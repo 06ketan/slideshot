@@ -1,0 +1,168 @@
+# Branded Slide Prompt — Ketan Slides Design System
+
+> Copy-paste this into ChatGPT, Claude, or any AI to generate carousel HTML using the full Ketan Slides design system.
+
+---
+
+## Prompt
+
+You are generating HTML slides using the **"Ketan Slides" design system** — a minimal, monospace carousel style.
+
+### Design Tokens
+
+| Token | Value | Usage |
+|-------|-------|-------|
+| Font | `Space Mono` monospace | Everything |
+| Teal | `#00B894` | Accents, highlights, links |
+| Coral | `#E84C1E` | Alerts, brand dot |
+| Purple | `#7C5CBF` | Secondary accent |
+| Dark | `#1A1A1A` | Text, dark backgrounds |
+| Muted | `#888` | Secondary text |
+| Light BG | `#F0EDE7` | Default slide background |
+| Dark BG | `#0D0D0D` | Dark slide variant |
+| Border | `#DEDAD4` | Dividers, card borders |
+
+### Slide Base
+
+- Default: `.slide` — light background `#F0EDE7`
+- Dark variant: `.slide.dark` — dark background `#0D0D0D`, inverts text/borders
+- Corner accents via `::before` (top-right) and `::after` (bottom-left)
+- Dimensions: `540×675px`, padding `32px 40px 52px`
+
+### Available Components
+
+| Class(es) | Purpose | Layout |
+|-----------|---------|--------|
+| `.dots` + `.dot` / `.dot.on` / `.dot.tl` | Slide position indicator | Flex row of circles |
+| `.btag` + `.bdot` + `.btxt` + `.burl` | Brand tag pill | Inline-flex |
+| `.h1` / `.h2` | Headlines (`<i>` = teal, `<s>` = muted) | Block |
+| `.lbl` | Uppercase section label | Block |
+| `.ft` + `.ft-l` + `.ft-pl` + `.ft-h` + `.ft-sw` | Slide footer | Absolute bottom |
+| `.scols` + `.sc` + `.sn` + `.sb` + `.sk` + `.sd` | Stat cards | 3-col grid |
+| `.itrow` + `.it` + `.ic` + `.il` | Icon tiles (`.gray` `.coral` `.teal` `.purple`) | 4-col grid |
+| `.ul` + `.ur` + `.un` + `.um` + `.us` + `.utg` | List rows with tags | Flex column |
+| `.br` + `.bl` + `.bt` + `.bf` + `.bv` | Horizontal bar chart | Flex row |
+| `.cg` + `.cc` + `.cbad` + `.cgood` + `.ct` + `.ci` + `.cil` + `.cid` | Comparison grid | 2-col grid (dark) |
+| `.hg` + `.hc` + `.hev` + `.htr` + `.hac` + `.hds` | Hook/event cards | 2-col grid |
+| `.cr` + `.ck` + `.cv` | Config/code rows | Flex row |
+| `.al` + `.ai` + `.an` + `.at` + `.as` | Action list (CTA) | Flex column |
+| `.mg` + `.mc` + `.mn` + `.mk` + `.md` + `.mv` | Metric grid | 2-col grid |
+| `.hr` | Horizontal rule | Block |
+| `.pnote` | Provider note | Block |
+| `.lrow` + `.lchip` | Link chips | Flex wrap |
+
+### Full CSS
+
+Include this in your `<style>` block:
+
+```css
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#1A1A1A;padding:48px;font-family:'Space Mono',monospace;display:flex;flex-direction:column;align-items:flex-start;gap:40px;}
+.slide-meta{font-size:10px;color:#555;letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px;}
+.slide{position:relative;width:540px;height:675px;background:#F0EDE7;padding:32px 40px 52px;overflow:hidden;font-family:'Space Mono',monospace;flex-shrink:0;}
+.slide::before{content:'';position:absolute;top:24px;right:24px;width:80px;height:80px;border-top:1px solid #B8B4AD;border-right:1px solid #B8B4AD;pointer-events:none;}
+.slide::after{content:'';position:absolute;bottom:24px;left:24px;width:60px;height:60px;border-bottom:1px solid #B8B4AD;border-left:1px solid #B8B4AD;pointer-events:none;}
+.dark{background:#0D0D0D;}.dark::before{border-color:#252525;}.dark::after{border-color:#252525;}
+.dots{display:flex;gap:5px;margin-bottom:18px;}.dot{width:17px;height:17px;border-radius:50%;background:#C8C4BC;display:flex;align-items:center;justify-content:center;font-size:6.5px;font-weight:700;color:transparent;}.dot.on{background:#1A1A1A;color:#FFF;}.dot.tl{background:#00B894;color:#FFF;}
+.ft{position:absolute;bottom:0;left:0;right:0;padding:0px 24px 8px;display:flex;justify-content:space-between;align-items:flex-end;}.ft-l{display:flex;flex-direction:row;gap:1px;}.ft-pl{font-size:8.5px;color:#888;letter-spacing:.12em;text-transform:uppercase;}.ft-h{font-size:8.5px;font-weight:700;color:#1A1A1A;}.ft-sw{font-size:8.5px;color:#888;}.dark .ft-h{color:#FFF;}.dark .ft-pl,.dark .ft-sw{color:#444;}
+.btag{display:inline-flex;align-items:center;gap:7px;background:#1A1A1A;border-radius:100px;padding:5px 12px 5px 8px;margin-bottom:16px;}.bdot{width:8px;height:8px;background:#E84C1E;border-radius:50%;}.btxt{font-size:8.5px;font-weight:700;color:#FFF;letter-spacing:.12em;text-transform:uppercase;}.burl{font-size:8.5px;color:#555;}
+.h1{font-size:72px;font-weight:700;line-height:1.0;margin-bottom:18px;color:#1A1A1A;letter-spacing:-.02em;}.h1 i{color:#00B894;font-style:italic;}.h1 s{color:#C0BCB5;text-decoration:none;}.dark .h1{color:#F0EDE7;}
+.h2{font-size:46px;font-weight:700;line-height:1.05;margin-bottom:14px;letter-spacing:-.02em;color:#1A1A1A;}.h2 i{color:#00B894;font-style:italic;}.h2 s{color:#C0BCB5;text-decoration:none;}.dark .h2{color:#F0EDE7;}
+.lbl{font-size:10px;color:#888;letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px;}.dark .lbl{color:#444;}
+.scols{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:13px;}.sc{background:#FFF;border:.5px solid #DEDAD4;border-radius:6px;padding:11px 10px;}.sn{font-size:24px;font-weight:700;line-height:1;}.sb{width:24px;height:2px;background:#1A1A1A;margin:5px 0;}.sk{font-size:8px;font-weight:700;color:#1A1A1A;text-transform:uppercase;letter-spacing:.1em;}.sd{font-size:7.5px;color:#888;margin-top:2px;}
+.itrow{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:4px;}.it{border-radius:8px;padding:8px 4px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:54px;}.it .ic{font-size:20px;}.it .il{font-size:7px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;text-align:center;color:#1A1A1A;}.gray{background:#E8E5DF;}.coral{background:#FDECEA;}.teal{background:#E0F5F0;}.purple{background:#EDE8F5;}
+.ul{list-style:none;}.ur{display:flex;align-items:baseline;gap:10px;padding:9px 0;border-bottom:.5px solid #DEDAD4;}.ur:last-child{border-bottom:none;}.un{font-size:10px;color:#AAA;min-width:16px;}.um{font-size:10.5px;color:#1A1A1A;flex:1;font-weight:700;}.us{font-size:8.5px;color:#888;display:block;font-weight:400;margin-top:2px;}.utg{font-size:7.5px;color:#888;background:#F5F3EE;border:.5px solid #DEDAD4;border-radius:4px;padding:2px 6px;text-transform:uppercase;letter-spacing:.08em;white-space:nowrap;}
+.br{display:flex;align-items:center;gap:10px;margin-bottom:9px;}.bl{font-size:8.5px;color:#1A1A1A;text-align:right;width:130px;min-width:130px;}.bt{flex:1;height:20px;background:#E8E5DF;border-radius:2px;overflow:hidden;}.bf{height:100%;border-radius:2px;display:flex;align-items:center;justify-content:flex-end;padding-right:6px;}.bv{font-size:8.5px;font-weight:700;color:#FFF;}
+.cg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;}.cc{padding:14px;border-radius:6px;}.cbad{background:#161616;border:.5px solid #2A2A2A;}.cgood{background:#0A1A14;border:.5px solid #00B894;}.ct{font-size:8.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-bottom:12px;}.cbad .ct{color:#444;}.cgood .ct{color:#00B894;}.ci{margin-bottom:9px;}.cil{font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;display:block;}.cid{font-size:8px;margin-top:2px;}.cbad .cil{color:#444;}.cbad .cid{color:#333;}.cgood .cil{color:#00B894;}.cgood .cid{color:#556;}
+.hg{display:grid;grid-template-columns:1fr 1fr;gap:8px;}.hc{background:#FFF;border:.5px solid #DEDAD4;border-radius:6px;padding:13px;}.hev{font-size:7.5px;color:#888;letter-spacing:.12em;text-transform:uppercase;margin-bottom:5px;}.htr{font-size:9.5px;font-weight:700;color:#1A1A1A;margin-bottom:4px;}.hac{font-size:8px;color:#7C5CBF;}.hds{font-size:8px;color:#888;margin-top:3px;}
+.cr{display:flex;gap:12px;padding:9px 0;border-bottom:.5px solid #DEDAD4;}.cr:last-child{border-bottom:none;}.ck{font-size:9.5px;font-weight:700;color:#00B894;min-width:155px;}.cv{font-size:8.5px;color:#888;flex:1;}
+.al{list-style:none;}.ai{display:flex;gap:12px;padding:10px 0;border-bottom:.5px solid #DEDAD4;}.ai:last-child{border-bottom:none;}.an{font-size:10px;font-weight:700;color:#C0BCB5;min-width:18px;}.at{font-size:10.5px;font-weight:700;color:#1A1A1A;}.as{font-size:8.5px;color:#888;display:block;font-weight:400;margin-top:2px;}
+.mg{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:6px;}.mc{background:#FFF;border:.5px solid #DEDAD4;border-radius:6px;padding:14px;}.mn{font-size:36px;font-weight:700;line-height:1;}.mk{font-size:9px;font-weight:700;color:#1A1A1A;text-transform:uppercase;margin-top:6px;letter-spacing:.08em;}.md{font-size:8px;color:#888;margin-top:2px;}.mv{font-size:7.5px;color:#C8C4BC;letter-spacing:.12em;text-transform:uppercase;margin-top:8px;}
+.hr{width:100%;height:.5px;background:#C8C4BC;margin:13px 0;}
+.pnote{margin-top:10px;padding-top:8px;border-top:.5px solid #DEDAD4;font-size:8.5px;color:#888;}.pnote strong{color:#1A1A1A;font-weight:700;}
+.lrow{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px;}.lchip{font-size:7.5px;color:#00B894;border:.5px solid #00B894;border-radius:4px;padding:3px 7px;letter-spacing:.04em;}
+```
+
+Include this `<link>` in `<head>`:
+
+```html
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+```
+
+### Slide Types & Examples
+
+**Hero slide:**
+```html
+<div class="slide">
+  <div class="dots">
+    <div class="dot on">1</div><div class="dot"></div><div class="dot"></div>
+  </div>
+  <div class="btag"><div class="bdot"></div><span class="btxt">Author Name</span></div>
+  <div class="h1">Big Bold<br><i>Headline</i><br><s>Here.</s></div>
+  <div class="scols">
+    <div class="sc"><div class="sn" style="color:#00B894">42</div><div class="sb"></div><div class="sk">Stat Label</div><div class="sd">Description</div></div>
+    <!-- more stat cards -->
+  </div>
+  <div class="ft">
+    <div class="ft-l"><span class="ft-pl">Platform</span><span class="ft-h">@handle</span></div>
+    <span class="ft-sw">Swipe to Know More</span>
+  </div>
+</div>
+```
+
+**List slide:**
+```html
+<div class="slide">
+  <div class="dots"><!-- dots --></div>
+  <div class="lbl">Section Label</div>
+  <div class="h2">Medium<br><i>Headline</i></div>
+  <ul class="ul">
+    <li class="ur">
+      <span class="un">01</span>
+      <span class="um">Item Title<span class="us">Description text</span></span>
+      <span class="utg">TAG</span>
+    </li>
+  </ul>
+  <div class="ft"><!-- footer --></div>
+</div>
+```
+
+**Dark comparison slide:**
+```html
+<div class="slide dark">
+  <div class="dots"><!-- dots --></div>
+  <div class="lbl">Comparison</div>
+  <div class="h2">Without vs<br><i>With</i></div>
+  <div class="cg">
+    <div class="cc cbad">
+      <div class="ct">Without</div>
+      <div class="ci"><span class="cil">Problem</span><span class="cid">Details</span></div>
+    </div>
+    <div class="cc cgood">
+      <div class="ct">With</div>
+      <div class="ci"><span class="cil">Solution</span><span class="cid">Details</span></div>
+    </div>
+  </div>
+  <div class="ft"><!-- footer --></div>
+</div>
+```
+
+**CTA slide:**
+```html
+<div class="slide">
+  <div class="dots"><!-- dots --></div>
+  <div class="h1">Call to<br><i>Action</i></div>
+  <ul class="al">
+    <li class="ai"><span class="an">01</span><span class="at">Step one<span class="as">Details</span></span></li>
+  </ul>
+  <div class="ft"><!-- footer --></div>
+</div>
+```
+
+---
+
+## Usage
+
+```bash
+npx html-to-slides ./my-carousel.html --formats png,webp,pdf
+```

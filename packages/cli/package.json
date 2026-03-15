@@ -1,0 +1,48 @@
+{
+  "name": "html-to-slides",
+  "version": "1.0.0",
+  "description": "CLI tool to convert HTML slides to high-res PNG, WebP, and PDF",
+  "type": "module",
+  "license": "MIT",
+  "author": "Ketan Chavan",
+  "bin": {
+    "html-to-slides": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "html-to-image",
+    "slides",
+    "carousel",
+    "puppeteer",
+    "screenshot",
+    "pdf",
+    "cli",
+    "linkedin-carousel"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ketan-chavan/html-to-slides",
+    "directory": "packages/cli"
+  },
+  "homepage": "https://github.com/ketan-chavan/html-to-slides#readme",
+  "bugs": "https://github.com/ketan-chavan/html-to-slides/issues",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "dependencies": {
+    "html-to-slides-core": "^1.0.0",
+    "commander": "^13.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0",
+    "@types/node": "^22.0.0"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "html-to-slides-monorepo",
+  "private": true,
+  "workspaces": [
+    "packages/core",
+    "packages/cli",
+    "packages/mcp-server"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces",
+    "build:core": "npm run build -w packages/core",
+    "build:cli": "npm run build -w packages/cli",
+    "build:mcp": "npm run build -w packages/mcp-server"
+  }
+}

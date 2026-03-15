@@ -1,0 +1,203 @@
+#!/usr/bin/env node
+
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { z } from "zod";
+import { renderSlides, type ImageFormat } from "html-to-slides-core";
+import fs from "node:fs";
+import path from "node:path";
+
+const GENERIC_PROMPT = `You are generating HTML slides for a visual carousel (LinkedIn, Instagram, presentations).
+
+RULES:
+1. Create a single HTML file with a <style> block and a <body> containing multiple slide divs.
+2. Each slide MUST use the CSS class ".slide" and have fixed dimensions: width: 540px; height: 675px.
+3. Use overflow: hidden on each slide — content must fit within the frame.
+4. Use Google Fonts via <link> tags in <head> if you need custom fonts.
+5. Each slide must be visually self-contained — no JavaScript required.
+6. Use print-safe colors (avoid transparency-only effects).
+7. Structure:
+
+\`\`\`html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #1a1a1a; padding: 48px; display: flex; flex-direction: column; gap: 40px; align-items: flex-start; }
+    .slide { position: relative; width: 540px; height: 675px; padding: 32px 40px; overflow: hidden; font-family: 'Inter', sans-serif; flex-shrink: 0; }
+    /* your custom styles here */
+  </style>
+</head>
+<body>
+  <div class="slide"> <!-- Slide 1 --> </div>
+  <div class="slide"> <!-- Slide 2 --> </div>
+</body>
+</html>
+\`\`\`
+
+The tool will screenshot each .slide element at 4x resolution for crisp output.`;
+
+const BRANDED_PROMPT = `You are generating HTML slides using the "Ketan Slides" design system — a minimal, monospace carousel style.
+
+DESIGN SYSTEM RULES:
+1. Font: 'Space Mono' monospace via Google Fonts.
+2. Slide base: .slide { width: 540px; height: 675px; background: #F0EDE7; padding: 32px 40px 52px; }
+3. Dark variant: .slide.dark { background: #0D0D0D; } — inverts text/border colors.
+4. Corner accents: ::before (top-right 80px) and ::after (bottom-left 60px) border decorations.
+5. Colors: teal=#00B894, coral=#E84C1E, purple=#7C5CBF, neutral=#1A1A1A, muted=#888, bg=#F0EDE7.
+
+AVAILABLE COMPONENTS (use these CSS classes):
+- .dots + .dot / .dot.on / .dot.tl — slide position indicator (row of circles)
+- .btag + .bdot + .btxt + .burl — brand tag pill
+- .h1 / .h2 — headlines (<i> for teal italic accent, <s> for muted strikethrough-removed text)
+- .lbl — uppercase label
+- .ft + .ft-l + .ft-pl + .ft-h + .ft-sw — slide footer
+- .scols + .sc + .sn + .sb + .sk + .sd — stat cards grid (3-col)
+- .itrow + .it + .ic + .il — icon tile grid (4-col), colors: .gray .coral .teal .purple
+- .ul + .ur + .un + .um + .us + .utg — use-case list rows with tags
+- .br + .bl + .bt + .bf + .bv — horizontal bar chart
+- .cg + .cc + .cbad + .cgood + .ct + .ci + .cil + .cid — comparison grid (dark)
+- .hg + .hc + .hev + .htr + .hac + .hds — hook/event cards (2-col)
+- .cr + .ck + .cv — code/config rows
+- .al + .ai + .an + .at + .as — action list (CTA slide)
+- .mg + .mc + .mn + .mk + .md + .mv — metric grid (2-col)
+- .hr — horizontal rule
+- .pnote — provider note
+- .lrow + .lchip — link chips
+
+FULL CSS (include this in your <style> block):
+\`\`\`
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#1A1A1A;padding:48px;font-family:'Space Mono',monospace;display:flex;flex-direction:column;align-items:flex-start;gap:40px;}
+.slide{position:relative;width:540px;height:675px;background:#F0EDE7;padding:32px 40px 52px;overflow:hidden;font-family:'Space Mono',monospace;flex-shrink:0;}
+.slide::before{content:'';position:absolute;top:24px;right:24px;width:80px;height:80px;border-top:1px solid #B8B4AD;border-right:1px solid #B8B4AD;pointer-events:none;}
+.slide::after{content:'';position:absolute;bottom:24px;left:24px;width:60px;height:60px;border-bottom:1px solid #B8B4AD;border-left:1px solid #B8B4AD;pointer-events:none;}
+.dark{background:#0D0D0D;}.dark::before{border-color:#252525;}.dark::after{border-color:#252525;}
+.dots{display:flex;gap:5px;margin-bottom:18px;}.dot{width:17px;height:17px;border-radius:50%;background:#C8C4BC;display:flex;align-items:center;justify-content:center;font-size:6.5px;font-weight:700;color:transparent;}.dot.on{background:#1A1A1A;color:#FFF;}.dot.tl{background:#00B894;color:#FFF;}
+.ft{position:absolute;bottom:0;left:0;right:0;padding:0px 24px 8px;display:flex;justify-content:space-between;align-items:flex-end;}.ft-l{display:flex;flex-direction:row;gap:1px;}.ft-pl{font-size:8.5px;color:#888;letter-spacing:.12em;text-transform:uppercase;}.ft-h{font-size:8.5px;font-weight:700;color:#1A1A1A;}.ft-sw{font-size:8.5px;color:#888;}.dark .ft-h{color:#FFF;}.dark .ft-pl,.dark .ft-sw{color:#444;}
+.btag{display:inline-flex;align-items:center;gap:7px;background:#1A1A1A;border-radius:100px;padding:5px 12px 5px 8px;margin-bottom:16px;}.bdot{width:8px;height:8px;background:#E84C1E;border-radius:50%;}.btxt{font-size:8.5px;font-weight:700;color:#FFF;letter-spacing:.12em;text-transform:uppercase;}.burl{font-size:8.5px;color:#555;}
+.h1{font-size:72px;font-weight:700;line-height:1.0;margin-bottom:18px;color:#1A1A1A;letter-spacing:-.02em;}.h1 i{color:#00B894;font-style:italic;}.h1 s{color:#C0BCB5;text-decoration:none;}.dark .h1{color:#F0EDE7;}
+.h2{font-size:46px;font-weight:700;line-height:1.05;margin-bottom:14px;letter-spacing:-.02em;color:#1A1A1A;}.h2 i{color:#00B894;font-style:italic;}.h2 s{color:#C0BCB5;text-decoration:none;}.dark .h2{color:#F0EDE7;}
+.lbl{font-size:10px;color:#888;letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px;}.dark .lbl{color:#444;}
+.scols{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:13px;}.sc{background:#FFF;border:.5px solid #DEDAD4;border-radius:6px;padding:11px 10px;}.sn{font-size:24px;font-weight:700;line-height:1;}.sb{width:24px;height:2px;background:#1A1A1A;margin:5px 0;}.sk{font-size:8px;font-weight:700;color:#1A1A1A;text-transform:uppercase;letter-spacing:.1em;}.sd{font-size:7.5px;color:#888;margin-top:2px;}
+.itrow{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:4px;}.it{border-radius:8px;padding:8px 4px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:54px;}.it .ic{font-size:20px;}.it .il{font-size:7px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;text-align:center;color:#1A1A1A;}.gray{background:#E8E5DF;}.coral{background:#FDECEA;}.teal{background:#E0F5F0;}.purple{background:#EDE8F5;}
+.ul{list-style:none;}.ur{display:flex;align-items:baseline;gap:10px;padding:9px 0;border-bottom:.5px solid #DEDAD4;}.ur:last-child{border-bottom:none;}.un{font-size:10px;color:#AAA;min-width:16px;}.um{font-size:10.5px;color:#1A1A1A;flex:1;font-weight:700;}.us{font-size:8.5px;color:#888;display:block;font-weight:400;margin-top:2px;}.utg{font-size:7.5px;color:#888;background:#F5F3EE;border:.5px solid #DEDAD4;border-radius:4px;padding:2px 6px;text-transform:uppercase;letter-spacing:.08em;white-space:nowrap;}
+.br{display:flex;align-items:center;gap:10px;margin-bottom:9px;}.bl{font-size:8.5px;color:#1A1A1A;text-align:right;width:130px;min-width:130px;}.bt{flex:1;height:20px;background:#E8E5DF;border-radius:2px;overflow:hidden;}.bf{height:100%;border-radius:2px;display:flex;align-items:center;justify-content:flex-end;padding-right:6px;}.bv{font-size:8.5px;font-weight:700;color:#FFF;}
+.cg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;}.cc{padding:14px;border-radius:6px;}.cbad{background:#161616;border:.5px solid #2A2A2A;}.cgood{background:#0A1A14;border:.5px solid #00B894;}.ct{font-size:8.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-bottom:12px;}.cbad .ct{color:#444;}.cgood .ct{color:#00B894;}.ci{margin-bottom:9px;}.cil{font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;display:block;}.cid{font-size:8px;margin-top:2px;}.cbad .cil{color:#444;}.cbad .cid{color:#333;}.cgood .cil{color:#00B894;}.cgood .cid{color:#556;}
+.hg{display:grid;grid-template-columns:1fr 1fr;gap:8px;}.hc{background:#FFF;border:.5px solid #DEDAD4;border-radius:6px;padding:13px;}.hev{font-size:7.5px;color:#888;letter-spacing:.12em;text-transform:uppercase;margin-bottom:5px;}.htr{font-size:9.5px;font-weight:700;color:#1A1A1A;margin-bottom:4px;}.hac{font-size:8px;color:#7C5CBF;}.hds{font-size:8px;color:#888;margin-top:3px;}
+.cr{display:flex;gap:12px;padding:9px 0;border-bottom:.5px solid #DEDAD4;}.cr:last-child{border-bottom:none;}.ck{font-size:9.5px;font-weight:700;color:#00B894;min-width:155px;}.cv{font-size:8.5px;color:#888;flex:1;}
+.al{list-style:none;}.ai{display:flex;gap:12px;padding:10px 0;border-bottom:.5px solid #DEDAD4;}.ai:last-child{border-bottom:none;}.an{font-size:10px;font-weight:700;color:#C0BCB5;min-width:18px;}.at{font-size:10.5px;font-weight:700;color:#1A1A1A;}.as{font-size:8.5px;color:#888;display:block;font-weight:400;margin-top:2px;}
+.mg{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:6px;}.mc{background:#FFF;border:.5px solid #DEDAD4;border-radius:6px;padding:14px;}.mn{font-size:36px;font-weight:700;line-height:1;}.mk{font-size:9px;font-weight:700;color:#1A1A1A;text-transform:uppercase;margin-top:6px;letter-spacing:.08em;}.md{font-size:8px;color:#888;margin-top:2px;}.mv{font-size:7.5px;color:#C8C4BC;letter-spacing:.12em;text-transform:uppercase;margin-top:8px;}
+.hr{width:100%;height:.5px;background:#C8C4BC;margin:13px 0;}
+.pnote{margin-top:10px;padding-top:8px;border-top:.5px solid #DEDAD4;font-size:8.5px;color:#888;}.pnote strong{color:#1A1A1A;font-weight:700;}
+.lrow{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px;}.lchip{font-size:7.5px;color:#00B894;border:.5px solid #00B894;border-radius:4px;padding:3px 7px;letter-spacing:.04em;}
+.slide-meta{font-size:10px;color:#555;letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px;}
+\`\`\`
+
+Include this <link> in <head>:
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+
+The tool will screenshot each .slide at 4x for 2160x2700 px output.`;
+
+const server = new McpServer({
+  name: "html-to-slides",
+  version: "1.0.0",
+});
+
+server.tool(
+  "render_html_to_images",
+  "Render HTML slides to high-resolution PNG, WebP, and/or PDF files",
+  {
+    html: z.string().describe("Full HTML string containing slide elements"),
+    selector: z.string().optional().describe("CSS selector for slide elements (default: .slide)"),
+    width: z.number().optional().describe("Slide width in CSS pixels (default: 540)"),
+    height: z.number().optional().describe("Slide height in CSS pixels (default: 675)"),
+    scale: z.number().optional().describe("Device scale factor 1-6 (default: 4)"),
+    formats: z.array(z.enum(["png", "webp", "pdf"])).optional().describe("Output formats (default: [png, webp, pdf])"),
+    outDir: z.string().describe("Absolute path to output directory"),
+  },
+  async ({ html, selector, width, height, scale, formats, outDir }) => {
+    try {
+      const result = await renderSlides({
+        html,
+        selector,
+        width,
+        height,
+        scale,
+        formats: formats as ImageFormat[] | undefined,
+        outDir,
+      });
+
+      return {
+        content: [
+          {
+            type: "text" as const,
+            text: JSON.stringify({
+              success: true,
+              slideCount: result.slideCount,
+              files: result.files,
+            }, null, 2),
+          },
+        ],
+      };
+    } catch (err: any) {
+      return {
+        content: [
+          {
+            type: "text" as const,
+            text: JSON.stringify({ success: false, error: err.message }),
+          },
+        ],
+        isError: true,
+      };
+    }
+  },
+);
+
+server.tool(
+  "get_slide_prompt",
+  "Get AI prompt template for generating slide HTML compatible with html-to-slides",
+  {
+    variant: z.enum(["generic", "branded"]).describe("'generic' for clean minimal slides, 'branded' for the Ketan Slides design system"),
+  },
+  async ({ variant }) => {
+    const text = variant === "generic" ? GENERIC_PROMPT : BRANDED_PROMPT;
+    return {
+      content: [{ type: "text" as const, text }],
+    };
+  },
+);
+
+server.prompt(
+  "generic-slides",
+  "Generic slide HTML generation prompt",
+  () => ({
+    messages: [
+      { role: "user" as const, content: { type: "text" as const, text: GENERIC_PROMPT } },
+    ],
+  }),
+);
+
+server.prompt(
+  "branded-slides",
+  "Branded Ketan Slides design system prompt",
+  () => ({
+    messages: [
+      { role: "user" as const, content: { type: "text" as const, text: BRANDED_PROMPT } },
+    ],
+  }),
+);
+
+async function main() {
+  const transport = new StdioServerTransport();
+  await server.connect(transport);
+  console.error("html-to-slides MCP server running on stdio");
+}
+
+main().catch((err) => {
+  console.error("Fatal:", err);
+  process.exit(1);
+});

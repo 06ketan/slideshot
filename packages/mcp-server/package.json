@@ -1,0 +1,50 @@
+{
+  "name": "html-to-slides-mcp",
+  "version": "1.0.0",
+  "description": "MCP server for rendering HTML slides to PNG, WebP, and PDF — use with Claude Desktop or Cursor",
+  "type": "module",
+  "license": "MIT",
+  "author": "Ketan Chavan",
+  "bin": {
+    "html-to-slides-mcp": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "html-to-image",
+    "slides",
+    "carousel",
+    "puppeteer",
+    "claude",
+    "cursor",
+    "ai-tools"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ketan-chavan/html-to-slides",
+    "directory": "packages/mcp-server"
+  },
+  "homepage": "https://github.com/ketan-chavan/html-to-slides#readme",
+  "bugs": "https://github.com/ketan-chavan/html-to-slides/issues",
+  "scripts": {
+    "build": "tsc && chmod +x dist/index.js",
+    "dev": "tsc --watch"
+  },
+  "dependencies": {
+    "html-to-slides-core": "^1.0.0",
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "zod": "^3.24.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0",
+    "@types/node": "^22.0.0"
+  }
+}
