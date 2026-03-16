@@ -164,5 +164,5 @@ Include this `<link>` in `<head>`:
 ## Usage
 
 ```bash
-npx html-to-slides ./my-carousel.html --formats png,webp,pdf
+npx slideshot ./my-carousel.html --formats png,webp,pdf
 ```

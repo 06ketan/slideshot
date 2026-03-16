@@ -13,9 +13,24 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "html-to-slides — Convert HTML to Images & PDF",
+  title: "slideshot — Convert HTML to High-Res Images & PDF",
   description:
-    "Paste HTML, get high-res PNG, WebP, and PDF slide exports. Powered by Puppeteer.",
+    "Paste HTML slides, preview live, export to high-res PNG, WebP, and PDF. Powered by Puppeteer. CLI, MCP server, and web app.",
+  metadataBase: new URL("https://slideshot.vercel.app"),
+  openGraph: {
+    title: "slideshot — Convert HTML to High-Res Images & PDF",
+    description:
+      "Paste HTML slides, preview live, export to high-res PNG, WebP, and PDF.",
+    url: "https://slideshot.vercel.app",
+    siteName: "slideshot",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "slideshot — Convert HTML to High-Res Images & PDF",
+    description:
+      "Paste HTML slides, preview live, export to high-res PNG, WebP, and PDF.",
+  },
 };
 
 export default function RootLayout({

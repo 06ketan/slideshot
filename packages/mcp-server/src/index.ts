@@ -3,7 +3,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
-import { renderSlides, type ImageFormat } from "html-to-slides-core";
+import { renderSlides, type ImageFormat } from "slideshot";
 import fs from "node:fs";
 import path from "node:path";
 
@@ -103,8 +103,8 @@ Include this <link> in <head>:
 The tool will screenshot each .slide at 4x for 2160x2700 px output.`;
 
 const server = new McpServer({
-  name: "html-to-slides",
-  version: "1.0.0",
+  name: "slideshot",
+  version: "2.0.0",
 });
 
 server.tool(
@@ -159,7 +159,7 @@ server.tool(
 
 server.tool(
   "get_slide_prompt",
-  "Get AI prompt template for generating slide HTML compatible with html-to-slides",
+  "Get AI prompt template for generating slide HTML compatible with slideshot",
   {
     variant: z.enum(["generic", "branded"]).describe("'generic' for clean minimal slides, 'branded' for the Ketan Slides design system"),
   },
@@ -194,7 +194,7 @@ server.prompt(
 async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  console.error("html-to-slides MCP server running on stdio");
+  console.error("slideshot MCP server running on stdio");
 }
 
 main().catch((err) => {

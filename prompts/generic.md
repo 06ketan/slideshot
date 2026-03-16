@@ -1,6 +1,6 @@
-# Generic Slide Prompt — html-to-slides
+# Generic Slide Prompt — slideshot
 
-> Copy-paste this into ChatGPT, Claude, or any AI to generate carousel HTML that works with `html-to-slides`.
+> Copy-paste this into ChatGPT, Claude, or any AI to generate carousel HTML that works with `slideshot`.
 
 ---
 
@@ -71,5 +71,5 @@ You are generating HTML slides for a visual carousel (LinkedIn, Instagram, prese
 
 ```bash
 # After AI generates the HTML file:
-npx html-to-slides ./my-carousel.html --formats png,webp,pdf
+npx slideshot ./my-carousel.html --formats png,webp,pdf
 ```

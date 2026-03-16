@@ -1,12 +1,20 @@
 {
-  "name": "html-to-slides",
-  "version": "1.0.0",
-  "description": "CLI tool to convert HTML slides to high-res PNG, WebP, and PDF",
+  "name": "slideshot",
+  "version": "2.0.0",
+  "description": "Convert HTML slides to high-res PNG, WebP, and PDF — CLI + library",
   "type": "module",
   "license": "MIT",
   "author": "Ketan Chavan",
   "bin": {
-    "html-to-slides": "./dist/index.js"
+    "slideshot": "./dist/cli.js"
+  },
+  "main": "./dist/core.js",
+  "types": "./dist/core.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/core.js",
+      "types": "./dist/core.d.ts"
+    }
   },
   "files": [
     "dist",
@@ -24,21 +32,22 @@
     "screenshot",
     "pdf",
     "cli",
-    "linkedin-carousel"
+    "linkedin-carousel",
+    "slideshot"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/ketan-chavan/html-to-slides",
+    "url": "https://github.com/06ketan/slideshot",
     "directory": "packages/cli"
   },
-  "homepage": "https://github.com/ketan-chavan/html-to-slides#readme",
-  "bugs": "https://github.com/ketan-chavan/html-to-slides/issues",
+  "homepage": "https://slideshot.vercel.app",
+  "bugs": "https://github.com/06ketan/slideshot/issues",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && chmod +x dist/cli.js",
     "dev": "tsc --watch"
   },
   "dependencies": {
-    "html-to-slides-core": "^1.0.0",
+    "puppeteer": "^24.6.0",
     "commander": "^13.0.0"
   },
   "devDependencies": {

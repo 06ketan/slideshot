@@ -1,5 +1,5 @@
 {
-  "name": "html-to-slides-core",
+  "name": "slideshot-core",
   "version": "1.0.0",
   "description": "Core Puppeteer engine for rendering HTML slides to PNG, WebP, and PDF",
   "type": "module",
@@ -29,15 +29,16 @@
     "screenshot",
     "pdf",
     "png",
-    "webp"
+    "webp",
+    "slideshot"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/ketan-chavan/html-to-slides",
+    "url": "https://github.com/06ketan/slideshot",
     "directory": "packages/core"
   },
-  "homepage": "https://github.com/ketan-chavan/html-to-slides#readme",
-  "bugs": "https://github.com/ketan-chavan/html-to-slides/issues",
+  "homepage": "https://github.com/06ketan/slideshot",
+  "bugs": "https://github.com/06ketan/slideshot/issues",
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch"

@@ -1,36 +1,54 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# slideshot — Web App
 
-## Getting Started
+[![GitHub stars](https://img.shields.io/github/stars/06ketan/slideshot)](https://github.com/06ketan/slideshot)
 
-First, run the development server:
+The web interface for [slideshot](https://github.com/06ketan/slideshot). Paste HTML, preview slides live, export to high-res PNG, WebP, and PDF.
+
+**[Live App](https://slideshot.vercel.app)** · **[npm CLI](https://www.npmjs.com/package/slideshot)** · **[npm MCP](https://www.npmjs.com/package/slideshot-mcp)** · **[GitHub](https://github.com/06ketan/slideshot)**
+
+## Features
+
+- Paste HTML with `.slide` elements
+- Live preview in iframe
+- Export to PNG, WebP, PDF (or all at once)
+- Configurable selector, dimensions, scale factor
+- Built-in AI prompt templates (generic + branded)
+- Acid Brutalist UI
+
+## Tech Stack
+
+- Next.js 16 (App Router)
+- React 19
+- Tailwind CSS 4
+- Puppeteer (server-side rendering)
+- JSZip (ZIP bundling)
+
+## Run Locally
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Deploy to Vercel
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The app is deployed at [slideshot.vercel.app](https://slideshot.vercel.app).
 
-## Learn More
+To deploy your own:
 
-To learn more about Next.js, take a look at the following resources:
+1. Fork the [GitHub repo](https://github.com/06ketan/slideshot)
+2. Import in [Vercel](https://vercel.com/new)
+3. Set root directory to `packages/webapp`
+4. Deploy
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Related
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **[slideshot](https://www.npmjs.com/package/slideshot)** — CLI: `npx slideshot ./slides.html`
+- **[slideshot-mcp](https://www.npmjs.com/package/slideshot-mcp)** — MCP server for Claude / Cursor
+- **[GitHub](https://github.com/06ketan/slideshot)** — source code & issues
 
-## Deploy on Vercel
+## License
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+MIT

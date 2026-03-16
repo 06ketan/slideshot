@@ -1,14 +1,22 @@
-# html-to-slides
+# slideshot
 
-Convert AI-generated HTML carousels into high-res PNG, WebP, and PDF — via CLI, Web App, or MCP Server.
+[![npm](https://img.shields.io/npm/v/slideshot)](https://www.npmjs.com/package/slideshot)
+[![npm downloads](https://img.shields.io/npm/dm/slideshot)](https://www.npmjs.com/package/slideshot)
+[![npm mcp](https://img.shields.io/npm/v/slideshot-mcp?label=slideshot-mcp)](https://www.npmjs.com/package/slideshot-mcp)
+[![GitHub stars](https://img.shields.io/github/stars/06ketan/slideshot)](https://github.com/06ketan/slideshot)
+[![license](https://img.shields.io/github/license/06ketan/slideshot)](LICENSE)
+
+Convert AI-generated HTML carousels into high-res PNG, WebP, and PDF — via **CLI**, **Web App**, or **MCP Server**.
+
+**[Web App](https://slideshot.vercel.app)** · **[npm CLI](https://www.npmjs.com/package/slideshot)** · **[npm MCP](https://www.npmjs.com/package/slideshot-mcp)**
 
 ## Architecture
 
 ```
-html-to-slides/
+slideshot/
   packages/
     core/          ← Shared Puppeteer rendering engine
-    cli/           ← npx html-to-slides ./file.html
+    cli/           ← npx slideshot ./file.html
     mcp-server/    ← MCP stdio server for AI tools
     webapp/        ← Next.js web app with live preview
   prompts/
@@ -21,8 +29,7 @@ html-to-slides/
 ### CLI
 
 ```bash
-cd packages/cli && npm install && npm run build
-npx html-to-slides ./my-carousel.html --formats png,webp,pdf --scale 4
+npx slideshot ./my-carousel.html --formats png,webp,pdf --scale 4
 ```
 
 **Options:**
@@ -39,6 +46,10 @@ npx html-to-slides ./my-carousel.html --formats png,webp,pdf --scale 4
 
 ### Web App
 
+**Live:** [slideshot.vercel.app](https://slideshot.vercel.app)
+
+Or run locally:
+
 ```bash
 cd packages/webapp && npm install && npm run dev
 ```
@@ -52,9 +63,9 @@ Add to Claude Desktop or Cursor config:
 ```json
 {
   "mcpServers": {
-    "html-to-slides": {
-      "command": "node",
-      "args": ["/path/to/packages/mcp-server/dist/index.js"]
+    "slideshot": {
+      "command": "npx",
+      "args": ["-y", "slideshot-mcp"]
     }
   }
 }
@@ -78,6 +89,19 @@ See `prompts/generic.md` and `prompts/branded.md` for copy-paste prompts you can
 
 ```bash
 npm install   # from root — installs all workspaces
-npm run build # builds core → cli → mcp-server
+npm run build # builds cli → mcp-server
 cd packages/webapp && npm run build  # builds webapp separately
 ```
+
+## Links
+
+| Surface | URL |
+|---------|-----|
+| Web App | [slideshot.vercel.app](https://slideshot.vercel.app) |
+| npm CLI | [npmjs.com/package/slideshot](https://www.npmjs.com/package/slideshot) |
+| npm MCP | [npmjs.com/package/slideshot-mcp](https://www.npmjs.com/package/slideshot-mcp) |
+| GitHub | [github.com/06ketan/slideshot](https://github.com/06ketan/slideshot) |
+
+## License
+
+MIT

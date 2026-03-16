@@ -1,4 +1,5 @@
-import puppeteer from "puppeteer";
+import puppeteer from "puppeteer-core";
+import chromium from "@sparticuz/chromium";
 import JSZip from "jszip";
 
 export const maxDuration = 60;
@@ -20,6 +21,23 @@ function jsonResponse(data: object, status: number) {
   });
 }
 
+async function getBrowser() {
+  if (process.env.NODE_ENV === "development") {
+    const puppeteerFull = await import("puppeteer");
+    return puppeteerFull.default.launch({
+      headless: true,
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    });
+  }
+
+  return puppeteer.launch({
+    args: chromium.args,
+    defaultViewport: chromium.defaultViewport,
+    executablePath: await chromium.executablePath(),
+    headless: chromium.headless,
+  });
+}
+
 export async function POST(req: Request) {
   let browser;
   try {
@@ -38,14 +56,15 @@ export async function POST(req: Request) {
       return jsonResponse({ error: "HTML is required" }, 400);
     }
 
-    browser = await puppeteer.launch({ headless: true });
+    browser = await getBrowser();
     const page = await browser.newPage();
+    page.setDefaultNavigationTimeout(15000);
     await page.setViewport({
       width: width + 96,
       height: height + 96,
       deviceScaleFactor: scale,
     });
-    await page.setContent(html, { waitUntil: "networkidle0" });
+    await page.setContent(html, { waitUntil: "domcontentloaded" });
     await page.evaluateHandle("document.fonts.ready");
 
     const slides = await page.$$(selector);
@@ -81,7 +100,7 @@ export async function POST(req: Request) {
     }
 
     if (formats.includes("pdf")) {
-      await page.setContent(html, { waitUntil: "networkidle0" });
+      await page.setContent(html, { waitUntil: "domcontentloaded" });
       await page.evaluateHandle("document.fonts.ready");
       await page.addStyleTag({
         content: `

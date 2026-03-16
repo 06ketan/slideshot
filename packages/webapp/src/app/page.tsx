@@ -32,7 +32,7 @@ body{background:#1A1A1A;padding:48px;font-family:'Space Mono',monospace;display:
     Each <code style="background:#E8E5DF;padding:2px 6px;border-radius:3px;font-size:10px;">.slide</code> element becomes one image.
   </div>
   <div class="ft">
-    <span class="ft-h">html-to-slides</span>
+    <span class="ft-h">slideshot</span>
     <span class="ft-sw">Export to PNG, WebP, PDF</span>
   </div>
 </div>
@@ -170,58 +170,76 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-screen font-mono">
       {/* Header */}
-      <header className="flex items-center justify-between px-5 py-3 border-b border-border bg-surface shrink-0">
+      <header className="flex items-center justify-between px-5 py-3 border-b-2 border-border bg-surface shrink-0">
         <div className="flex items-center gap-3">
-          <div className="w-2.5 h-2.5 rounded-full bg-accent" />
-          <h1 className="text-sm font-bold tracking-wider uppercase font-mono">
-            html-to-slides
+          <div className="w-3 h-3 rounded-full bg-primary" />
+          <h1 className="text-sm font-black tracking-widest uppercase font-mono">
+            SLIDESHOT
           </h1>
         </div>
-        <div className="flex items-center gap-4 text-xs text-muted">
-          <span>
+        <div className="flex items-center gap-4">
+          <a
+            href="https://github.com/06ketan/slideshot"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="border-2 border-border rounded-none px-2 py-0.5 text-xs font-mono text-muted hover:border-primary hover:text-primary"
+          >
+            GitHub
+          </a>
+          <a
+            href="https://www.npmjs.com/package/slideshot"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="border-2 border-border rounded-none px-2 py-0.5 text-xs font-mono text-muted hover:border-primary hover:text-primary"
+          >
+            npm
+          </a>
+          <span className="border-2 border-border rounded-none px-2 py-0.5 text-xs font-mono text-muted">
             {width * scale} x {height * scale} px
           </span>
-          <span className="text-accent">{scale}x</span>
+          <span className="bg-primary text-black font-black text-xs px-2 py-0.5 rounded-none border-2 border-black">
+            {scale}x
+          </span>
         </div>
       </header>
 
       {/* Controls */}
-      <div className="flex items-center gap-4 px-5 py-2.5 border-b border-border bg-surface-2 shrink-0 flex-wrap">
-        <label className="flex items-center gap-2 text-xs">
+      <div className="flex items-center gap-4 px-5 py-2.5 border-b-2 border-border bg-surface-2 shrink-0 flex-wrap">
+        <label className="flex items-center gap-2 text-xs font-mono uppercase tracking-wider">
           <span className="text-muted">Selector</span>
           <input
             type="text"
             value={selector}
             onChange={(e) => setSelector(e.target.value)}
-            className="bg-background border border-border rounded px-2 py-1 w-24 text-xs font-mono"
+            className="bg-background border-2 border-border rounded-none px-2 py-1 w-24 text-xs font-mono text-foreground"
           />
         </label>
-        <label className="flex items-center gap-2 text-xs">
+        <label className="flex items-center gap-2 text-xs font-mono uppercase tracking-wider">
           <span className="text-muted">W</span>
           <input
             type="number"
             value={width}
             onChange={(e) => setWidth(+e.target.value)}
-            className="bg-background border border-border rounded px-2 py-1 w-16 text-xs font-mono"
+            className="bg-background border-2 border-border rounded-none px-2 py-1 w-16 text-xs font-mono text-foreground"
           />
         </label>
-        <label className="flex items-center gap-2 text-xs">
+        <label className="flex items-center gap-2 text-xs font-mono uppercase tracking-wider">
           <span className="text-muted">H</span>
           <input
             type="number"
             value={height}
             onChange={(e) => setHeight(+e.target.value)}
-            className="bg-background border border-border rounded px-2 py-1 w-16 text-xs font-mono"
+            className="bg-background border-2 border-border rounded-none px-2 py-1 w-16 text-xs font-mono text-foreground"
           />
         </label>
-        <label className="flex items-center gap-2 text-xs">
+        <label className="flex items-center gap-2 text-xs font-mono uppercase tracking-wider">
           <span className="text-muted">Scale</span>
           <select
             value={scale}
             onChange={(e) => setScale(+e.target.value)}
-            className="bg-background border border-border rounded px-2 py-1 text-xs font-mono"
+            className="bg-background border-2 border-border rounded-none px-2 py-1 text-xs font-mono text-foreground"
           >
             {[1, 2, 3, 4, 5, 6].map((s) => (
               <option key={s} value={s}>
@@ -230,56 +248,91 @@ export default function Home() {
             ))}
           </select>
         </label>
-        <div className="flex items-center gap-3 text-xs">
+        <div className="flex items-center gap-3 text-xs font-mono">
           {(["png", "webp", "pdf"] as const).map((f) => (
             <label key={f} className="flex items-center gap-1.5 cursor-pointer">
               <input
                 type="checkbox"
                 checked={formats[f]}
                 onChange={() => toggleFormat(f)}
-                className="accent-accent"
+                className="accent-primary"
               />
-              <span className="uppercase text-muted">{f}</span>
+              <span className="uppercase text-muted tracking-wider font-bold">{f}</span>
             </label>
           ))}
         </div>
         <button
           onClick={handleExport}
           disabled={exporting}
-          className="ml-auto bg-accent text-black font-bold text-xs uppercase tracking-wider px-5 py-2 rounded hover:brightness-110 disabled:opacity-50 disabled:cursor-wait transition-all"
+          className="ml-auto bg-primary text-black font-black text-xs uppercase tracking-widest px-5 py-2 rounded-none border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[6px_6px_0px_0px_#000] active:translate-x-1 active:translate-y-1 active:shadow-none disabled:opacity-50 disabled:cursor-wait"
         >
-          {exporting ? "Exporting..." : "Export"}
+          {exporting ? "EXPORTING..." : "EXPORT"}
         </button>
         {status && (
-          <span className="text-xs text-muted">{status}</span>
+          <span className="text-xs font-mono text-primary font-bold uppercase tracking-wider">
+            {status}
+          </span>
         )}
+      </div>
+
+      {/* Footer Bar */}
+      <div className="flex items-center justify-between px-5 py-1.5 border-b-2 border-border bg-surface shrink-0">
+        <div className="flex items-center gap-4 text-xs font-mono text-muted">
+          <span>
+            CLI:{" "}
+            <code className="text-primary font-bold">npx slideshot ./slides.html</code>
+          </span>
+          <span className="text-border">|</span>
+          <span>
+            MCP:{" "}
+            <a
+              href="https://www.npmjs.com/package/slideshot-mcp"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary font-bold hover:underline"
+            >
+              slideshot-mcp
+            </a>
+            {" "}for Claude / Cursor
+          </span>
+        </div>
+        <div className="flex items-center gap-3 text-xs font-mono text-muted">
+          <a
+            href="https://github.com/06ketan/slideshot"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-primary"
+          >
+            Star on GitHub
+          </a>
+        </div>
       </div>
 
       {/* Main */}
       <div className="flex flex-1 min-h-0">
         {/* Left: Editor + Prompts */}
-        <div className="flex flex-col w-1/2 border-r border-border">
+        <div className="flex flex-col w-1/2 border-r-2 border-border">
           {/* Tabs */}
-          <div className="flex border-b border-border shrink-0">
+          <div className="flex border-b-2 border-border shrink-0">
             <button
               onClick={() => setTab("editor")}
-              className={`px-4 py-2 text-xs uppercase tracking-wider font-bold transition-colors ${
+              className={`px-5 py-2.5 text-xs uppercase tracking-widest font-black font-mono border-r-2 border-border ${
                 tab === "editor"
-                  ? "text-accent border-b-2 border-accent"
-                  : "text-muted hover:text-foreground"
+                  ? "bg-primary text-black"
+                  : "text-muted bg-surface hover:bg-surface-2"
               }`}
             >
-              HTML Editor
+              HTML EDITOR
             </button>
             <button
               onClick={() => setTab("prompts")}
-              className={`px-4 py-2 text-xs uppercase tracking-wider font-bold transition-colors ${
+              className={`px-5 py-2.5 text-xs uppercase tracking-widest font-black font-mono ${
                 tab === "prompts"
-                  ? "text-accent border-b-2 border-accent"
-                  : "text-muted hover:text-foreground"
+                  ? "bg-primary text-black"
+                  : "text-muted bg-surface hover:bg-surface-2"
               }`}
             >
-              AI Prompts
+              AI PROMPTS
             </button>
           </div>
 
@@ -293,32 +346,32 @@ export default function Home() {
             />
           ) : (
             <div className="flex-1 flex flex-col overflow-hidden">
-              <div className="flex items-center gap-3 px-4 py-3 border-b border-border">
+              <div className="flex items-center gap-3 px-4 py-3 border-b-2 border-border">
                 <button
                   onClick={() => setPromptVariant("generic")}
-                  className={`text-xs uppercase tracking-wider font-bold px-3 py-1 rounded transition-colors ${
+                  className={`text-xs uppercase tracking-widest font-black px-3 py-1.5 rounded-none border-2 font-mono ${
                     promptVariant === "generic"
-                      ? "bg-accent text-black"
-                      : "text-muted hover:text-foreground"
+                      ? "bg-primary text-black border-black shadow-[3px_3px_0px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
+                      : "text-muted border-border hover:bg-surface-2"
                   }`}
                 >
-                  Generic
+                  GENERIC
                 </button>
                 <button
                   onClick={() => setPromptVariant("branded")}
-                  className={`text-xs uppercase tracking-wider font-bold px-3 py-1 rounded transition-colors ${
+                  className={`text-xs uppercase tracking-widest font-black px-3 py-1.5 rounded-none border-2 font-mono ${
                     promptVariant === "branded"
-                      ? "bg-purple text-white"
-                      : "text-muted hover:text-foreground"
+                      ? "bg-secondary text-white border-black shadow-[3px_3px_0px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
+                      : "text-muted border-border hover:bg-surface-2"
                   }`}
                 >
-                  Branded (Ketan Slides)
+                  BRANDED
                 </button>
                 <button
                   onClick={copyPrompt}
-                  className="ml-auto text-xs uppercase tracking-wider font-bold text-accent hover:brightness-110 transition-colors"
+                  className="ml-auto text-xs uppercase tracking-widest font-black text-foreground font-mono border-2 border-border rounded-none px-3 py-1.5 shadow-[3px_3px_0px_0px_#404040] hover:shadow-[3px_3px_0px_0px_#BFFF00] hover:border-primary active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
                 >
-                  {copied ? "Copied!" : "Copy Prompt"}
+                  {copied ? "COPIED!" : "COPY PROMPT"}
                 </button>
               </div>
               <pre className="flex-1 overflow-auto p-4 text-xs leading-relaxed text-muted font-mono whitespace-pre-wrap">
@@ -332,24 +385,24 @@ export default function Home() {
 
         {/* Right: Preview */}
         <div className="flex flex-col w-1/2 bg-surface">
-          <div className="flex items-center justify-between px-4 py-2 border-b border-border shrink-0">
-            <span className="text-xs uppercase tracking-wider text-muted font-bold">
-              Preview
+          <div className="flex items-center justify-between px-4 py-2.5 border-b-2 border-border shrink-0">
+            <span className="text-xs uppercase tracking-widest text-muted font-black font-mono">
+              PREVIEW
             </span>
             <button
               onClick={updatePreview}
-              className="text-xs uppercase tracking-wider font-bold text-accent hover:brightness-110 transition-colors"
+              className="text-xs uppercase tracking-widest font-black text-foreground font-mono border-2 border-border rounded-none px-3 py-1 shadow-[3px_3px_0px_0px_#404040] hover:shadow-[3px_3px_0px_0px_#BFFF00] hover:border-primary active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
             >
-              Refresh
+              REFRESH
             </button>
           </div>
           <div className="flex-1 overflow-auto p-6 flex justify-center">
             <iframe
               ref={iframeRef}
               srcDoc={html}
-              className="border border-border rounded bg-white"
+              className="border-2 border-border rounded-none bg-white"
               style={{ width: width + 96, minHeight: height + 96 }}
-              sandbox="allow-same-origin"
+              sandbox="allow-same-origin allow-scripts"
               title="Slide preview"
             />
           </div>
