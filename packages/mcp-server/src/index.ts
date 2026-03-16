@@ -104,7 +104,7 @@ The tool will screenshot each .slide at 4x for 2160x2700 px output.`;
 
 const server = new McpServer({
   name: "slideshot",
-  version: "2.0.0",
+  version: "2.1.0",
 });
 
 server.tool(
@@ -118,6 +118,12 @@ server.tool(
     scale: z.number().optional().describe("Device scale factor 1-6 (default: 4)"),
     formats: z.array(z.enum(["png", "webp", "pdf"])).optional().describe("Output formats (default: [png, webp, pdf])"),
     outDir: z.string().describe("Absolute path to output directory"),
+  },
+  {
+    readOnlyHint: false,
+    destructiveHint: false,
+    idempotentHint: true,
+    openWorldHint: false,
   },
   async ({ html, selector, width, height, scale, formats, outDir }) => {
     try {
@@ -162,6 +168,12 @@ server.tool(
   "Get AI prompt template for generating slide HTML compatible with slideshot",
   {
     variant: z.enum(["generic", "branded"]).describe("'generic' for clean minimal slides, 'branded' for the Ketan Slides design system"),
+  },
+  {
+    readOnlyHint: true,
+    destructiveHint: false,
+    idempotentHint: true,
+    openWorldHint: false,
   },
   async ({ variant }) => {
     const text = variant === "generic" ? GENERIC_PROMPT : BRANDED_PROMPT;

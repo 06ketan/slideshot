@@ -90,6 +90,10 @@ https://slideshot.vercel.app/api/openapi.json
 | ChatGPT Custom GPT | OpenAPI Action — import the spec URL above |
 | OpenWebUI | OpenAPI Tool — import the spec URL above |
 
+## Privacy Policy
+
+Slideshot MCP runs entirely on your local machine. No data is collected, transmitted, or stored remotely. Output files are saved only to the directory you specify. See the full [Privacy Policy](https://github.com/06ketan/slideshot/blob/main/PRIVACY.md).
+
 ## Related
 
 - **[slideshot](https://www.npmjs.com/package/slideshot)** — CLI and programmatic API

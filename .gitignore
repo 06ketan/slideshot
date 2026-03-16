@@ -4,6 +4,7 @@ dist/
 out/
 build/
 *.tgz
+*.mcpb
 *.log
 .env
 .env.*

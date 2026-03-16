@@ -1,0 +1,60 @@
+{
+  "manifest_version": "0.3",
+  "name": "slideshot",
+  "display_name": "Slideshot - HTML to Slides",
+  "version": "2.1.0",
+  "description": "Render HTML slides to high-resolution PNG, WebP, and PDF using Puppeteer. Generate carousels for LinkedIn, Instagram, and presentations.",
+  "long_description": "Slideshot converts HTML into pixel-perfect slide images. Give it HTML with `.slide` divs and it renders each one as a 4x resolution PNG, WebP, or combined PDF — ready for LinkedIn carousels, Instagram posts, or presentation decks. Includes two built-in prompt templates: a generic clean layout and the Ketan Slides branded design system.",
+  "author": {
+    "name": "Ketan Chavan",
+    "url": "https://github.com/06ketan"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/06ketan/slideshot.git"
+  },
+  "homepage": "https://slideshot.vercel.app",
+  "documentation": "https://github.com/06ketan/slideshot#readme",
+  "support": "https://github.com/06ketan/slideshot/issues",
+  "license": "MIT",
+  "privacy_policies": [
+    "https://github.com/06ketan/slideshot/blob/main/PRIVACY.md"
+  ],
+  "keywords": ["slides", "carousel", "html-to-image", "puppeteer", "linkedin", "instagram", "pdf"],
+  "server": {
+    "type": "node",
+    "entry_point": "dist/index.js",
+    "mcp_config": {
+      "command": "npx",
+      "args": ["-y", "slideshot-mcp"]
+    }
+  },
+  "tools": [
+    {
+      "name": "render_html_to_images",
+      "description": "Render HTML slides to high-resolution PNG, WebP, and/or PDF files"
+    },
+    {
+      "name": "get_slide_prompt",
+      "description": "Get AI prompt template for generating slide HTML compatible with slideshot"
+    }
+  ],
+  "prompts": [
+    {
+      "name": "generic-slides",
+      "description": "Clean minimal slide generation prompt",
+      "text": "Generate HTML slides using .slide divs at 540x675px with clean, minimal styling."
+    },
+    {
+      "name": "branded-slides",
+      "description": "Ketan Slides design system prompt with monospace typography and corner accents",
+      "text": "Generate HTML slides using the Ketan Slides design system with Space Mono font, corner accents, and teal/coral accent colors."
+    }
+  ],
+  "compatibility": {
+    "platforms": ["darwin", "win32", "linux"],
+    "runtimes": {
+      "node": ">=18.0.0"
+    }
+  }
+}
