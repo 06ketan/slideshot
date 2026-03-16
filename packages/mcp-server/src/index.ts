@@ -3,7 +3,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
-import { renderSlides, type ImageFormat } from "slideshot";
+import { renderSlides, launchBrowser, type ImageFormat } from "slideshot";
 import fs from "node:fs";
 import path from "node:path";
 import os from "node:os";
@@ -481,7 +481,7 @@ function formatSummary(files: string[]): Record<string, number> {
 
 const server = new McpServer({
   name: "slideshot",
-  version: "2.2.1",
+  version: "2.3.0",
 });
 
 server.tool(
@@ -560,6 +560,47 @@ server.tool(
 );
 
 server.tool(
+  "health_check",
+  "Verify Puppeteer/Chromium can launch in this environment. Run this first to diagnose render failures.",
+  {},
+  {
+    readOnlyHint: true,
+    destructiveHint: false,
+    idempotentHint: true,
+    openWorldHint: false,
+  },
+  async () => {
+    try {
+      const browser = await launchBrowser();
+      const version = await browser.version();
+      await browser.close();
+      return {
+        content: [{
+          type: "text" as const,
+          text: JSON.stringify({
+            ok: true,
+            browser: version,
+            platform: process.platform,
+            arch: process.arch,
+            nodeVersion: process.version,
+            outDir: defaultOutDir(),
+            pid: process.pid,
+          }, null, 2),
+        }],
+      };
+    } catch (err: any) {
+      return {
+        content: [{
+          type: "text" as const,
+          text: JSON.stringify({ ok: false, error: err.message, platform: process.platform }),
+        }],
+        isError: true,
+      };
+    }
+  },
+);
+
+server.tool(
   "get_slide_prompt",
   "Get AI prompt template for generating slide HTML compatible with slideshot",
   {
@@ -596,7 +637,7 @@ for (const [key, text] of Object.entries(PROMPTS)) {
 async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  console.error("slideshot MCP server v2.2.1 running on stdio");
+  console.error("slideshot MCP server v2.3.0 running on stdio");
 }
 
 main().catch((err) => {

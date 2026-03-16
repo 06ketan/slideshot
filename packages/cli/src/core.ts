@@ -30,7 +30,30 @@ const DEFAULTS = {
   webpQuality: 95,
 };
 
-const LAUNCH_ARGS = ["--no-sandbox", "--disable-setuid-sandbox"];
+const LAUNCH_ARGS = [
+  "--no-sandbox",
+  "--disable-setuid-sandbox",
+  "--disable-dev-shm-usage",
+  "--disable-gpu",
+  "--disable-software-rasterizer",
+  "--single-process",
+  "--no-zygote",
+];
+
+export async function launchBrowser(): Promise<Browser> {
+  try {
+    return await puppeteer.launch({
+      headless: true,
+      args: LAUNCH_ARGS,
+      timeout: 30000,
+    });
+  } catch (err: any) {
+    throw new Error(
+      `browser_launch_failed: ${err.message}. ` +
+      `Ensure Chromium is available. On containers, verify /dev/shm size or set --disable-dev-shm-usage.`,
+    );
+  }
+}
 
 async function setupPage(
   browser: Browser,
@@ -51,9 +74,9 @@ async function loadHtml(page: Page, opts: RenderOptions): Promise<void> {
   if (opts.htmlPath) {
     const abs = path.resolve(opts.htmlPath);
     if (!fs.existsSync(abs)) throw new Error(`File not found: ${abs}`);
-    await page.goto(`file://${abs}`, { waitUntil: "networkidle0" });
+    await page.goto(`file://${abs}`, { waitUntil: "domcontentloaded", timeout: 60000 });
   } else if (opts.html) {
-    await page.setContent(opts.html, { waitUntil: "networkidle0" });
+    await page.setContent(opts.html, { waitUntil: "domcontentloaded", timeout: 60000 });
   } else {
     throw new Error("Provide either `html` string or `htmlPath`.");
   }
@@ -142,7 +165,7 @@ export async function renderSlides(options: RenderOptions): Promise<RenderResult
 
   if (!fs.existsSync(outDir)) fs.mkdirSync(outDir, { recursive: true });
 
-  const browser = await puppeteer.launch({ headless: true, args: LAUNCH_ARGS });
+  const browser = await launchBrowser();
   const files: string[] = [];
 
   try {
@@ -181,7 +204,7 @@ export async function renderToBuffers(options: Omit<RenderOptions, "outDir"> & {
   const formats = options.formats ?? DEFAULTS.formats;
   const webpQuality = options.webpQuality ?? DEFAULTS.webpQuality;
 
-  const browser = await puppeteer.launch({ headless: true, args: LAUNCH_ARGS });
+  const browser = await launchBrowser();
   const images: Array<{ name: string; buffer: Buffer; type: ImageFormat }> = [];
   let pdf: Buffer | undefined;
 
