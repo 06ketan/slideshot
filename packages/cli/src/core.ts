@@ -163,7 +163,15 @@ export async function renderSlides(options: RenderOptions): Promise<RenderResult
   const webpQuality = options.webpQuality ?? DEFAULTS.webpQuality;
   const outDir = path.resolve(options.outDir);
 
-  if (!fs.existsSync(outDir)) fs.mkdirSync(outDir, { recursive: true });
+  try {
+    if (!fs.existsSync(outDir)) fs.mkdirSync(outDir, { recursive: true });
+  } catch (err: any) {
+    throw new Error(
+      `Cannot create output directory "${outDir}": ${err.message}. ` +
+      `The path may not be accessible from the MCP server process. ` +
+      `Try using a path under the user's home directory, or omit outDir to use the default.`,
+    );
+  }
 
   const browser = await launchBrowser();
   const files: string[] = [];

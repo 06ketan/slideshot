@@ -437,6 +437,8 @@ const PROMPTS: Record<PromptVariant, string> = {
   "editorial": EDITORIAL_PROMPT,
 };
 
+const VERSION = "2.4.0";
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -481,7 +483,7 @@ function formatSummary(files: string[]): Record<string, number> {
 
 const server = new McpServer({
   name: "slideshot",
-  version: "2.3.0",
+  version: VERSION,
 });
 
 server.tool(
@@ -509,8 +511,40 @@ server.tool(
         throw new Error("Provide either `html` (string) or `htmlPath` (absolute file path).");
       }
 
-      const resolvedOutDir = outDir || defaultOutDir();
+      let resolvedOutDir = outDir || defaultOutDir();
+      let outDirFallback = false;
+      const requestedOutDir = outDir || null;
+
+      if (outDir) {
+        try {
+          if (!fs.existsSync(outDir)) fs.mkdirSync(outDir, { recursive: true });
+        } catch {
+          resolvedOutDir = defaultOutDir();
+          outDirFallback = true;
+          if (!fs.existsSync(resolvedOutDir)) fs.mkdirSync(resolvedOutDir, { recursive: true });
+        }
+      }
+
       const resolvedFormats = resolveFormats(formats as ImageFormat[] | undefined);
+
+      let effectiveHtml = html;
+      let effectiveHtmlPath = htmlPath;
+      let htmlPathFallback = false;
+
+      if (htmlPath && !fs.existsSync(htmlPath)) {
+        if (html) {
+          const tmpFile = path.join(os.tmpdir(), `slideshot-${Date.now()}.html`);
+          fs.writeFileSync(tmpFile, html, "utf-8");
+          effectiveHtmlPath = tmpFile;
+          htmlPathFallback = true;
+        } else {
+          throw new Error(
+            `htmlPath "${htmlPath}" is not accessible from the MCP server process. ` +
+            `This often happens in sandboxed environments (e.g. Claude Code) where the MCP server ` +
+            `runs in a separate filesystem context. Pass the HTML content via the \`html\` parameter instead.`,
+          );
+        }
+      }
 
       const renderOpts: Record<string, unknown> = {
         selector,
@@ -521,13 +555,17 @@ server.tool(
         outDir: resolvedOutDir,
       };
 
-      if (htmlPath) {
-        renderOpts.htmlPath = htmlPath;
+      if (effectiveHtmlPath) {
+        renderOpts.htmlPath = effectiveHtmlPath;
       } else {
-        renderOpts.html = html;
+        renderOpts.html = effectiveHtml;
       }
 
       const result = await renderSlides(renderOpts as any);
+
+      if (htmlPathFallback && effectiveHtmlPath) {
+        try { fs.unlinkSync(effectiveHtmlPath); } catch {}
+      }
 
       const absOutDir = path.resolve(resolvedOutDir);
       return {
@@ -541,6 +579,8 @@ server.tool(
               openFolder: `file://${absOutDir}`,
               files: result.files,
               formatSummary: formatSummary(result.files),
+              ...(outDirFallback && { outDirFallback: true, requestedOutDir }),
+              ...(htmlPathFallback && { htmlPathFallback: true, note: "htmlPath was inaccessible; used html string via temp file" }),
             }, null, 2),
           },
         ],
@@ -579,6 +619,7 @@ server.tool(
           type: "text" as const,
           text: JSON.stringify({
             ok: true,
+            serverVersion: VERSION,
             browser: version,
             platform: process.platform,
             arch: process.arch,
@@ -637,7 +678,7 @@ for (const [key, text] of Object.entries(PROMPTS)) {
 async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  console.error("slideshot MCP server v2.3.0 running on stdio");
+  console.error(`slideshot MCP server v${VERSION} | node ${process.version} | ${process.platform}/${process.arch} | pid ${process.pid}`);
 }
 
 main().catch((err) => {
