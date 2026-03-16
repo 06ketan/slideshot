@@ -6,9 +6,9 @@
 [![GitHub stars](https://img.shields.io/github/stars/06ketan/slideshot)](https://github.com/06ketan/slideshot)
 [![license](https://img.shields.io/github/license/06ketan/slideshot)](LICENSE)
 
-Convert AI-generated HTML carousels into high-res PNG, WebP, and PDF — via **CLI**, **Web App**, or **MCP Server**.
+Convert AI-generated HTML carousels into high-res PNG, WebP, and PDF — via **CLI**, **Web App**, **MCP Server**, or **REST API**.
 
-**[Web App](https://slideshot.vercel.app)** · **[npm CLI](https://www.npmjs.com/package/slideshot)** · **[npm MCP](https://www.npmjs.com/package/slideshot-mcp)**
+**[Web App](https://slideshot.vercel.app)** · **[npm CLI](https://www.npmjs.com/package/slideshot)** · **[npm MCP](https://www.npmjs.com/package/slideshot-mcp)** · **[API Spec](https://slideshot.vercel.app/api/openapi.json)**
 
 ## Architecture
 
@@ -81,6 +81,38 @@ Add to Claude Desktop or Cursor config:
 - `generic-slides` — clean minimal slide prompt
 - `branded-slides` — Ketan Slides design system prompt
 
+### REST API (ChatGPT Actions / OpenWebUI)
+
+The web app exposes an OpenAPI-compatible REST API at `https://slideshot.vercel.app`.
+
+**Endpoints:**
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `POST` | `/api/render` | Render HTML slides to PNG/WebP/PDF (returns ZIP) |
+| `GET` | `/api/prompt?variant=generic` | Get AI prompt template |
+| `GET` | `/api/openapi.json` | OpenAPI 3.1.0 spec |
+
+**ChatGPT Custom GPT:**
+
+1. Create a Custom GPT at [chat.openai.com](https://chat.openai.com)
+2. Add Action → Import URL: `https://slideshot.vercel.app/api/openapi.json`
+3. The GPT can now render slides via the API
+
+**OpenWebUI:**
+
+1. Admin → Tools → Add Tool
+2. Paste: `https://slideshot.vercel.app/api/openapi.json`
+
+**Platform support:**
+
+| Platform | Method | Setup |
+|----------|--------|-------|
+| Cursor | MCP | `npx slideshot-mcp` in `.cursor/mcp.json` |
+| Claude Desktop | MCP | `npx slideshot-mcp` in config |
+| ChatGPT | OpenAPI Action | Import `/api/openapi.json` |
+| OpenWebUI | OpenAPI Tool | Import `/api/openapi.json` |
+
 ## AI Prompt Templates
 
 See `prompts/generic.md` and `prompts/branded.md` for copy-paste prompts you can give to ChatGPT, Claude, or any AI to generate compatible carousel HTML.
@@ -101,6 +133,7 @@ cd packages/webapp && npm run build  # builds webapp separately
 | npm CLI | [npmjs.com/package/slideshot](https://www.npmjs.com/package/slideshot) |
 | npm MCP | [npmjs.com/package/slideshot-mcp](https://www.npmjs.com/package/slideshot-mcp) |
 | GitHub | [github.com/06ketan/slideshot](https://github.com/06ketan/slideshot) |
+| API Spec | [slideshot.vercel.app/api/openapi.json](https://slideshot.vercel.app/api/openapi.json) |
 
 ## License
 

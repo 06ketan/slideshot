@@ -14,6 +14,7 @@ The web interface for [slideshot](https://github.com/06ketan/slideshot). Paste H
 - Configurable selector, dimensions, scale factor
 - Built-in AI prompt templates (generic + branded)
 - Acid Brutalist UI
+- OpenAPI REST API for ChatGPT Actions and OpenWebUI
 
 ## Tech Stack
 
@@ -42,6 +43,22 @@ To deploy your own:
 2. Import in [Vercel](https://vercel.com/new)
 3. Set root directory to `packages/webapp`
 4. Deploy
+
+## API Endpoints
+
+The webapp exposes a REST API with CORS enabled for cross-origin tool use.
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `POST` | `/api/render` | Render HTML slides → ZIP of PNG/WebP/PDF |
+| `GET` | `/api/prompt?variant=generic` | Get AI prompt template |
+| `GET` | `/api/openapi.json` | OpenAPI 3.1.0 spec for tool import |
+
+Import the OpenAPI spec into ChatGPT Actions or OpenWebUI:
+
+```
+https://slideshot.vercel.app/api/openapi.json
+```
 
 ## Related
 

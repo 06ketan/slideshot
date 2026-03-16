@@ -76,6 +76,20 @@ Returns an AI prompt template for generating compatible slide HTML.
 3. AI calls `render_html_to_images` with the HTML and your desired output path
 4. Get PNG, WebP, and PDF files ready for LinkedIn, Instagram, or presentations
 
+## HTTP API Alternative
+
+For platforms that don't support MCP (ChatGPT, OpenWebUI), the same tools are available as a REST API:
+
+```
+https://slideshot.vercel.app/api/openapi.json
+```
+
+| Platform | Method |
+|----------|--------|
+| Cursor / Claude Desktop | MCP (this package) |
+| ChatGPT Custom GPT | OpenAPI Action — import the spec URL above |
+| OpenWebUI | OpenAPI Tool — import the spec URL above |
+
 ## Related
 
 - **[slideshot](https://www.npmjs.com/package/slideshot)** — CLI and programmatic API

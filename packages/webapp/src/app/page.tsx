@@ -196,6 +196,14 @@ export default function Home() {
           >
             npm
           </a>
+          <a
+            href="/api/openapi.json"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="border-2 border-border rounded-none px-2 py-0.5 text-xs font-mono text-muted hover:border-primary hover:text-primary"
+          >
+            API
+          </a>
           <span className="border-2 border-border rounded-none px-2 py-0.5 text-xs font-mono text-muted">
             {width * scale} x {height * scale} px
           </span>

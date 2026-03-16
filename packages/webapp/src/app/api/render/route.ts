@@ -4,6 +4,12 @@ import JSZip from "jszip";
 
 export const maxDuration = 60;
 
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type",
+};
+
 interface RenderBody {
   html: string;
   selector?: string;
@@ -17,7 +23,7 @@ interface RenderBody {
 function jsonResponse(data: object, status: number) {
   return new Response(JSON.stringify(data), {
     status,
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", ...corsHeaders },
   });
 }
 
@@ -134,6 +140,7 @@ export async function POST(req: Request) {
       headers: {
         "Content-Type": "application/zip",
         "Content-Disposition": 'attachment; filename="slides.zip"',
+        ...corsHeaders,
       },
     });
   } catch (err: unknown) {
@@ -141,4 +148,8 @@ export async function POST(req: Request) {
     const message = err instanceof Error ? err.message : "Unknown error";
     return jsonResponse({ error: message }, 500);
   }
+}
+
+export async function OPTIONS() {
+  return new Response(null, { status: 204, headers: corsHeaders });
 }
