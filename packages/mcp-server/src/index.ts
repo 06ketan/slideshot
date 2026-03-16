@@ -442,7 +442,23 @@ const PROMPTS: Record<PromptVariant, string> = {
 // ---------------------------------------------------------------------------
 
 function defaultOutDir(): string {
-  return path.join(os.homedir(), "Desktop", "slideshot-output");
+  if (process.env.SLIDESHOT_OUTPUT_DIR) {
+    return process.env.SLIDESHOT_OUTPUT_DIR;
+  }
+
+  const home = os.homedir();
+
+  const desktop = path.join(home, "Desktop");
+  if (fs.existsSync(desktop)) {
+    return path.join(desktop, "slideshot-output");
+  }
+
+  const downloads = path.join(home, "Downloads");
+  if (fs.existsSync(downloads)) {
+    return path.join(downloads, "slideshot-output");
+  }
+
+  return path.join(os.tmpdir(), "slideshot-output");
 }
 
 function resolveFormats(formats?: ImageFormat[]): ImageFormat[] {
@@ -465,7 +481,7 @@ function formatSummary(files: string[]): Record<string, number> {
 
 const server = new McpServer({
   name: "slideshot",
-  version: "2.2.0",
+  version: "2.2.1",
 });
 
 server.tool(
@@ -580,7 +596,7 @@ for (const [key, text] of Object.entries(PROMPTS)) {
 async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  console.error("slideshot MCP server v2.2.0 running on stdio");
+  console.error("slideshot MCP server v2.2.1 running on stdio");
 }
 
 main().catch((err) => {
