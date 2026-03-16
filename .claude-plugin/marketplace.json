@@ -1,0 +1,28 @@
+{
+  "name": "slideshot-marketplace",
+  "owner": {
+    "name": "Ketan Chavan",
+    "email": "ketan.chavan.in@gmail.com"
+  },
+  "plugins": [
+    {
+      "name": "slideshot",
+      "source": "./packages/mcp-server",
+      "description": "MCP server that renders HTML slides to high-res PNG, WebP, and PDF",
+      "version": "2.1.0",
+      "author": { "name": "Ketan Chavan" },
+      "homepage": "https://slideshot.vercel.app",
+      "repository": "https://github.com/06ketan/slideshot",
+      "license": "MIT",
+      "keywords": ["slides", "carousel", "html-to-image", "puppeteer"],
+      "category": "productivity",
+      "mcpServers": {
+        "slideshot": {
+          "command": "npx",
+          "args": ["-y", "slideshot-mcp"]
+        }
+      },
+      "strict": false
+    }
+  ]
+}

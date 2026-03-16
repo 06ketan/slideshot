@@ -1,0 +1,11 @@
+{
+  "name": "slideshot",
+  "description": "Render HTML slides to high-res PNG, WebP, and PDF using Puppeteer",
+  "version": "2.1.0",
+  "mcpServers": {
+    "slideshot": {
+      "command": "npx",
+      "args": ["-y", "slideshot-mcp"]
+    }
+  }
+}
