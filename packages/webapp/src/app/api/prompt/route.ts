@@ -1,6 +1,5 @@
 import fs from "node:fs";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
 
 const VARIANTS = [
   "generic", "branded", "instagram-carousel", "infographic",
@@ -12,10 +11,16 @@ type Variant = (typeof VARIANTS)[number];
 const cache = new Map<string, string>();
 
 function promptsDir(): string {
-  const thisDir = path.dirname(fileURLToPath(import.meta.url));
-  const local = path.resolve(thisDir, "../../../../prompts");
-  if (fs.existsSync(local)) return local;
-  return path.resolve(thisDir, "../../prompts");
+  const cwd = process.cwd();
+  const candidates = [
+    path.resolve(cwd, "prompts"),
+    path.resolve(cwd, "../../prompts"),
+    path.resolve(cwd, "../prompts"),
+  ];
+  for (const dir of candidates) {
+    if (fs.existsSync(dir)) return dir;
+  }
+  return candidates[0];
 }
 
 function loadPrompt(variant: string): string | null {
