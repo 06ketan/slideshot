@@ -1,6 +1,6 @@
 {
   "name": "slideshot-mcp",
-  "version": "2.4.0",
+  "version": "2.5.0",
   "description": "MCP server for rendering HTML slides to PNG, WebP, and PDF — use with Claude Desktop or Cursor",
   "type": "module",
   "license": "MIT",
@@ -10,6 +10,7 @@
   },
   "files": [
     "dist",
+    "prompts",
     "README.md",
     "LICENSE"
   ],
@@ -36,12 +37,12 @@
   "homepage": "https://github.com/06ketan/slideshot#mcp-server",
   "bugs": "https://github.com/06ketan/slideshot/issues",
   "scripts": {
-    "build": "tsc && chmod +x dist/index.js",
+    "build": "tsc && chmod +x dist/index.js && cp -r ../../prompts ./prompts",
     "dev": "tsc --watch"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.12.1",
-    "slideshot": "^2.2.0",
+    "slideshot": "^2.3.0",
     "zod": "^3.24.0"
   },
   "devDependencies": {

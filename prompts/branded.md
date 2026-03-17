@@ -1,64 +1,35 @@
-# Branded Slide Prompt — Ketan Slides Design System
+You are generating HTML slides using the "Ketan Slides" design system — a minimal, monospace carousel style.
 
-> Copy-paste this into ChatGPT, Claude, or any AI to generate carousel HTML using the full Ketan Slides design system.
+DESIGN SYSTEM RULES:
+1. Font: 'Space Mono' monospace via Google Fonts.
+2. Slide base: .slide { width: 540px; height: 675px; background: #F0EDE7; padding: 32px 40px 52px; }
+3. Dark variant: .slide.dark { background: #0D0D0D; } — inverts text/border colors.
+4. Corner accents: ::before (top-right 80px) and ::after (bottom-left 60px) border decorations.
+5. Colors: teal=#00B894, coral=#E84C1E, purple=#7C5CBF, neutral=#1A1A1A, muted=#888, bg=#F0EDE7.
 
----
+AVAILABLE COMPONENTS (use these CSS classes):
+- .dots + .dot / .dot.on / .dot.tl — slide position indicator (row of circles)
+- .btag + .bdot + .btxt + .burl — brand tag pill
+- .h1 / .h2 — headlines (<i> for teal italic accent, <s> for muted strikethrough-removed text)
+- .lbl — uppercase label
+- .ft + .ft-l + .ft-pl + .ft-h + .ft-sw — slide footer
+- .scols + .sc + .sn + .sb + .sk + .sd — stat cards grid (3-col)
+- .itrow + .it + .ic + .il — icon tile grid (4-col), colors: .gray .coral .teal .purple
+- .ul + .ur + .un + .um + .us + .utg — use-case list rows with tags
+- .br + .bl + .bt + .bf + .bv — horizontal bar chart
+- .cg + .cc + .cbad + .cgood + .ct + .ci + .cil + .cid — comparison grid (dark)
+- .hg + .hc + .hev + .htr + .hac + .hds — hook/event cards (2-col)
+- .cr + .ck + .cv — code/config rows
+- .al + .ai + .an + .at + .as — action list (CTA slide)
+- .mg + .mc + .mn + .mk + .md + .mv — metric grid (2-col)
+- .hr — horizontal rule
+- .pnote — provider note
+- .lrow + .lchip — link chips
 
-## Prompt
-
-You are generating HTML slides using the **"Ketan Slides" design system** — a minimal, monospace carousel style.
-
-### Design Tokens
-
-| Token | Value | Usage |
-|-------|-------|-------|
-| Font | `Space Mono` monospace | Everything |
-| Teal | `#00B894` | Accents, highlights, links |
-| Coral | `#E84C1E` | Alerts, brand dot |
-| Purple | `#7C5CBF` | Secondary accent |
-| Dark | `#1A1A1A` | Text, dark backgrounds |
-| Muted | `#888` | Secondary text |
-| Light BG | `#F0EDE7` | Default slide background |
-| Dark BG | `#0D0D0D` | Dark slide variant |
-| Border | `#DEDAD4` | Dividers, card borders |
-
-### Slide Base
-
-- Default: `.slide` — light background `#F0EDE7`
-- Dark variant: `.slide.dark` — dark background `#0D0D0D`, inverts text/borders
-- Corner accents via `::before` (top-right) and `::after` (bottom-left)
-- Dimensions: `540×675px`, padding `32px 40px 52px`
-
-### Available Components
-
-| Class(es) | Purpose | Layout |
-|-----------|---------|--------|
-| `.dots` + `.dot` / `.dot.on` / `.dot.tl` | Slide position indicator | Flex row of circles |
-| `.btag` + `.bdot` + `.btxt` + `.burl` | Brand tag pill | Inline-flex |
-| `.h1` / `.h2` | Headlines (`<i>` = teal, `<s>` = muted) | Block |
-| `.lbl` | Uppercase section label | Block |
-| `.ft` + `.ft-l` + `.ft-pl` + `.ft-h` + `.ft-sw` | Slide footer | Absolute bottom |
-| `.scols` + `.sc` + `.sn` + `.sb` + `.sk` + `.sd` | Stat cards | 3-col grid |
-| `.itrow` + `.it` + `.ic` + `.il` | Icon tiles (`.gray` `.coral` `.teal` `.purple`) | 4-col grid |
-| `.ul` + `.ur` + `.un` + `.um` + `.us` + `.utg` | List rows with tags | Flex column |
-| `.br` + `.bl` + `.bt` + `.bf` + `.bv` | Horizontal bar chart | Flex row |
-| `.cg` + `.cc` + `.cbad` + `.cgood` + `.ct` + `.ci` + `.cil` + `.cid` | Comparison grid | 2-col grid (dark) |
-| `.hg` + `.hc` + `.hev` + `.htr` + `.hac` + `.hds` | Hook/event cards | 2-col grid |
-| `.cr` + `.ck` + `.cv` | Config/code rows | Flex row |
-| `.al` + `.ai` + `.an` + `.at` + `.as` | Action list (CTA) | Flex column |
-| `.mg` + `.mc` + `.mn` + `.mk` + `.md` + `.mv` | Metric grid | 2-col grid |
-| `.hr` | Horizontal rule | Block |
-| `.pnote` | Provider note | Block |
-| `.lrow` + `.lchip` | Link chips | Flex wrap |
-
-### Full CSS
-
-Include this in your `<style>` block:
-
-```css
+FULL CSS (include this in your <style> block):
+```
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:#1A1A1A;padding:48px;font-family:'Space Mono',monospace;display:flex;flex-direction:column;align-items:flex-start;gap:40px;}
-.slide-meta{font-size:10px;color:#555;letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px;}
 .slide{position:relative;width:540px;height:675px;background:#F0EDE7;padding:32px 40px 52px;overflow:hidden;font-family:'Space Mono',monospace;flex-shrink:0;}
 .slide::before{content:'';position:absolute;top:24px;right:24px;width:80px;height:80px;border-top:1px solid #B8B4AD;border-right:1px solid #B8B4AD;pointer-events:none;}
 .slide::after{content:'';position:absolute;bottom:24px;left:24px;width:60px;height:60px;border-bottom:1px solid #B8B4AD;border-left:1px solid #B8B4AD;pointer-events:none;}
@@ -81,88 +52,10 @@ body{background:#1A1A1A;padding:48px;font-family:'Space Mono',monospace;display:
 .hr{width:100%;height:.5px;background:#C8C4BC;margin:13px 0;}
 .pnote{margin-top:10px;padding-top:8px;border-top:.5px solid #DEDAD4;font-size:8.5px;color:#888;}.pnote strong{color:#1A1A1A;font-weight:700;}
 .lrow{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px;}.lchip{font-size:7.5px;color:#00B894;border:.5px solid #00B894;border-radius:4px;padding:3px 7px;letter-spacing:.04em;}
+.slide-meta{font-size:10px;color:#555;letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px;}
 ```
 
-Include this `<link>` in `<head>`:
-
-```html
+Include this <link> in <head>:
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
-```
 
-### Slide Types & Examples
-
-**Hero slide:**
-```html
-<div class="slide">
-  <div class="dots">
-    <div class="dot on">1</div><div class="dot"></div><div class="dot"></div>
-  </div>
-  <div class="btag"><div class="bdot"></div><span class="btxt">Author Name</span></div>
-  <div class="h1">Big Bold<br><i>Headline</i><br><s>Here.</s></div>
-  <div class="scols">
-    <div class="sc"><div class="sn" style="color:#00B894">42</div><div class="sb"></div><div class="sk">Stat Label</div><div class="sd">Description</div></div>
-    <!-- more stat cards -->
-  </div>
-  <div class="ft">
-    <div class="ft-l"><span class="ft-pl">Platform</span><span class="ft-h">@handle</span></div>
-    <span class="ft-sw">Swipe to Know More</span>
-  </div>
-</div>
-```
-
-**List slide:**
-```html
-<div class="slide">
-  <div class="dots"><!-- dots --></div>
-  <div class="lbl">Section Label</div>
-  <div class="h2">Medium<br><i>Headline</i></div>
-  <ul class="ul">
-    <li class="ur">
-      <span class="un">01</span>
-      <span class="um">Item Title<span class="us">Description text</span></span>
-      <span class="utg">TAG</span>
-    </li>
-  </ul>
-  <div class="ft"><!-- footer --></div>
-</div>
-```
-
-**Dark comparison slide:**
-```html
-<div class="slide dark">
-  <div class="dots"><!-- dots --></div>
-  <div class="lbl">Comparison</div>
-  <div class="h2">Without vs<br><i>With</i></div>
-  <div class="cg">
-    <div class="cc cbad">
-      <div class="ct">Without</div>
-      <div class="ci"><span class="cil">Problem</span><span class="cid">Details</span></div>
-    </div>
-    <div class="cc cgood">
-      <div class="ct">With</div>
-      <div class="ci"><span class="cil">Solution</span><span class="cid">Details</span></div>
-    </div>
-  </div>
-  <div class="ft"><!-- footer --></div>
-</div>
-```
-
-**CTA slide:**
-```html
-<div class="slide">
-  <div class="dots"><!-- dots --></div>
-  <div class="h1">Call to<br><i>Action</i></div>
-  <ul class="al">
-    <li class="ai"><span class="an">01</span><span class="at">Step one<span class="as">Details</span></span></li>
-  </ul>
-  <div class="ft"><!-- footer --></div>
-</div>
-```
-
----
-
-## Usage
-
-```bash
-npx slideshot ./my-carousel.html --formats png,webp,pdf
-```
+The tool will screenshot each .slide at 4x for 2160x2700 px output.

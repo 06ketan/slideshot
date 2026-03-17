@@ -1,6 +1,6 @@
 {
   "name": "slideshot",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "Convert HTML slides to high-res PNG, WebP, and PDF — CLI + library",
   "type": "module",
   "license": "MIT",
@@ -8,16 +8,17 @@
   "bin": {
     "slideshot": "./dist/cli.js"
   },
-  "main": "./dist/core.js",
-  "types": "./dist/core.d.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/core.js",
-      "types": "./dist/core.d.ts"
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
     }
   },
   "files": [
     "dist",
+    "prompts",
     "README.md",
     "LICENSE"
   ],
@@ -43,7 +44,7 @@
   "homepage": "https://slideshot.vercel.app",
   "bugs": "https://github.com/06ketan/slideshot/issues",
   "scripts": {
-    "build": "tsc && chmod +x dist/cli.js",
+    "build": "tsc && chmod +x dist/cli.js && cp -r ../../prompts ./prompts",
     "dev": "tsc --watch"
   },
   "dependencies": {

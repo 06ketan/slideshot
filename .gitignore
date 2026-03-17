@@ -9,3 +9,7 @@ build/
 .env
 .env.*
 .DS_Store
+
+# Build-copied prompts (source of truth is /prompts/)
+packages/cli/prompts/
+packages/mcp-server/prompts/
