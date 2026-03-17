@@ -50,6 +50,7 @@ program
   .option("-q, --quality <n>", "WebP quality (0-100)", "95")
   .option("-o, --out <dir>", "Output directory", "./slides")
   .option("--orientation <type>", "portrait or landscape (sets default dims)", "")
+  .option("--pptx-mode <mode>", "native (editable text) or image (screenshot-based)", "native")
   .action(async (file: string | undefined, opts) => {
     if (!file) {
       program.help();
@@ -78,6 +79,7 @@ program
 
     try {
       const orientation = opts.orientation === "portrait" || opts.orientation === "landscape" ? opts.orientation : undefined;
+      const pptxMode = opts.pptxMode === "image" ? "image" as const : "native" as const;
       const result = await renderSlides({
         htmlPath,
         selector: opts.selector,
@@ -87,6 +89,7 @@ program
         formats,
         webpQuality: quality,
         outDir: opts.out,
+        pptxMode,
         ...(orientation && { orientation }),
       });
 

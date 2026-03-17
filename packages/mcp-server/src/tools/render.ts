@@ -17,9 +17,10 @@ export async function handleRender(args: {
   pptxFilename?: string;
   slideRange?: [number, number];
   orientation?: "portrait" | "landscape";
+  pptxMode?: "native" | "image";
 }) {
   try {
-    const { html, htmlPath, selector, width, height, scale, formats, outDir, pdfFilename, pptxFilename, slideRange, orientation } = args;
+    const { html, htmlPath, selector, width, height, scale, formats, outDir, pdfFilename, pptxFilename, slideRange, orientation, pptxMode } = args;
 
     if (!html && !htmlPath) {
       throw new Error("Provide either `html` (string) or `htmlPath` (absolute file path).");
@@ -68,6 +69,7 @@ export async function handleRender(args: {
       ...(pptxFilename && { pptxFilename }),
       ...(slideRange && { slideRange }),
       ...(orientation && { orientation }),
+      ...(pptxMode && { pptxMode }),
     };
 
     if (effectiveHtmlPath) {

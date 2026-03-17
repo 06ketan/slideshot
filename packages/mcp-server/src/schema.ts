@@ -13,6 +13,7 @@ export const RenderInputSchema = {
   pptxFilename: z.string().optional().describe("Custom PPTX filename (default: carousel.pptx). E.g. 'brand-deck.pptx'"),
   slideRange: z.tuple([z.number(), z.number()]).optional().describe("Render only slides N-M, 1-indexed (e.g. [1,3] for first 3 slides). Useful for quick iteration"),
   orientation: z.enum(["portrait", "landscape"]).optional().describe("Orientation preset: portrait (540x675) or landscape (1920x1080). Overridden by explicit width/height"),
+  pptxMode: z.enum(["native", "image"]).optional().describe("PPTX mode: 'native' = editable text (default), 'image' = screenshot-based (pixel-perfect but not editable)"),
 };
 
 export const PromptInputSchema = {

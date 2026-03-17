@@ -4,7 +4,7 @@ import type { ImageFormat, RenderOptions, RenderResult } from "./types.js";
 import { DEFAULTS, ORIENTATION_PRESETS } from "./types.js";
 import { launchBrowser, setupPage } from "./browser.js";
 import { loadHtml, screenshotSlides, generatePdf, PRINT_CSS } from "./renderer.js";
-import { generatePptx } from "./pptx.js";
+import { generateImagePptx, generateNativePptx, extractSlideData } from "./pptx.js";
 
 function resolveOrientation(options: RenderOptions) {
   let width = options.width;
@@ -56,21 +56,41 @@ export async function renderSlides(options: RenderOptions): Promise<RenderResult
     }
 
     if (formats.includes("pptx")) {
-      await loadHtml(page, options);
-      const allSlides = await page.$$(selector);
-      const start = options.slideRange ? options.slideRange[0] - 1 : 0;
-      const end = options.slideRange ? Math.min(options.slideRange[1], allSlides.length) : allSlides.length;
-      const slides = allSlides.slice(start, end);
-
-      const pptxImages: Array<{ buffer: Buffer; mimeType: string }> = [];
-      for (const slide of slides) {
-        const buf = await slide.screenshot({ type: "png", encoding: "binary" });
-        pptxImages.push({ buffer: Buffer.from(buf), mimeType: "image/png" });
-      }
-
       const pptxPath = path.join(outDir, options.pptxFilename || "carousel.pptx");
-      await generatePptx(pptxImages, width * scale, height * scale, pptxPath);
-      files.push(pptxPath);
+      const useNative = options.pptxMode !== "image";
+
+      if (useNative) {
+        try {
+          await loadHtml(page, options);
+          const slidesData = await extractSlideData(page, selector, options.slideRange);
+          await generateNativePptx(slidesData, width, height, pptxPath);
+          files.push(pptxPath);
+        } catch {
+          await loadHtml(page, options);
+          const allSlides = await page.$$(selector);
+          const start = options.slideRange ? options.slideRange[0] - 1 : 0;
+          const end = options.slideRange ? Math.min(options.slideRange[1], allSlides.length) : allSlides.length;
+          const pptxImages: Array<{ buffer: Buffer; mimeType: string }> = [];
+          for (const s of allSlides.slice(start, end)) {
+            const buf = await s.screenshot({ type: "png", encoding: "binary" });
+            pptxImages.push({ buffer: Buffer.from(buf), mimeType: "image/png" });
+          }
+          await generateImagePptx(pptxImages, width * scale, height * scale, pptxPath);
+          files.push(pptxPath);
+        }
+      } else {
+        await loadHtml(page, options);
+        const allSlides = await page.$$(selector);
+        const start = options.slideRange ? options.slideRange[0] - 1 : 0;
+        const end = options.slideRange ? Math.min(options.slideRange[1], allSlides.length) : allSlides.length;
+        const pptxImages: Array<{ buffer: Buffer; mimeType: string }> = [];
+        for (const s of allSlides.slice(start, end)) {
+          const buf = await s.screenshot({ type: "png", encoding: "binary" });
+          pptxImages.push({ buffer: Buffer.from(buf), mimeType: "image/png" });
+        }
+        await generateImagePptx(pptxImages, width * scale, height * scale, pptxPath);
+        files.push(pptxPath);
+      }
     }
 
     const slideCount = (await page.$$(selector)).length || files.length;
@@ -138,36 +158,73 @@ export async function renderToBuffers(options: Omit<RenderOptions, "outDir"> & {
     }
 
     if (formats.includes("pptx")) {
-      await loadHtml(page, loadOpts);
-      const pptxSlides = await page.$$(selector);
-      const pStart = options.slideRange ? options.slideRange[0] - 1 : 0;
-      const pEnd = options.slideRange ? Math.min(options.slideRange[1], pptxSlides.length) : pptxSlides.length;
-      const pSlice = pptxSlides.slice(pStart, pEnd);
-
-      const pptxImages: Array<{ buffer: Buffer; mimeType: string }> = [];
-      for (const s of pSlice) {
-        const buf = await s.screenshot({ type: "png", encoding: "binary" });
-        pptxImages.push({ buffer: Buffer.from(buf), mimeType: "image/png" });
+      const useNative = (options as any).pptxMode !== "image";
+      if (useNative) {
+        try {
+          await loadHtml(page, loadOpts);
+          const slidesData = await extractSlideData(page, selector, options.slideRange);
+          const tmpPath = path.join(require("os").tmpdir(), `slideshot-${Date.now()}.pptx`);
+          await generateNativePptx(slidesData, width, height, tmpPath);
+          pptx = require("fs").readFileSync(tmpPath);
+          try { require("fs").unlinkSync(tmpPath); } catch {}
+        } catch {
+          await loadHtml(page, loadOpts);
+          const pptxSlides = await page.$$(selector);
+          const pStart = options.slideRange ? options.slideRange[0] - 1 : 0;
+          const pEnd = options.slideRange ? Math.min(options.slideRange[1], pptxSlides.length) : pptxSlides.length;
+          const pSlice = pptxSlides.slice(pStart, pEnd);
+          const pptxImages: Array<{ buffer: Buffer; mimeType: string }> = [];
+          for (const s of pSlice) {
+            const buf = await s.screenshot({ type: "png", encoding: "binary" });
+            pptxImages.push({ buffer: Buffer.from(buf), mimeType: "image/png" });
+          }
+          const mod = await import("pptxgenjs");
+          const PptxGenJS = (mod as any).default ?? mod;
+          const pres = typeof PptxGenJS === "function" ? new PptxGenJS() : PptxGenJS;
+          const isLandscape = width >= height;
+          const maxInch = 10;
+          const wInch = isLandscape ? maxInch : maxInch * width / height;
+          const hInch = isLandscape ? maxInch * height / width : maxInch;
+          pres.defineLayout({ name: "SLIDESHOT", width: wInch, height: hInch });
+          pres.layout = "SLIDESHOT";
+          for (const img of pptxImages) {
+            const slide = pres.addSlide();
+            slide.addImage({
+              data: `image/png;base64,${img.buffer.toString("base64")}`,
+              x: 0, y: 0, w: wInch, h: hInch,
+            });
+          }
+          pptx = Buffer.from(await pres.write({ outputType: "nodebuffer" }) as ArrayBuffer);
+        }
+      } else {
+        await loadHtml(page, loadOpts);
+        const pptxSlides = await page.$$(selector);
+        const pStart = options.slideRange ? options.slideRange[0] - 1 : 0;
+        const pEnd = options.slideRange ? Math.min(options.slideRange[1], pptxSlides.length) : pptxSlides.length;
+        const pSlice = pptxSlides.slice(pStart, pEnd);
+        const pptxImages: Array<{ buffer: Buffer; mimeType: string }> = [];
+        for (const s of pSlice) {
+          const buf = await s.screenshot({ type: "png", encoding: "binary" });
+          pptxImages.push({ buffer: Buffer.from(buf), mimeType: "image/png" });
+        }
+        const mod = await import("pptxgenjs");
+        const PptxGenJS = (mod as any).default ?? mod;
+        const pres = typeof PptxGenJS === "function" ? new PptxGenJS() : PptxGenJS;
+        const isLandscape = width >= height;
+        const maxInch = 10;
+        const wInch = isLandscape ? maxInch : maxInch * width / height;
+        const hInch = isLandscape ? maxInch * height / width : maxInch;
+        pres.defineLayout({ name: "SLIDESHOT", width: wInch, height: hInch });
+        pres.layout = "SLIDESHOT";
+        for (const img of pptxImages) {
+          const slide = pres.addSlide();
+          slide.addImage({
+            data: `image/png;base64,${img.buffer.toString("base64")}`,
+            x: 0, y: 0, w: wInch, h: hInch,
+          });
+        }
+        pptx = Buffer.from(await pres.write({ outputType: "nodebuffer" }) as ArrayBuffer);
       }
-
-      const mod = await import("pptxgenjs");
-      const PptxGenJS = (mod as any).default ?? mod;
-      const pres = typeof PptxGenJS === "function" ? new PptxGenJS() : PptxGenJS;
-      const isLandscape = width >= height;
-      const maxInch = 10;
-      const wInch = isLandscape ? maxInch : maxInch * width / height;
-      const hInch = isLandscape ? maxInch * height / width : maxInch;
-      pres.defineLayout({ name: "SLIDESHOT", width: wInch, height: hInch });
-      pres.layout = "SLIDESHOT";
-
-      for (const img of pptxImages) {
-        const slide = pres.addSlide();
-        slide.addImage({
-          data: `image/png;base64,${img.buffer.toString("base64")}`,
-          x: 0, y: 0, w: wInch, h: hInch,
-        });
-      }
-      pptx = Buffer.from(await pres.write({ outputType: "nodebuffer" }) as ArrayBuffer);
     }
 
     return { images, pdf, pptx, slideCount: slides.length };

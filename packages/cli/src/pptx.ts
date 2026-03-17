@@ -6,7 +6,9 @@ async function createPres() {
   return typeof PptxGenJS === "function" ? new PptxGenJS() : PptxGenJS;
 }
 
-export async function generatePptx(
+export { generateNativePptx, extractSlideData } from "./pptx-native.js";
+
+export async function generateImagePptx(
   images: Array<{ buffer: Buffer; mimeType: string }>,
   width: number,
   height: number,
