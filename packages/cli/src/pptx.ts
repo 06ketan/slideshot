@@ -26,13 +26,17 @@ export async function generatePptx(
 
   for (const img of images) {
     const slide = pres.addSlide();
-    const isPng = img.mimeType === "image/png";
-    const dataUri = `image/${isPng ? "png" : "png"};base64,${img.buffer.toString("base64")}`;
-    slide.addImage({ data: dataUri, x: 0, y: 0, w: "100%", h: "100%" });
+    const ext = img.mimeType === "image/png" ? "png" : "jpeg";
+    slide.addImage({
+      data: `image/${ext};base64,${img.buffer.toString("base64")}`,
+      x: 0,
+      y: 0,
+      w: wInch,
+      h: hInch,
+    });
   }
 
-  const dir = path.dirname(outPath);
-  const file = path.basename(outPath);
-  await pres.writeFile({ fileName: path.join(dir, file) });
+  const fullPath = path.resolve(outPath);
+  await pres.writeFile({ fileName: fullPath });
   return outPath;
 }

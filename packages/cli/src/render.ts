@@ -164,7 +164,7 @@ export async function renderToBuffers(options: Omit<RenderOptions, "outDir"> & {
         const slide = pres.addSlide();
         slide.addImage({
           data: `image/png;base64,${img.buffer.toString("base64")}`,
-          x: 0, y: 0, w: "100%", h: "100%",
+          x: 0, y: 0, w: wInch, h: hInch,
         });
       }
       pptx = Buffer.from(await pres.write({ outputType: "nodebuffer" }) as ArrayBuffer);
