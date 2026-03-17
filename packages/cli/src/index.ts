@@ -1,4 +1,5 @@
 export type { ImageFormat, RenderOptions, RenderResult } from "./types.js";
-export { DEFAULTS } from "./types.js";
+export { DEFAULTS, ORIENTATION_PRESETS } from "./types.js";
 export { launchBrowser } from "./browser.js";
 export { renderSlides, renderToBuffers } from "./render.js";
+export { generatePptx } from "./pptx.js";

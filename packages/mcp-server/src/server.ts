@@ -6,7 +6,7 @@ import { handleGetPrompt } from "./tools/prompt.js";
 import { handleCreate } from "./tools/create.js";
 import { loadAllPrompts } from "./prompts.js";
 
-export const VERSION = "2.6.0";
+export const VERSION = "2.7.0";
 
 export function createServer(): McpServer {
   const server = new McpServer({ name: "slideshot", version: VERSION });
@@ -24,10 +24,10 @@ export function createServer(): McpServer {
 
   server.tool(
     "render_html_to_images",
-    "Render HTML slides to high-resolution PNG, WebP, and/or PDF files. " +
+    "Render HTML slides to high-resolution PNG, WebP, PDF, and/or PPTX files. " +
     "Use when the user provides HTML containing .slide elements with fixed dimensions (e.g. 540x675), Google Fonts, or carousel-style content. " +
     "Provide html string OR htmlPath. Returns file paths + inline preview of first slide. " +
-    "Supports slideRange for partial renders and pdfFilename for custom PDF names.",
+    "Supports pptx output, orientation presets (portrait/landscape), slideRange, pdfFilename, pptxFilename.",
     RenderInputSchema,
     { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     async (args) => handleRender(args),

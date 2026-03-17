@@ -7,10 +7,12 @@ export const RenderInputSchema = {
   width: z.number().optional().describe("Slide width in CSS pixels (default: 540)"),
   height: z.number().optional().describe("Slide height in CSS pixels (default: 675)"),
   scale: z.number().optional().describe("Device scale factor 1-6 (default: 4)"),
-  formats: z.array(z.enum(["png", "webp", "pdf"])).optional().describe("Output formats (default: [webp, pdf])"),
+  formats: z.array(z.enum(["png", "webp", "pdf", "pptx"])).optional().describe("Output formats (default: [webp, pdf]). Use 'pptx' for PowerPoint decks"),
   outDir: z.string().optional().describe("Absolute path to output directory (default: ~/Desktop/slideshot-output)"),
   pdfFilename: z.string().optional().describe("Custom PDF filename (default: carousel.pdf). E.g. 'brand-slides.pdf'"),
+  pptxFilename: z.string().optional().describe("Custom PPTX filename (default: carousel.pptx). E.g. 'brand-deck.pptx'"),
   slideRange: z.tuple([z.number(), z.number()]).optional().describe("Render only slides N-M, 1-indexed (e.g. [1,3] for first 3 slides). Useful for quick iteration"),
+  orientation: z.enum(["portrait", "landscape"]).optional().describe("Orientation preset: portrait (540x675) or landscape (1920x1080). Overridden by explicit width/height"),
 };
 
 export const PromptInputSchema = {

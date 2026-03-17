@@ -1,7 +1,7 @@
 {
   "name": "slideshot-mcp",
-  "version": "2.6.0",
-  "description": "MCP server for rendering HTML slides to PNG, WebP, and PDF — use with Claude Desktop or Cursor",
+  "version": "2.7.0",
+  "description": "MCP server for rendering HTML slides to PNG, WebP, PDF, and PPTX — use with Claude Desktop or Cursor",
   "type": "module",
   "license": "MIT",
   "author": "Ketan Chavan",
@@ -27,6 +27,8 @@
     "claude",
     "cursor",
     "ai-tools",
+    "pptx",
+    "powerpoint",
     "slideshot"
   ],
   "repository": {
@@ -42,7 +44,7 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.12.1",
-    "slideshot": "^2.4.0",
+    "slideshot": "^2.5.0",
     "zod": "^3.24.0"
   },
   "devDependencies": {

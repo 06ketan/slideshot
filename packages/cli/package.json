@@ -1,7 +1,7 @@
 {
   "name": "slideshot",
-  "version": "2.4.0",
-  "description": "Convert HTML slides to high-res PNG, WebP, and PDF — CLI + library",
+  "version": "2.5.0",
+  "description": "Convert HTML slides to high-res PNG, WebP, PDF, and PPTX — CLI + library",
   "type": "module",
   "license": "MIT",
   "author": "Ketan Chavan",
@@ -32,6 +32,8 @@
     "puppeteer",
     "screenshot",
     "pdf",
+    "pptx",
+    "powerpoint",
     "cli",
     "linkedin-carousel",
     "slideshot"
@@ -48,11 +50,12 @@
     "dev": "tsc --watch"
   },
   "dependencies": {
-    "puppeteer": "^24.6.0",
-    "commander": "^13.0.0"
+    "commander": "^13.0.0",
+    "pptxgenjs": "^4.0.1",
+    "puppeteer": "^24.6.0"
   },
   "devDependencies": {
-    "typescript": "^5.7.0",
-    "@types/node": "^22.0.0"
+    "@types/node": "^22.0.0",
+    "typescript": "^5.7.0"
   }
 }

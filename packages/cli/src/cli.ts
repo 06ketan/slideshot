@@ -29,8 +29,8 @@ const program = new Command();
 
 program
   .name("slideshot")
-  .description("Convert HTML slides to high-res PNG, WebP, and PDF")
-  .version("2.4.0");
+  .description("Convert HTML slides to high-res PNG, WebP, PDF, and PPTX")
+  .version("2.5.0");
 
 program
   .command("prompt [variant]")
@@ -46,9 +46,10 @@ program
   .option("-W, --width <n>", "Slide width in CSS pixels", "540")
   .option("-H, --height <n>", "Slide height in CSS pixels", "675")
   .option("--scale <n>", "Device scale factor (2-6)", "4")
-  .option("-f, --formats <list>", "Comma-separated: png,webp,pdf", "png,webp,pdf")
+  .option("-f, --formats <list>", "Comma-separated: png,webp,pdf,pptx", "png,webp,pdf")
   .option("-q, --quality <n>", "WebP quality (0-100)", "95")
   .option("-o, --out <dir>", "Output directory", "./slides")
+  .option("--orientation <type>", "portrait or landscape (sets default dims)", "")
   .action(async (file: string | undefined, opts) => {
     if (!file) {
       program.help();
@@ -76,6 +77,7 @@ program
     console.log(`  Output:   ${path.resolve(opts.out)}\n`);
 
     try {
+      const orientation = opts.orientation === "portrait" || opts.orientation === "landscape" ? opts.orientation : undefined;
       const result = await renderSlides({
         htmlPath,
         selector: opts.selector,
@@ -85,6 +87,7 @@ program
         formats,
         webpQuality: quality,
         outDir: opts.out,
+        ...(orientation && { orientation }),
       });
 
       for (const f of result.files) {

@@ -55,11 +55,11 @@ const THEME_CATALOG: ThemeEntry[] = [
   },
 ];
 
-const OUTPUT_PRESETS: Record<string, { formats: string[]; width: number; height: number; scale: number; description: string }> = {
-  instagram: { formats: ["webp"], width: 1080, height: 1350, scale: 1, description: "Instagram post/carousel (1080x1350)" },
-  linkedin: { formats: ["pdf", "webp"], width: 540, height: 675, scale: 4, description: "LinkedIn carousel (2160x2700 @4x)" },
-  presentation: { formats: ["pdf"], width: 1920, height: 1080, scale: 2, description: "Presentation/deck (3840x2160 @2x)" },
-  custom: { formats: ["png", "webp", "pdf"], width: 540, height: 675, scale: 4, description: "Custom — all formats, default dims" },
+const OUTPUT_PRESETS: Record<string, { formats: string[]; width: number; height: number; scale: number; orientation: string; description: string }> = {
+  instagram: { formats: ["webp"], width: 1080, height: 1350, scale: 1, orientation: "portrait", description: "Instagram post/carousel (1080x1350)" },
+  linkedin: { formats: ["pdf", "webp"], width: 540, height: 675, scale: 4, orientation: "portrait", description: "LinkedIn carousel (2160x2700 @4x)" },
+  presentation: { formats: ["pptx"], width: 1920, height: 1080, scale: 2, orientation: "landscape", description: "PowerPoint deck (1920x1080 landscape)" },
+  custom: { formats: ["png", "webp", "pdf"], width: 540, height: 675, scale: 4, orientation: "portrait", description: "Custom — all formats, default dims" },
 };
 
 function discoverStep() {
@@ -69,13 +69,14 @@ function discoverStep() {
       text: JSON.stringify({
         themes: THEME_CATALOG,
         outputPresets: OUTPUT_PRESETS,
-        availableFormats: ["png", "webp", "pdf"],
+        availableFormats: ["png", "webp", "pdf", "pptx"],
         askUser: [
           "Present the theme list as a numbered menu using each theme's emoji, name, and style description.",
           "Ask these in ONE bundled message:",
           "1. Which theme? (pick from the list or describe your own style)",
           "2. What content/topic for the slides? (or paste existing content)",
-          "3. Target platform: Instagram, LinkedIn, Presentation, or Custom?",
+          "3. Target platform: Instagram, LinkedIn, Presentation (PPTX), or Custom?",
+          "4. Orientation: Portrait or Landscape? (default: portrait for social, landscape for presentations)",
           "After the user answers, use get_slide_prompt with the chosen theme variant to get the full CSS/prompt, then generate the HTML.",
         ].join(" "),
       }, null, 2),
