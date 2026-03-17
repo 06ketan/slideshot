@@ -30,7 +30,7 @@ const program = new Command();
 program
   .name("slideshot")
   .description("Convert HTML slides to high-res PNG, WebP, and PDF")
-  .version("2.3.0");
+  .version("2.4.0");
 
 program
   .command("prompt [variant]")

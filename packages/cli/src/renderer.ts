@@ -36,15 +36,20 @@ export async function screenshotSlides(
   outDir: string,
   formats: ImageFormat[],
   webpQuality: number,
+  slideRange?: [number, number],
 ): Promise<string[]> {
-  const slides = await page.$$(selector);
-  if (slides.length === 0)
+  const allSlides = await page.$$(selector);
+  if (allSlides.length === 0)
     throw new Error(`No elements found for selector "${selector}"`);
+
+  const start = slideRange ? slideRange[0] - 1 : 0;
+  const end = slideRange ? Math.min(slideRange[1], allSlides.length) : allSlides.length;
+  const slides = allSlides.slice(start, end);
 
   const files: string[] = [];
 
   for (let i = 0; i < slides.length; i++) {
-    const num = String(i + 1).padStart(2, "0");
+    const num = String(start + i + 1).padStart(2, "0");
 
     if (formats.includes("png")) {
       const out = path.join(outDir, `slide-${num}.png`);
@@ -76,7 +81,7 @@ export async function generatePdf(
   await loadHtml(page, opts);
   await page.addStyleTag({ content: PRINT_CSS });
 
-  const pdfPath = path.join(outDir, "carousel.pdf");
+  const pdfPath = path.join(outDir, opts.pdfFilename || "carousel.pdf");
   await page.pdf({
     path: pdfPath,
     width: `${width}px`,

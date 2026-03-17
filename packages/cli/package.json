@@ -1,6 +1,6 @@
 {
   "name": "slideshot",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "description": "Convert HTML slides to high-res PNG, WebP, and PDF — CLI + library",
   "type": "module",
   "license": "MIT",

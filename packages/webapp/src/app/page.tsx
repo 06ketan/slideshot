@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 
 const SAMPLE_HTML = `<!DOCTYPE html>
 <html lang="en">
@@ -40,54 +40,24 @@ body{background:#1A1A1A;padding:48px;font-family:'Space Mono',monospace;display:
 </html>`;
 
 type Tab = "editor" | "prompts";
-type PromptVariant = "generic" | "branded";
+type PromptVariant = "generic" | "branded" | "instagram-carousel" | "infographic" | "pitch-deck" | "dark-modern" | "editorial";
 
-const GENERIC_PROMPT = `You are generating HTML slides for a visual carousel (LinkedIn, Instagram, presentations).
-
-RULES:
-1. Create a single HTML file with a <style> block and a <body> containing multiple slide divs.
-2. Each slide MUST use the CSS class ".slide" and have fixed dimensions: width: 540px; height: 675px.
-3. Use overflow: hidden on each slide — content must fit within the frame.
-4. Use Google Fonts via <link> tags in <head> if you need custom fonts.
-5. Each slide must be visually self-contained — no JavaScript required.
-6. Use print-safe colors (avoid transparency-only effects).
-
-Template:
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: #1a1a1a; padding: 48px; display: flex; flex-direction: column; gap: 40px; align-items: flex-start; }
-    .slide { position: relative; width: 540px; height: 675px; padding: 32px 40px; overflow: hidden; font-family: 'Inter', sans-serif; flex-shrink: 0; background: #fff; }
-  </style>
-</head>
-<body>
-  <div class="slide"><!-- Slide 1 --></div>
-  <div class="slide"><!-- Slide 2 --></div>
-</body>
-</html>
-
-The tool will screenshot each .slide element at 4x resolution → 2160×2700 px output.`;
-
-const BRANDED_PROMPT = `You are generating HTML slides using the "Ketan Slides" design system — a minimal, monospace carousel style.
-
-DESIGN TOKENS: Font: Space Mono | Teal: #00B894 | Coral: #E84C1E | Purple: #7C5CBF | Dark: #1A1A1A | Light BG: #F0EDE7
-
-SLIDE BASE: .slide { width: 540px; height: 675px; background: #F0EDE7; padding: 32px 40px 52px; }
-DARK VARIANT: .slide.dark { background: #0D0D0D; }
-
-COMPONENTS: .dots+.dot, .btag, .h1/.h2 (<i>=teal, <s>=muted), .lbl, .ft (footer), .scols+.sc (stat cards 3-col), .itrow+.it (icon tiles 4-col), .ul+.ur (list rows), .br+.bl+.bt+.bf (bar chart), .cg+.cc+.cbad+.cgood (comparison), .hg+.hc (hook cards), .cr+.ck+.cv (config rows), .al+.ai (action list), .mg+.mc (metric grid), .hr, .pnote, .lrow+.lchip
-
-Include the full CSS from the branded prompt file and use Space Mono from Google Fonts.
-Each .slide is screenshotted at 4x → 2160×2700 px.`;
+const VARIANT_META: Record<PromptVariant, { name: string; style: string; palette: string[] }> = {
+  generic: { name: "Clean Minimal", style: "Inter font, white cards", palette: ["#FFFFFF", "#1a1a1a", "#888"] },
+  branded: { name: "Ketan Slides", style: "Space Mono, teal/coral", palette: ["#F0EDE7", "#00B894", "#E84C1E"] },
+  "instagram-carousel": { name: "IG Carousel", style: "Poppins, bold gradients", palette: ["#6C5CE7", "#FD79A8", "#00CEC9"] },
+  infographic: { name: "Infographic", style: "DM Sans, data-heavy", palette: ["#2563EB", "#10B981", "#F59E0B"] },
+  "pitch-deck": { name: "Pitch Deck", style: "Professional, KPI cards", palette: ["#0F172A", "#3B82F6", "#8B5CF6"] },
+  "dark-modern": { name: "Dark Modern", style: "Neon, glassmorphism", palette: ["#0A0A0F", "#22D3EE", "#E879F9"] },
+  editorial: { name: "Editorial", style: "Serif, gold accents", palette: ["#FAF8F5", "#C9963B", "#2C2824"] },
+};
 
 export default function Home() {
   const [html, setHtml] = useState(SAMPLE_HTML);
   const [tab, setTab] = useState<Tab>("editor");
   const [promptVariant, setPromptVariant] = useState<PromptVariant>("generic");
+  const [promptText, setPromptText] = useState<string>("Loading...");
+  const [promptLoading, setPromptLoading] = useState(false);
   const [selector, setSelector] = useState(".slide");
   const [width, setWidth] = useState(540);
   const [height, setHeight] = useState(675);
@@ -97,6 +67,15 @@ export default function Home() {
   const [status, setStatus] = useState("");
   const [copied, setCopied] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  useEffect(() => {
+    setPromptLoading(true);
+    fetch(`/api/prompt?variant=${promptVariant}`)
+      .then((r) => r.json())
+      .then((d) => setPromptText(d.prompt || d.error || "Not found"))
+      .catch(() => setPromptText("Failed to load prompt"))
+      .finally(() => setPromptLoading(false));
+  }, [promptVariant]);
 
   const updatePreview = useCallback(() => {
     if (iframeRef.current) {
@@ -163,8 +142,7 @@ export default function Home() {
     setFormats((prev) => ({ ...prev, [f]: !prev[f] }));
 
   const copyPrompt = () => {
-    const text = promptVariant === "generic" ? GENERIC_PROMPT : BRANDED_PROMPT;
-    navigator.clipboard.writeText(text);
+    navigator.clipboard.writeText(promptText);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -354,27 +332,25 @@ export default function Home() {
             />
           ) : (
             <div className="flex-1 flex flex-col overflow-hidden">
-              <div className="flex items-center gap-3 px-4 py-3 border-b-2 border-border">
-                <button
-                  onClick={() => setPromptVariant("generic")}
-                  className={`text-xs uppercase tracking-widest font-black px-3 py-1.5 rounded-none border-2 font-mono ${
-                    promptVariant === "generic"
-                      ? "bg-primary text-black border-black shadow-[3px_3px_0px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
-                      : "text-muted border-border hover:bg-surface-2"
-                  }`}
-                >
-                  GENERIC
-                </button>
-                <button
-                  onClick={() => setPromptVariant("branded")}
-                  className={`text-xs uppercase tracking-widest font-black px-3 py-1.5 rounded-none border-2 font-mono ${
-                    promptVariant === "branded"
-                      ? "bg-secondary text-white border-black shadow-[3px_3px_0px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
-                      : "text-muted border-border hover:bg-surface-2"
-                  }`}
-                >
-                  BRANDED
-                </button>
+              <div className="flex items-center gap-2 px-4 py-2 border-b-2 border-border flex-wrap">
+                {(Object.keys(VARIANT_META) as PromptVariant[]).map((v) => (
+                  <button
+                    key={v}
+                    onClick={() => setPromptVariant(v)}
+                    className={`text-[10px] uppercase tracking-widest font-black px-2 py-1 rounded-none border-2 font-mono flex items-center gap-1.5 ${
+                      promptVariant === v
+                        ? "bg-primary text-black border-black shadow-[2px_2px_0px_0px_#000]"
+                        : "text-muted border-border hover:bg-surface-2"
+                    }`}
+                  >
+                    <span className="flex gap-0.5">
+                      {VARIANT_META[v].palette.slice(0, 3).map((c, i) => (
+                        <span key={i} className="w-2 h-2 rounded-full inline-block" style={{ background: c }} />
+                      ))}
+                    </span>
+                    {VARIANT_META[v].name}
+                  </button>
+                ))}
                 <button
                   onClick={copyPrompt}
                   className="ml-auto text-xs uppercase tracking-widest font-black text-foreground font-mono border-2 border-border rounded-none px-3 py-1.5 shadow-[3px_3px_0px_0px_#404040] hover:shadow-[3px_3px_0px_0px_#BFFF00] hover:border-primary active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
@@ -383,9 +359,7 @@ export default function Home() {
                 </button>
               </div>
               <pre className="flex-1 overflow-auto p-4 text-xs leading-relaxed text-muted font-mono whitespace-pre-wrap">
-                {promptVariant === "generic"
-                  ? GENERIC_PROMPT
-                  : BRANDED_PROMPT}
+                {promptLoading ? "Loading..." : promptText}
               </pre>
             </div>
           )}

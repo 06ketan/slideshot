@@ -10,6 +10,8 @@ export interface RenderOptions {
   formats?: ImageFormat[];
   webpQuality?: number;
   outDir: string;
+  pdfFilename?: string;
+  slideRange?: [number, number];
 }
 
 export interface RenderResult {

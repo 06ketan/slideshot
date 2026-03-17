@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 const VARIANTS = [
   "generic", "branded", "instagram-carousel", "infographic",
@@ -10,9 +11,16 @@ type Variant = (typeof VARIANTS)[number];
 
 const cache = new Map<string, string>();
 
+function promptsDir(): string {
+  const thisDir = path.dirname(fileURLToPath(import.meta.url));
+  const local = path.resolve(thisDir, "../../../../prompts");
+  if (fs.existsSync(local)) return local;
+  return path.resolve(thisDir, "../../prompts");
+}
+
 function loadPrompt(variant: string): string | null {
   if (cache.has(variant)) return cache.get(variant)!;
-  const filePath = path.resolve(process.cwd(), "../../prompts", `${variant}.md`);
+  const filePath = path.join(promptsDir(), `${variant}.md`);
   if (!fs.existsSync(filePath)) return null;
   const text = fs.readFileSync(filePath, "utf-8");
   cache.set(variant, text);
@@ -27,6 +35,14 @@ const corsHeaders = {
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
+
+  if (searchParams.get("list") !== null) {
+    return new Response(JSON.stringify({ variants: VARIANTS }), {
+      status: 200,
+      headers: { "Content-Type": "application/json", ...corsHeaders },
+    });
+  }
+
   const variant = (searchParams.get("variant") || "generic") as string;
 
   if (!VARIANTS.includes(variant as Variant)) {

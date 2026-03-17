@@ -9,6 +9,8 @@ export const RenderInputSchema = {
   scale: z.number().optional().describe("Device scale factor 1-6 (default: 4)"),
   formats: z.array(z.enum(["png", "webp", "pdf"])).optional().describe("Output formats (default: [webp, pdf])"),
   outDir: z.string().optional().describe("Absolute path to output directory (default: ~/Desktop/slideshot-output)"),
+  pdfFilename: z.string().optional().describe("Custom PDF filename (default: carousel.pdf). E.g. 'brand-slides.pdf'"),
+  slideRange: z.tuple([z.number(), z.number()]).optional().describe("Render only slides N-M, 1-indexed (e.g. [1,3] for first 3 slides). Useful for quick iteration"),
 };
 
 export const PromptInputSchema = {
@@ -19,4 +21,12 @@ export const PromptInputSchema = {
       "'infographic' = data-heavy charts, 'pitch-deck' = professional presentation, " +
       "'dark-modern' = neon glassmorphism, 'editorial' = magazine serif style",
     ),
+};
+
+export const CreateInputSchema = {
+  step: z.enum(["discover", "preview"]).describe(
+    "'discover' = get theme catalog + output presets + smart questions to ask user. " +
+    "'preview' = render slide 1 only at 1x for fast preview before full render",
+  ),
+  html: z.string().optional().describe("HTML to preview (required for 'preview' step)"),
 };

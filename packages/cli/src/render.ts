@@ -34,7 +34,7 @@ export async function renderSlides(options: RenderOptions): Promise<RenderResult
     const rasterFormats = formats.filter((f) => f !== "pdf") as ImageFormat[];
     if (rasterFormats.length > 0) {
       const rasterFiles = await screenshotSlides(
-        page, selector, outDir, rasterFormats, webpQuality,
+        page, selector, outDir, rasterFormats, webpQuality, options.slideRange,
       );
       files.push(...rasterFiles);
     }
@@ -72,12 +72,16 @@ export async function renderToBuffers(options: Omit<RenderOptions, "outDir"> & {
     const loadOpts: RenderOptions = { ...options, outDir: "" };
     await loadHtml(page, loadOpts);
 
-    const slides = await page.$$(selector);
-    if (slides.length === 0)
+    const allSlides = await page.$$(selector);
+    if (allSlides.length === 0)
       throw new Error(`No elements found for selector "${selector}"`);
 
+    const rangeStart = options.slideRange ? options.slideRange[0] - 1 : 0;
+    const rangeEnd = options.slideRange ? Math.min(options.slideRange[1], allSlides.length) : allSlides.length;
+    const slides = allSlides.slice(rangeStart, rangeEnd);
+
     for (let i = 0; i < slides.length; i++) {
-      const num = String(i + 1).padStart(2, "0");
+      const num = String(rangeStart + i + 1).padStart(2, "0");
 
       if (formats.includes("png")) {
         const buf = await slides[i].screenshot({ type: "png", encoding: "binary" });
