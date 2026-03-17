@@ -37,7 +37,7 @@
   "homepage": "https://github.com/06ketan/slideshot#mcp-server",
   "bugs": "https://github.com/06ketan/slideshot/issues",
   "scripts": {
-    "build": "tsc && chmod +x dist/index.js && cp -r ../../prompts ./prompts",
+    "build": "tsc && chmod +x dist/index.js && rm -rf ./prompts && cp -r ../../prompts ./prompts",
     "dev": "tsc --watch"
   },
   "dependencies": {
