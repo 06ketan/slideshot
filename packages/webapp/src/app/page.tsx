@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import PromptBlocks from "@/components/PromptBlocks";
 import HeroTerminal from "@/components/HeroTerminal";
+import ScrollReveal from "@/components/ScrollReveal";
 
 async function getStats() {
   try {
@@ -134,10 +135,10 @@ export default async function HomePage() {
       <section className="bg-[#FFD233] border-b-[3px] border-[#0A0A0A]">
         <div className="max-w-7xl mx-auto px-6 py-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <StatCard label="npm Downloads" value={stats.downloads.toLocaleString()} sub="Last 7 days" icon={<Download size={18} />} delay={0} />
-            <StatCard label="GitHub Stars" value={stats.stars.toLocaleString()} sub="Open source" icon={<Star size={18} />} delay={0.05} />
-            <StatCard label="Prompt Templates" value="8" sub="Ready to use" icon={<FileCode size={18} />} delay={0.1} />
-            <StatCard label="Export Formats" value="3" sub="PNG / WebP / PDF" icon={<ImageIcon size={18} />} delay={0.15} />
+            <ScrollReveal delay={0}><StatCard label="npm Downloads" value={stats.downloads.toLocaleString()} sub="Last 7 days" icon={<Download size={18} />} /></ScrollReveal>
+            <ScrollReveal delay={0.05}><StatCard label="GitHub Stars" value={stats.stars.toLocaleString()} sub="Open source" icon={<Star size={18} />} /></ScrollReveal>
+            <ScrollReveal delay={0.1}><StatCard label="Prompt Templates" value="8" sub="Ready to use" icon={<FileCode size={18} />} /></ScrollReveal>
+            <ScrollReveal delay={0.15}><StatCard label="Export Formats" value="3" sub="PNG / WebP / PDF" icon={<ImageIcon size={18} />} /></ScrollReveal>
           </div>
         </div>
       </section>
@@ -145,37 +146,40 @@ export default async function HomePage() {
       {/* FEATURES */}
       <section className="border-b-[3px] border-[#0A0A0A]">
         <div className="max-w-7xl mx-auto px-6 py-20">
-          <div className="text-center mb-12">
+          <ScrollReveal className="text-center mb-12">
             <h2 className="font-[var(--font-bebas-neue)] text-5xl md:text-6xl text-[#0A0A0A] mb-3">
               EVERYTHING YOU NEED
             </h2>
             <p className="text-[#666] text-lg font-medium max-w-xl mx-auto">
               From AI-generated prompts to high-res exports, slideshot handles the full pipeline.
             </p>
-          </div>
+          </ScrollReveal>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <FeatureCard
-              icon={<Palette size={24} />}
-              title="AI Prompt Templates"
-              description="8 built-in style variants: minimal, monospace, bold social, data cards, corporate, dark neon, editorial, and browser-shell."
-              accent="#FFD233"
-              delay={0}
-            />
-            <FeatureCard
-              icon={<ImageIcon size={24} />}
-              title="High-Res Export"
-              description="PNG, WebP, and PDF at up to 6x scale. Each .slide element becomes one image. Bundled as a ZIP."
-              accent="#FF6059"
-              delay={0.05}
-            />
-            <FeatureCard
-              icon={<Terminal size={24} color="#ffffff" />}
-              title="CLI + MCP Server"
-              description="Use from terminal with npx slideshot, or integrate with Claude / Cursor via the slideshot-mcp server."
-              accent="#0A0A0A"
-              delay={0.1}
-            />
+            <ScrollReveal delay={0}>
+              <FeatureCard
+                icon={<Palette size={24} />}
+                title="AI Prompt Templates"
+                description="8 built-in style variants: minimal, monospace, bold social, data cards, corporate, dark neon, editorial, and browser-shell."
+                accent="#FFD233"
+              />
+            </ScrollReveal>
+            <ScrollReveal delay={0.05}>
+              <FeatureCard
+                icon={<ImageIcon size={24} />}
+                title="High-Res Export"
+                description="PNG, WebP, and PDF at up to 6x scale. Each .slide element becomes one image. Bundled as a ZIP."
+                accent="#FF6059"
+              />
+            </ScrollReveal>
+            <ScrollReveal delay={0.1}>
+              <FeatureCard
+                icon={<Terminal size={24} color="#ffffff" />}
+                title="CLI + MCP Server"
+                description="Use from terminal with npx slideshot, or integrate with Claude / Cursor via the slideshot-mcp server."
+                accent="#0A0A0A"
+              />
+            </ScrollReveal>
           </div>
         </div>
       </section>
@@ -183,45 +187,49 @@ export default async function HomePage() {
       {/* HOW TO USE */}
       <section className="bg-[#FFD233] border-b-[3px] border-[#0A0A0A]">
         <div className="max-w-7xl mx-auto px-6 py-20">
-          <div className="text-center mb-12">
+          <ScrollReveal className="text-center mb-12">
             <h2 className="font-[var(--font-bebas-neue)] text-5xl md:text-6xl text-[#0A0A0A] mb-3">
               HOW TO USE SLIDESHOT
             </h2>
             <p className="text-[#0A0A0A]/70 text-lg font-medium max-w-xl mx-auto">
               Four ways to convert HTML into slides. Pick what fits your workflow.
             </p>
-          </div>
+          </ScrollReveal>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <HowToCard
-              num="01"
-              title="Web Editor"
-              description="Open the editor, paste your HTML+CSS, preview live in the browser, then export with one click."
-              cta={{ label: "Open Editor", href: "/editor" }}
-              delay={0}
-            />
-            <HowToCard
-              num="02"
-              title="npx (Zero Install)"
-              description="Run directly without installing. Renders your HTML file and outputs a ZIP with slide images."
-              code="npx slideshot ./slides.html --scale 4 --formats png,webp,pdf"
-              delay={0.05}
-            />
-            <HowToCard
-              num="03"
-              title="npm Global Install"
-              description="Install once, use anywhere. Same options as npx but faster on repeat runs."
-              code={`npm i -g slideshot\nslideshot render ./slides.html --scale 4`}
-              delay={0.1}
-            />
-            <HowToCard
-              num="04"
-              title="MCP Server"
-              description="Let AI generate and render slides directly. Works with Claude, Cursor, and Windsurf."
-              code="npm i -g slideshot-mcp"
-              cta={{ label: "View on npm", href: "https://www.npmjs.com/package/slideshot-mcp", external: true }}
-              delay={0.15}
-            />
+            <ScrollReveal delay={0}>
+              <HowToCard
+                num="01"
+                title="Web Editor"
+                description="Open the editor, paste your HTML+CSS, preview live in the browser, then export with one click."
+                cta={{ label: "Open Editor", href: "/editor" }}
+              />
+            </ScrollReveal>
+            <ScrollReveal delay={0.05}>
+              <HowToCard
+                num="02"
+                title="npx (Zero Install)"
+                description="Run directly without installing. Renders your HTML file and outputs a ZIP with slide images."
+                code="npx slideshot ./slides.html --scale 4 --formats png,webp,pdf"
+              />
+            </ScrollReveal>
+            <ScrollReveal delay={0.1}>
+              <HowToCard
+                num="03"
+                title="npm Global Install"
+                description="Install once, use anywhere. Same options as npx but faster on repeat runs."
+                code={`npm i -g slideshot\nslideshot render ./slides.html --scale 4`}
+              />
+            </ScrollReveal>
+            <ScrollReveal delay={0.15}>
+              <HowToCard
+                num="04"
+                title="MCP Server"
+                description="Let AI generate and render slides directly. Works with Claude, Cursor, and Windsurf."
+                code="npm i -g slideshot-mcp"
+                cta={{ label: "View on npm", href: "https://www.npmjs.com/package/slideshot-mcp", external: true }}
+              />
+            </ScrollReveal>
           </div>
         </div>
       </section>
@@ -232,34 +240,40 @@ export default async function HomePage() {
       {/* CTA */}
       <section className="bg-[#FFD233] border-t-[3px] border-[#0A0A0A]">
         <div className="max-w-4xl mx-auto px-6 py-20 text-center">
-          <h2 className="font-[var(--font-bebas-neue)] text-6xl md:text-7xl text-[#0A0A0A] mb-4">
-            READY TO BUILD
-            <br />
-            YOUR SLIDES?
-          </h2>
-          <p className="text-[#0A0A0A]/70 text-lg font-medium mb-8 max-w-lg mx-auto">
-            Open the editor, paste your HTML, and export. Or grab a prompt
-            template from the gallery.
-          </p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <Link
-              href="/editor"
-              className="inline-flex items-center gap-2 bg-[#0A0A0A] text-white font-bold px-8 py-3.5 border-[3px] border-[#0A0A0A] shadow-[5px_5px_0px_0px_#0A0A0A] hover:shadow-[8px_8px_0px_0px_#0A0A0A] hover:-translate-x-[1px] hover:-translate-y-[1px] active:shadow-none active:translate-x-[5px] active:translate-y-[5px] transition-all text-sm"
-            >
-              Open Editor <ArrowRight size={16} />
-            </Link>
-            <Link
-              href="/gallery"
-              className="inline-flex items-center gap-2 bg-white text-[#0A0A0A] font-bold px-8 py-3.5 border-[3px] border-[#0A0A0A] shadow-[5px_5px_0px_0px_#0A0A0A] hover:shadow-[8px_8px_0px_0px_#0A0A0A] hover:-translate-x-[1px] hover:-translate-y-[1px] active:shadow-none active:translate-x-[5px] active:translate-y-[5px] transition-all text-sm"
-            >
-              Browse Gallery
-            </Link>
-          </div>
-          <div className="mt-8">
-            <code className="text-sm font-mono bg-[#0A0A0A] border-[3px] border-[#0A0A0A] px-4 py-2 text-[#FFD233] inline-block max-w-full overflow-x-auto">
-              npx slideshot ./slides.html
-            </code>
-          </div>
+          <ScrollReveal>
+            <h2 className="font-[var(--font-bebas-neue)] text-6xl md:text-7xl text-[#0A0A0A] mb-4">
+              READY TO BUILD
+              <br />
+              YOUR SLIDES?
+            </h2>
+          </ScrollReveal>
+          <ScrollReveal delay={0.1}>
+            <p className="text-[#0A0A0A]/70 text-lg font-medium mb-8 max-w-lg mx-auto">
+              Open the editor, paste your HTML, and export. Or grab a prompt
+              template from the gallery.
+            </p>
+          </ScrollReveal>
+          <ScrollReveal delay={0.2}>
+            <div className="flex flex-wrap justify-center gap-4">
+              <Link
+                href="/editor"
+                className="inline-flex items-center gap-2 bg-[#0A0A0A] text-white font-bold px-8 py-3.5 border-[3px] border-[#0A0A0A] shadow-[5px_5px_0px_0px_#0A0A0A] hover:shadow-[8px_8px_0px_0px_#0A0A0A] hover:-translate-x-[1px] hover:-translate-y-[1px] active:shadow-none active:translate-x-[5px] active:translate-y-[5px] transition-all text-sm"
+              >
+                Open Editor <ArrowRight size={16} />
+              </Link>
+              <Link
+                href="/gallery"
+                className="inline-flex items-center gap-2 bg-white text-[#0A0A0A] font-bold px-8 py-3.5 border-[3px] border-[#0A0A0A] shadow-[5px_5px_0px_0px_#0A0A0A] hover:shadow-[8px_8px_0px_0px_#0A0A0A] hover:-translate-x-[1px] hover:-translate-y-[1px] active:shadow-none active:translate-x-[5px] active:translate-y-[5px] transition-all text-sm"
+              >
+                Browse Gallery
+              </Link>
+            </div>
+            <div className="mt-8">
+              <code className="text-sm font-mono bg-[#0A0A0A] border-[3px] border-[#0A0A0A] px-4 py-2 text-[#FFD233] inline-block max-w-full overflow-x-auto">
+                npx slideshot ./slides.html
+              </code>
+            </div>
+          </ScrollReveal>
         </div>
       </section>
 
@@ -273,16 +287,14 @@ function StatCard({
   value,
   sub,
   icon,
-  delay = 0,
 }: {
   label: string;
   value: string;
   sub: string;
   icon: React.ReactNode;
-  delay?: number;
 }) {
   return (
-    <div className="bg-white border-[3px] border-[#0A0A0A] shadow-[3px_3px_0px_0px_#0A0A0A] p-4 animate-fade-in-up" style={{ animationDelay: `${delay}s` }}>
+    <div className="bg-white border-[3px] border-[#0A0A0A] shadow-[3px_3px_0px_0px_#0A0A0A] p-4">
       <div className="flex items-center gap-3 mb-2">
         <div className="text-[#0A0A0A]">{icon}</div>
         <span className="text-[10px] font-bold tracking-wider uppercase text-[#888]">
@@ -302,16 +314,14 @@ function FeatureCard({
   title,
   description,
   accent,
-  delay = 0,
 }: {
   icon: React.ReactNode;
   title: string;
   description: string;
   accent: string;
-  delay?: number;
 }) {
   return (
-    <div className="border-[3px] border-[#0A0A0A] shadow-[5px_5px_0px_0px_#0A0A0A] p-8 bg-white hover:shadow-[8px_8px_0px_0px_#0A0A0A] hover:-translate-x-px hover:-translate-y-px transition-all duration-150 group animate-fade-in-up" style={{ animationDelay: `${delay}s` }}>
+    <div className="border-[3px] border-[#0A0A0A] shadow-[5px_5px_0px_0px_#0A0A0A] p-8 bg-white hover:shadow-[8px_8px_0px_0px_#0A0A0A] hover:-translate-x-px hover:-translate-y-px transition-all duration-150 group">
       <div
         className="w-12 h-12 flex items-center justify-center mb-5 border-[3px] border-[#0A0A0A]"
         style={{ background: accent, color: "#0A0A0A" }}
@@ -332,17 +342,15 @@ function HowToCard({
   description,
   code,
   cta,
-  delay = 0,
 }: {
   num: string;
   title: string;
   description: string;
   code?: string;
   cta?: { label: string; href: string; external?: boolean };
-  delay?: number;
 }) {
   return (
-    <div className="border-[3px] border-[#0A0A0A] bg-white p-6 shadow-[5px_5px_0px_0px_#0A0A0A] hover:shadow-[8px_8px_0px_0px_#0A0A0A] hover:-translate-x-px hover:-translate-y-px transition-all duration-150 group animate-fade-in-up" style={{ animationDelay: `${delay}s` }}>
+    <div className="border-[3px] border-[#0A0A0A] bg-white p-6 shadow-[5px_5px_0px_0px_#0A0A0A] hover:shadow-[8px_8px_0px_0px_#0A0A0A] hover:-translate-x-px hover:-translate-y-px transition-all duration-150 group">
       <div className="flex items-start gap-4 mb-4">
         <span className="font-[var(--font-bebas-neue)] text-4xl text-[#FFD233] [-webkit-text-stroke:1.5px_#0A0A0A] leading-none shrink-0">
           {num}

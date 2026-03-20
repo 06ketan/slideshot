@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useInView } from "@/hooks/useInView";
 
 const COMMAND = "npx slideshot ./slides.html --scale 4";
 const OUTPUT_LINES = [
@@ -15,18 +16,20 @@ const OUTPUT_LINES = [
 ];
 
 export default function HeroTerminal() {
+  const { ref, inView } = useInView({ threshold: 0.3 });
   const [typedLen, setTypedLen] = useState(0);
   const [showOutput, setShowOutput] = useState(false);
   const [visibleLines, setVisibleLines] = useState(0);
 
   useEffect(() => {
+    if (!inView) return;
     if (typedLen < COMMAND.length) {
       const t = setTimeout(() => setTypedLen((p) => p + 1), 45);
       return () => clearTimeout(t);
     }
     const t = setTimeout(() => setShowOutput(true), 400);
     return () => clearTimeout(t);
-  }, [typedLen]);
+  }, [inView, typedLen]);
 
   useEffect(() => {
     if (!showOutput) return;
@@ -36,12 +39,11 @@ export default function HeroTerminal() {
     }
   }, [showOutput, visibleLines]);
 
-  const typing = typedLen < COMMAND.length;
+  const typing = inView && typedLen < COMMAND.length;
 
   return (
-    <div className="bg-[#FFD233] p-5 border-[3px] border-[#0A0A0A] shadow-[8px_8px_0px_0px_#0A0A0A]">
+    <div ref={ref} className="bg-[#FFD233] p-5 border-[3px] border-[#0A0A0A] shadow-[8px_8px_0px_0px_#0A0A0A]">
       <div className="bg-[#12122A] overflow-hidden">
-        {/* Title bar */}
         <div className="flex items-center justify-between px-4 h-10">
           <div className="flex gap-[7px]">
             <div className="w-[11px] h-[11px] rounded-full bg-[#FF6059]" />
@@ -53,15 +55,20 @@ export default function HeroTerminal() {
           </span>
         </div>
 
-        {/* Terminal body */}
         <div className="px-5 py-4 font-mono text-sm leading-relaxed min-h-[220px]">
           <div className="flex">
             <span className="text-[#FFD233] font-bold mr-2">$</span>
-            <span className="text-white">
-              {COMMAND.slice(0, typedLen)}
-            </span>
-            {typing && (
-              <span className="text-[#FFD233] animate-blink ml-px">▌</span>
+            {inView ? (
+              <>
+                <span className="text-white">
+                  {COMMAND.slice(0, typedLen)}
+                </span>
+                {typing && (
+                  <span className="text-[#FFD233] animate-blink ml-px">▌</span>
+                )}
+              </>
+            ) : (
+              <span className="text-[#FFD233] animate-blink">▌</span>
             )}
           </div>
 
