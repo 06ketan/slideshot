@@ -1,17 +1,27 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0A0A0A;
-  --foreground: #FFFFFF;
-  --primary: #BFFF00;
+  --background: #FFFDF5;
+  --foreground: #0A0A0A;
+  --primary: #FFD233;
   --primary-foreground: #0A0A0A;
-  --secondary: #FF2D6F;
-  --accent: #7B61FF;
-  --highlight: #00E5FF;
-  --surface: #1A1A1A;
-  --surface-2: #2A2A2A;
-  --border: #404040;
-  --muted: #888888;
+  --navy: #12122A;
+  --navy-light: #2A2A44;
+  --accent-red: #FF6059;
+  --accent-red-light: #FFB3AE;
+  --surface: #FFFDF5;
+  --surface-2: #F5F3EE;
+  --border: #0A0A0A;
+  --border-light: #E5E3DE;
+  --muted: #666666;
+  --muted-2: #444444;
+  --dot-red: #FF6059;
+  --dot-amber: #FEBC2E;
+  --dot-inactive: #2A2A44;
+
+  --font-display: var(--font-bebas-neue), "Impact", sans-serif;
+  --font-body: var(--font-dm-sans), "Helvetica Neue", sans-serif;
+  --font-mono-family: var(--font-geist-mono), "Courier New", monospace;
 }
 
 @theme inline {
@@ -19,33 +29,41 @@
   --color-foreground: var(--foreground);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-accent: var(--accent);
-  --color-highlight: var(--highlight);
+  --color-navy: var(--navy);
+  --color-navy-light: var(--navy-light);
+  --color-accent-red: var(--accent-red);
+  --color-accent-red-light: var(--accent-red-light);
   --color-surface: var(--surface);
   --color-surface-2: var(--surface-2);
   --color-border: var(--border);
+  --color-border-light: var(--border-light);
   --color-muted: var(--muted);
-  --font-sans: var(--font-geist-sans);
+  --color-muted-2: var(--muted-2);
+  --color-dot-red: var(--dot-red);
+  --color-dot-amber: var(--dot-amber);
+  --color-dot-inactive: var(--dot-inactive);
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
+  --font-sans: var(--font-dm-sans);
   --font-mono: var(--font-geist-mono);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-mono), "Courier New", monospace;
+  font-family: var(--font-body), sans-serif;
 }
 
 textarea:focus,
 input:focus,
 select:focus {
-  outline: 2px solid var(--primary);
-  outline-offset: -2px;
+  outline: none;
+  border-color: var(--primary) !important;
 }
 
 ::selection {
   background: var(--primary);
-  color: var(--background);
+  color: var(--foreground);
 }
 
 ::-webkit-scrollbar {
@@ -56,9 +74,24 @@ select:focus {
   background: var(--background);
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--border);
-  border: 1px solid var(--border);
+  background: #0A0A0A;
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--primary);
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up {
+  animation: fadeInUp 0.4s ease-out both;
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+.animate-scale-in {
+  animation: scaleIn 0.2s ease-out both;
 }

@@ -1,0 +1,81 @@
+---
+description: Slideshot V2 Neobrutalism Design System
+globs: ["src/**/*.tsx", "src/**/*.css"]
+alwaysApply: false
+---
+
+# Slideshot V2 — Neobrutalism Design System
+
+## Borders
+- All interactive elements: `border-[3px] border-[#0A0A0A]`
+- Never use `border-1` or `border-2` on buttons, cards, inputs, modals
+
+## Shadows
+- Default: `shadow-[5px_5px_0px_0px_#0A0A0A]`
+- Hover: `shadow-[8px_8px_0px_0px_#0A0A0A]` with `-translate-x-px -translate-y-px`
+- Active/pressed: `shadow-none translate-x-[5px] translate-y-[5px]`
+- NEVER use soft blur shadows (`shadow-lg`, `shadow-xl`, `shadow-2xl`)
+
+## Border Radius
+- Default: `rounded-none` (sharp corners)
+- Exception: traffic light dots, avatars stay circular
+- NEVER use `rounded-xl`, `rounded-2xl`, `rounded-full` on cards/buttons/modals
+
+## Colours (flat fills only, no gradients)
+- Page bg: `#FFFDF5` (warm off-white)
+- Primary: `#FFD233` (yellow — buttons, accents, hero bg)
+- Navy: `#12122A` (dark sections, code areas, footer, browser shell)
+- Black: `#0A0A0A` (text, borders, shadows)
+- Body copy: `#444444`
+- Muted: `#666666`
+- Accent red: `#FF6059`
+- Traffic lights: red `#FF6059`, amber `#FEBC2E`, inactive `#2A2A44`
+
+## Typography
+- Headings: `font-[var(--font-bebas-neue)]` — all-caps, oversized
+- Body/UI: DM Sans via `font-[var(--font-dm-sans)]` — weight 500-800
+- Code: `font-mono` (Geist Mono)
+
+## Buttons
+```
+bg-[#FFD233] border-[3px] border-[#0A0A0A] rounded-none
+shadow-[5px_5px_0px_0px_#0A0A0A] font-bold text-[#0A0A0A]
+hover:shadow-[8px_8px_0px_0px_#0A0A0A] hover:-translate-x-px hover:-translate-y-px
+active:shadow-none active:translate-x-[5px] active:translate-y-[5px]
+transition-all duration-150
+```
+
+## Cards
+```
+bg-white border-[3px] border-[#0A0A0A] rounded-none
+shadow-[5px_5px_0px_0px_#0A0A0A]
+hover:shadow-[8px_8px_0px_0px_#0A0A0A] hover:-translate-x-px hover:-translate-y-px
+transition-all duration-150
+```
+
+## Inputs
+```
+border-[3px] border-[#0A0A0A] rounded-none bg-white
+focus:border-[#FFD233] focus:outline-none
+```
+
+## Navbar
+- `bg-[#FFFDF5] border-b-[3px] border-[#0A0A0A]` (no glass/blur)
+- Active link: yellow bg pill with thick border + small shadow
+
+## Footer
+- `bg-[#12122A] border-t-[3px] border-[#0A0A0A]`
+- 4-column grid: brand+tagline (col-span-2), Product links, Resources links
+- Bottom bar: CLI snippet, copyright, GitHub star CTA
+- Links: `text-[#ccc] hover:text-[#FFD233] transition-all duration-150 hover:-translate-y-px`
+- Section headers: `text-[#FFD233] text-xs font-bold tracking-[2px] uppercase`
+- Code blocks: `bg-[#0A0A0A] border-[2px] border-[#2A2A44] text-[#FFD233] font-mono`
+
+## Animations
+- Interactive elements: `transition-all duration-150` (fast, no sluggish fades)
+- Page sections: apply `.animate-fade-in-up` for entrance (0.4s ease-out)
+- Modals: apply `.animate-scale-in` for open (0.2s ease-out)
+- Card hover: lift via `-translate-x-px -translate-y-px` + shadow grow
+- Link hover: `hover:-translate-y-px` subtle lift
+- Stagger gallery cards with `animation-delay` (50ms increments)
+- NEVER use `duration-300`, `duration-500` or slow spring/bounce animations
