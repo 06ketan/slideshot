@@ -12,6 +12,7 @@ import {
   Star,
 } from "lucide-react";
 import PromptBlocks from "@/components/PromptBlocks";
+import HeroTerminal from "@/components/HeroTerminal";
 
 async function getStats() {
   try {
@@ -48,32 +49,36 @@ export default async function HomePage() {
       <section className="border-b-[3px] border-[#0A0A0A]">
         <div className="max-w-7xl mx-auto px-6 py-20 md:py-28">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div className="animate-fade-in-up">
-              <div className="inline-flex items-center gap-2 bg-[#FFD233] border-[3px] border-[#0A0A0A] px-4 py-1.5 mb-8 shadow-[3px_3px_0px_0px_#0A0A0A]">
+            <div>
+              <div className="inline-flex items-center gap-2 bg-[#FFD233] border-[3px] border-[#0A0A0A] px-4 py-1.5 mb-8 shadow-[3px_3px_0px_0px_#0A0A0A] animate-slide-in-line">
                 <Zap size={14} className="text-[#0A0A0A]" />
                 <span className="text-sm font-bold text-[#0A0A0A]">
                   HTML to slides in seconds
                 </span>
               </div>
 
-              <h1 className="font-[var(--font-bebas-neue)] text-7xl md:text-9xl text-[#0A0A0A] leading-[0.85] mb-6">
-                THE BEST
-                <br />
-                WAY TO
-                <br />
-                CREATE
-                <br />
-                <span className="text-[#FFD233] [-webkit-text-stroke:3px_#0A0A0A]">
-                  SLIDES
+              <h1 className="font-[var(--font-bebas-neue)] text-6xl sm:text-8xl lg:text-[10rem] text-[#0A0A0A] leading-[0.82] mb-6">
+                <span className="block animate-slide-in-line" style={{ animationDelay: "0.1s" }}>
+                  HTML
+                </span>
+                <span className="block animate-slide-in-line" style={{ animationDelay: "0.2s" }}>
+                  TO{" "}
+                  <span className="text-[#FFD233] [-webkit-text-stroke:3px_#0A0A0A]">
+                    SLIDES
+                  </span>
                 </span>
               </h1>
 
-              <p className="text-lg font-medium text-[#444] max-w-md mb-8 leading-relaxed">
-                Paste HTML+CSS, preview live, export to high-res PNG, WebP,
-                and PDF. Use AI prompts, CLI, or MCP server.
+              <p className="text-lg font-medium text-[#444] max-w-md mb-4 leading-relaxed animate-slide-in-line" style={{ animationDelay: "0.35s" }}>
+                Paste HTML+CSS, get high-res PNG, WebP &amp; PDF carousels.
+                Use the web editor, CLI, or MCP server.
               </p>
 
-              <div className="flex flex-wrap gap-4">
+              <code className="inline-block text-xs font-mono bg-[#0A0A0A] text-[#FFD233] px-4 py-2 border-[3px] border-[#0A0A0A] mb-8 animate-slide-in-line overflow-x-auto max-w-full" style={{ animationDelay: "0.45s" }}>
+                npx slideshot ./slides.html --scale 4
+              </code>
+
+              <div className="flex flex-wrap gap-4 animate-slide-in-line" style={{ animationDelay: "0.55s" }}>
                 <Link
                   href="/editor"
                   className="inline-flex items-center gap-2 bg-[#FFD233] text-[#0A0A0A] font-bold px-8 py-3.5 border-[3px] border-[#0A0A0A] shadow-[5px_5px_0px_0px_#0A0A0A] hover:shadow-[8px_8px_0px_0px_#0A0A0A] hover:-translate-x-[1px] hover:-translate-y-[1px] active:shadow-none active:translate-x-[5px] active:translate-y-[5px] transition-all text-sm"
@@ -89,50 +94,41 @@ export default async function HomePage() {
               </div>
             </div>
 
-            {/* Browser shell preview */}
-            <div className="hidden lg:block animate-fade-in-up" style={{ animationDelay: "0.1s" }}>
-              <div className="bg-[#FFD233] p-5 border-[3px] border-[#0A0A0A] shadow-[8px_8px_0px_0px_#0A0A0A]">
-                <div className="bg-[#12122A] overflow-hidden">
-                  <div className="flex items-center justify-between px-4 h-10">
-                    <div className="flex gap-[7px]">
-                      <div className="w-[11px] h-[11px] rounded-full bg-[#FF6059]" />
-                      <div className="w-[11px] h-[11px] rounded-full bg-[#FEBC2E]" />
-                      <div className="w-[11px] h-[11px] rounded-full bg-[#2A2A44]" />
-                    </div>
-                    <span className="text-white text-sm font-bold">slideshot</span>
-                  </div>
-                  <div className="bg-white p-6">
-                    <div className="space-y-3">
-                      <div className="flex gap-2">
-                        <div className="w-2 h-2 bg-[#FFD233] mt-1.5" />
-                        <div className="h-3 bg-[#F5F3EE] w-3/4" />
-                      </div>
-                      <div className="h-16 bg-[#FFFDF5] border-[3px] border-[#0A0A0A] flex items-center justify-center">
-                        <span className="font-[var(--font-bebas-neue)] text-3xl text-[#0A0A0A]/20">
-                          YOUR SLIDE
-                        </span>
-                      </div>
-                      <div className="flex gap-2">
-                        <div className="h-3 bg-[#F5F3EE] flex-1" />
-                        <div className="h-3 bg-[#FFD233]/30 w-1/4" />
-                      </div>
-                      <div className="flex gap-2">
-                        <div className="h-3 bg-[#F5F3EE] w-1/2" />
-                        <div className="h-3 bg-[#F5F3EE] w-1/3" />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="bg-[#12122A] px-4 py-2 text-center">
-                    <span className="text-white/60 text-[8px] font-bold tracking-[2px] uppercase">
-                      Export to PNG / WebP / PDF
-                    </span>
-                  </div>
-                </div>
-              </div>
+            {/* Terminal demo */}
+            <div className="animate-slide-in-line" style={{ animationDelay: "0.3s" }}>
+              <HeroTerminal />
             </div>
           </div>
         </div>
       </section>
+
+      {/* MARQUEE STRIP */}
+      <div className="bg-[#0A0A0A] border-b-[3px] border-[#0A0A0A] overflow-hidden py-2.5">
+        <div className="animate-marquee whitespace-nowrap flex">
+          {[...Array(2)].map((_, setIdx) => (
+            <div key={setIdx} className="flex shrink-0">
+              {[
+                "npx slideshot",
+                "4 slides → ZIP",
+                "PNG + WebP + PDF",
+                "540 × 675",
+                "MCP Server",
+                "AI Prompts",
+                "Up to 6x Scale",
+                "Open Source",
+              ].map((item, i) => (
+                <span
+                  key={i}
+                  className="font-[var(--font-bebas-neue)] text-[#FFD233] text-lg tracking-wider uppercase mx-8 flex items-center gap-3"
+                >
+                  <span className="w-2 h-2 bg-[#FFD233] shrink-0" />
+                  {item}
+                </span>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
 
       {/* STATS BAR */}
       <section className="bg-[#FFD233] border-b-[3px] border-[#0A0A0A]">
@@ -174,7 +170,7 @@ export default async function HomePage() {
               delay={0.05}
             />
             <FeatureCard
-              icon={<Terminal size={24} />}
+              icon={<Terminal size={24} color="#ffffff" />}
               title="CLI + MCP Server"
               description="Use from terminal with npx slideshot, or integrate with Claude / Cursor via the slideshot-mcp server."
               accent="#0A0A0A"

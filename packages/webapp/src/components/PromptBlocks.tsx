@@ -147,7 +147,7 @@ export default function PromptBlocks() {
             subtitle="Content to Slide Structure"
             description="Turns your text, lists, and data into slideshot-compatible HTML. Handles multi-slide splitting, typography, and layout."
             prompt={BASE_PROMPT}
-            accentColor="#0A0A0A"
+            accentColor="#FFD233"
           />
           <PromptCard
             icon={<Paintbrush size={20} />}

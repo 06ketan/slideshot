@@ -95,3 +95,27 @@ select:focus {
 .animate-scale-in {
   animation: scaleIn 0.2s ease-out both;
 }
+
+@keyframes slideInLine {
+  from { opacity: 0; transform: translateY(20px) skewY(2deg); }
+  to { opacity: 1; transform: translateY(0) skewY(0deg); }
+}
+.animate-slide-in-line {
+  animation: slideInLine 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.animate-marquee {
+  animation: marquee 20s linear infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+.animate-blink {
+  animation: blink 1s step-end infinite;
+}
