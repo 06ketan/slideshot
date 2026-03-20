@@ -12,13 +12,25 @@ const spec = {
     license: { name: "MIT", url: "https://opensource.org/licenses/MIT" },
   },
   servers: [{ url: "https://slideshot.vercel.app" }],
+  components: {
+    securitySchemes: {
+      ApiKeyAuth: {
+        type: "apiKey",
+        in: "header",
+        name: "x-api-key",
+        description:
+          "API key for authenticating render requests. Same-origin browser requests are exempt.",
+      },
+    },
+  },
   paths: {
     "/api/render": {
       post: {
         operationId: "renderSlides",
         summary: "Render HTML slides to PNG, WebP, and/or PDF",
         description:
-          "Accepts an HTML string containing .slide elements, screenshots each at high resolution, and returns a ZIP file with the rendered images and optional PDF.",
+          "Accepts an HTML string containing .slide elements, screenshots each at high resolution, and returns a ZIP file with the rendered images and optional PDF. Requires x-api-key header for external callers.",
+        security: [{ ApiKeyAuth: [] }],
         requestBody: {
           required: true,
           content: {
@@ -82,6 +94,17 @@ const spec = {
           },
           "400": {
             description: "Invalid request",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: { error: { type: "string" } },
+                },
+              },
+            },
+          },
+          "401": {
+            description: "Missing or invalid API key",
             content: {
               "application/json": {
                 schema: {

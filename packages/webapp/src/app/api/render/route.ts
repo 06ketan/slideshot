@@ -6,11 +6,28 @@ import JSZip from "jszip";
 
 export const maxDuration = 60;
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type",
-};
+const MAX_HTML_BYTES = 512 * 1024; // 512 KB
+const MAX_WIDTH = 1920;
+const MAX_HEIGHT = 2400;
+const MAX_SCALE = 6;
+const MAX_SLIDES = 20;
+const VALID_FORMATS = new Set(["png", "webp", "pdf"]);
+
+function getAllowedOrigin(req: Request): string {
+  const allowed = process.env.ALLOWED_ORIGINS;
+  if (!allowed) return "*";
+  const origin = req.headers.get("origin") ?? "";
+  const list = allowed.split(",").map((o) => o.trim());
+  return list.includes(origin) ? origin : list[0];
+}
+
+function corsHeaders(req: Request) {
+  return {
+    "Access-Control-Allow-Origin": getAllowedOrigin(req),
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type, x-api-key",
+  };
+}
 
 interface RenderBody {
   html: string;
@@ -22,10 +39,10 @@ interface RenderBody {
   webpQuality?: number;
 }
 
-function jsonResponse(data: object, status: number) {
+function jsonResponse(data: object, status: number, req: Request) {
   return new Response(JSON.stringify(data), {
     status,
-    headers: { "Content-Type": "application/json", ...corsHeaders },
+    headers: { "Content-Type": "application/json", ...corsHeaders(req) },
   });
 }
 
@@ -64,15 +81,24 @@ export async function POST(req: Request) {
     const {
       html,
       selector = ".slide",
-      width = 540,
-      height = 675,
-      scale = 4,
       formats = ["png", "webp", "pdf"],
       webpQuality = 95,
     } = body;
 
     if (!html?.trim()) {
-      return jsonResponse({ error: "HTML is required" }, 400);
+      return jsonResponse({ error: "HTML is required" }, 400, req);
+    }
+
+    if (new TextEncoder().encode(html).length > MAX_HTML_BYTES) {
+      return jsonResponse({ error: "HTML payload exceeds 512 KB limit" }, 400, req);
+    }
+
+    const width = Math.min(Math.max(body.width ?? 540, 1), MAX_WIDTH);
+    const height = Math.min(Math.max(body.height ?? 675, 1), MAX_HEIGHT);
+    const scale = Math.min(Math.max(body.scale ?? 4, 1), MAX_SCALE);
+    const safeFormats = formats.filter((f) => VALID_FORMATS.has(f));
+    if (safeFormats.length === 0) {
+      return jsonResponse({ error: "No valid formats specified" }, 400, req);
     }
 
     browser = await getBrowser();
@@ -92,6 +118,16 @@ export async function POST(req: Request) {
       return jsonResponse(
         { error: `No elements found for selector "${selector}"` },
         400,
+        req,
+      );
+    }
+
+    if (slides.length > MAX_SLIDES) {
+      await browser.close();
+      return jsonResponse(
+        { error: `Too many slides (${slides.length}). Maximum is ${MAX_SLIDES}.` },
+        400,
+        req,
       );
     }
 
@@ -100,7 +136,7 @@ export async function POST(req: Request) {
     for (let i = 0; i < slides.length; i++) {
       const num = String(i + 1).padStart(2, "0");
 
-      if (formats.includes("png")) {
+      if (safeFormats.includes("png")) {
         const buf = await slides[i].screenshot({
           type: "png",
           encoding: "binary",
@@ -108,7 +144,7 @@ export async function POST(req: Request) {
         zip.file(`slide-${num}.png`, buf);
       }
 
-      if (formats.includes("webp")) {
+      if (safeFormats.includes("webp")) {
         const buf = await slides[i].screenshot({
           type: "webp",
           quality: webpQuality,
@@ -118,7 +154,7 @@ export async function POST(req: Request) {
       }
     }
 
-    if (formats.includes("pdf")) {
+    if (safeFormats.includes("pdf")) {
       await page.setContent(html, { waitUntil: "domcontentloaded" });
       await page.evaluateHandle("document.fonts.ready");
       await page.addStyleTag({
@@ -153,16 +189,16 @@ export async function POST(req: Request) {
       headers: {
         "Content-Type": "application/zip",
         "Content-Disposition": 'attachment; filename="slides.zip"',
-        ...corsHeaders,
+        ...corsHeaders(req),
       },
     });
   } catch (err: unknown) {
     if (browser) await browser.close();
     const message = err instanceof Error ? err.message : "Unknown error";
-    return jsonResponse({ error: message }, 500);
+    return jsonResponse({ error: message }, 500, req);
   }
 }
 
-export async function OPTIONS() {
-  return new Response(null, { status: 204, headers: corsHeaders });
+export async function OPTIONS(req: Request) {
+  return new Response(null, { status: 204, headers: corsHeaders(req) });
 }
