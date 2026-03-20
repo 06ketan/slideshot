@@ -1,3 +1,5 @@
+import path from "path";
+import fs from "fs";
 import puppeteer from "puppeteer-core";
 import chromium from "@sparticuz/chromium";
 import JSZip from "jszip";
@@ -36,10 +38,21 @@ async function getBrowser() {
     });
   }
 
+  let executablePath: string;
+  const binPath = path.join(
+    process.cwd(),
+    "node_modules/@sparticuz/chromium/bin",
+  );
+  if (fs.existsSync(binPath)) {
+    executablePath = await chromium.executablePath(binPath);
+  } else {
+    executablePath = await chromium.executablePath();
+  }
+
   return puppeteer.launch({
     args: chromium.args,
     defaultViewport: null,
-    executablePath: await chromium.executablePath(),
+    executablePath,
     headless: true,
   });
 }
