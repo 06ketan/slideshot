@@ -16,7 +16,6 @@ import {
   Sparkles,
   Globe,
   MousePointerClick,
-  Clock,
   Workflow,
   ExternalLink,
 } from "lucide-react";
@@ -404,13 +403,13 @@ export default async function HomePage() {
       </section>
 
       {/* PRIVACY FIRST */}
-      <section className="border-b-[3px] border-[#0A0A0A]">
+      <section className="bg-[#FFD233] border-b-[3px] border-[#0A0A0A]">
         <div className="max-w-7xl mx-auto px-6 py-20">
           <ScrollReveal className="text-center mb-12">
             <h2 className="font-[var(--font-bebas-neue)] text-5xl md:text-6xl text-[#0A0A0A] mb-3">
               PRIVACY FIRST
             </h2>
-            <p className="text-[#666] text-lg font-medium max-w-xl mx-auto">
+            <p className="text-[#0A0A0A]/70 text-lg font-medium max-w-xl mx-auto">
               Your data never leaves your machine. No tracking, no analytics, no cloud uploads.
             </p>
           </ScrollReveal>
@@ -418,8 +417,8 @@ export default async function HomePage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             <ScrollReveal delay={0}>
               <div className="border-[3px] border-[#0A0A0A] shadow-[5px_5px_0px_0px_#0A0A0A] p-8 bg-white text-center">
-                <div className="w-14 h-14 bg-[#FFD233] border-[3px] border-[#0A0A0A] flex items-center justify-center mx-auto mb-5">
-                  <Shield size={28} className="text-[#0A0A0A]" />
+                <div className="w-14 h-14 bg-[#0A0A0A] border-[3px] border-[#0A0A0A] flex items-center justify-center mx-auto mb-5">
+                  <Shield size={28} className="text-[#FFD233]" />
                 </div>
                 <h3 className="font-[var(--font-bebas-neue)] text-2xl text-[#0A0A0A] mb-2 tracking-wide">
                   NO DATA STORED
@@ -431,8 +430,8 @@ export default async function HomePage() {
             </ScrollReveal>
             <ScrollReveal delay={0.05}>
               <div className="border-[3px] border-[#0A0A0A] shadow-[5px_5px_0px_0px_#0A0A0A] p-8 bg-white text-center">
-                <div className="w-14 h-14 bg-[#FFD233] border-[3px] border-[#0A0A0A] flex items-center justify-center mx-auto mb-5">
-                  <Eye size={28} className="text-[#0A0A0A]" />
+                <div className="w-14 h-14 bg-[#0A0A0A] border-[3px] border-[#0A0A0A] flex items-center justify-center mx-auto mb-5">
+                  <Eye size={28} className="text-[#FFD233]" />
                 </div>
                 <h3 className="font-[var(--font-bebas-neue)] text-2xl text-[#0A0A0A] mb-2 tracking-wide">
                   ZERO TRACKING
@@ -444,8 +443,8 @@ export default async function HomePage() {
             </ScrollReveal>
             <ScrollReveal delay={0.1}>
               <div className="border-[3px] border-[#0A0A0A] shadow-[5px_5px_0px_0px_#0A0A0A] p-8 bg-white text-center">
-                <div className="w-14 h-14 bg-[#FFD233] border-[3px] border-[#0A0A0A] flex items-center justify-center mx-auto mb-5">
-                  <Sparkles size={28} className="text-[#0A0A0A]" />
+                <div className="w-14 h-14 bg-[#0A0A0A] border-[3px] border-[#0A0A0A] flex items-center justify-center mx-auto mb-5">
+                  <Sparkles size={28} className="text-[#FFD233]" />
                 </div>
                 <h3 className="font-[var(--font-bebas-neue)] text-2xl text-[#0A0A0A] mb-2 tracking-wide">
                   100% OPEN SOURCE
@@ -471,13 +470,13 @@ export default async function HomePage() {
       </section>
 
       {/* FEATURES */}
-      <section className="bg-[#FFD233] border-b-[3px] border-[#0A0A0A]">
+      <section className="border-b-[3px] border-[#0A0A0A]">
         <div className="max-w-7xl mx-auto px-6 py-20">
           <ScrollReveal className="text-center mb-12">
             <h2 className="font-[var(--font-bebas-neue)] text-5xl md:text-6xl text-[#0A0A0A] mb-3">
               EVERYTHING YOU NEED
             </h2>
-            <p className="text-[#0A0A0A]/70 text-lg font-medium max-w-xl mx-auto">
+            <p className="text-[#666] text-lg font-medium max-w-xl mx-auto">
               From AI-generated prompts to high-res exports, slideshot handles the full pipeline.
             </p>
           </ScrollReveal>
@@ -488,7 +487,7 @@ export default async function HomePage() {
                 icon={<Palette size={24} />}
                 title="AI Prompt Templates"
                 description="8 built-in style variants: minimal, monospace, bold social, data cards, corporate, dark neon, editorial, and browser-shell."
-                accent="#FFFDF5"
+                accent="#FFD233"
               />
             </ScrollReveal>
             <ScrollReveal delay={0.05}>
@@ -512,25 +511,25 @@ export default async function HomePage() {
       </section>
 
       {/* CHATGPT CUSTOM GPT BANNER */}
-      <section className="border-b-[3px] border-[#0A0A0A]">
-        <div className="max-w-7xl mx-auto px-6 py-12">
+      <section className="bg-[#0A0A0A] border-b-[3px] border-[#0A0A0A]">
+        <div className="max-w-7xl mx-auto px-6 py-16">
           <ScrollReveal>
-            <div className="border-[3px] border-[#0A0A0A] shadow-[5px_5px_0px_0px_#0A0A0A] bg-white p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center gap-6">
-              <div className="w-14 h-14 bg-[#0A0A0A] border-[3px] border-[#0A0A0A] flex items-center justify-center shrink-0">
-                <Sparkles size={24} className="text-[#FFD233]" />
+            <div className="border-[3px] border-[#FFD233] p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center gap-6">
+              <div className="w-14 h-14 bg-[#FFD233] border-[3px] border-[#FFD233] flex items-center justify-center shrink-0">
+                <Sparkles size={24} className="text-[#0A0A0A]" />
               </div>
               <div className="flex-1">
-                <h3 className="font-[var(--font-bebas-neue)] text-2xl text-[#0A0A0A] tracking-wide mb-1">
+                <h3 className="font-[var(--font-bebas-neue)] text-2xl text-[#FFD233] tracking-wide mb-1">
                   USE WITH CHATGPT CUSTOM GPTS
                 </h3>
-                <p className="text-sm text-[#666] leading-relaxed">
+                <p className="text-sm text-white/60 leading-relaxed">
                   Create a Custom GPT with our system prompt from the gallery. ChatGPT generates
                   slideshot-compatible HTML -- paste the output into the editor or pipe it through the CLI.
                 </p>
               </div>
               <Link
                 href="/gallery"
-                className="inline-flex items-center gap-2 bg-[#FFD233] text-[#0A0A0A] font-bold px-6 py-3 border-[3px] border-[#0A0A0A] shadow-[3px_3px_0px_0px_#0A0A0A] hover:shadow-[5px_5px_0px_0px_#0A0A0A] hover:-translate-x-[1px] hover:-translate-y-[1px] active:shadow-none active:translate-x-[3px] active:translate-y-[3px] transition-all text-sm shrink-0"
+                className="inline-flex items-center gap-2 bg-[#FFD233] text-[#0A0A0A] font-bold px-6 py-3 border-[3px] border-[#FFD233] shadow-[3px_3px_0px_0px_#FFD233] hover:shadow-[5px_5px_0px_0px_#FFD233] hover:-translate-x-[1px] hover:-translate-y-[1px] active:shadow-none active:translate-x-[3px] active:translate-y-[3px] transition-all text-sm shrink-0"
               >
                 Get Prompts <ArrowRight size={14} />
               </Link>
