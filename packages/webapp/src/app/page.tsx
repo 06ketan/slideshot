@@ -22,6 +22,7 @@ import {
 import PromptBlocks from "@/components/PromptBlocks";
 import HeroTerminal from "@/components/HeroTerminal";
 import ScrollReveal from "@/components/ScrollReveal";
+import CopyBlock from "@/components/CopyBlock";
 
 async function getStats() {
   try {
@@ -52,7 +53,7 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen bg-[#FFFDF5] flex flex-col">
-      <Navbar stars={stats.stars} />
+      <Navbar />
 
       {/* HERO */}
       <section className="border-b-[3px] border-[#0A0A0A]">
@@ -76,16 +77,18 @@ export default async function HomePage() {
                     SLIDES
                   </span>
                 </span>
-              </h1>
+          </h1>
 
               <p className="text-lg font-medium text-[#444] max-w-md mb-4 leading-relaxed animate-slide-in-line" style={{ animationDelay: "0.35s" }}>
                 Paste HTML+CSS, get high-res PNG, WebP &amp; PDF carousels.
                 Use the web editor, CLI, or MCP server.
               </p>
 
-              <code className="inline-block text-xs font-mono bg-[#0A0A0A] text-[#FFD233] px-4 py-2 border-[3px] border-[#0A0A0A] mb-8 animate-slide-in-line overflow-x-auto max-w-full" style={{ animationDelay: "0.45s" }}>
-                npx slideshot ./slides.html --scale 4
-              </code>
+              <CopyBlock text="npx slideshot ./slides.html --scale 4" className="inline-block mb-8 animate-slide-in-line max-w-full" dark>
+                <code className="block text-xs font-mono bg-[#0A0A0A] text-[#FFD233] px-4 py-2 pr-10 border-[3px] border-[#0A0A0A] whitespace-nowrap overflow-x-auto" style={{ animationDelay: "0.45s" }}>
+                  npx slideshot ./slides.html --scale 4
+                </code>
+              </CopyBlock>
 
               <div className="flex flex-wrap gap-4 animate-slide-in-line" style={{ animationDelay: "0.55s" }}>
                 <Link
@@ -132,7 +135,7 @@ export default async function HomePage() {
                 >
                   <span className="w-2 h-2 bg-[#FFD233] shrink-0" />
                   {item}
-                </span>
+          </span>
               ))}
             </div>
           ))}
@@ -190,7 +193,7 @@ export default async function HomePage() {
       </section>
 
       {/* MCP -- LET AI DO IT */}
-      <section className="bg-[#0A0A0A] border-b-[3px] border-[#0A0A0A]">
+      <section className="bg-[#0A0A0A] border-b-[3px] border-[#0A0A0A] ">
         <div className="max-w-7xl mx-auto px-6 py-20">
           <ScrollReveal>
             <div className="flex items-center gap-3 mb-3">
@@ -233,45 +236,127 @@ export default async function HomePage() {
             </div>
           </ScrollReveal>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Setup cards 2x2 */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
             <ScrollReveal delay={0.15}>
-              <div className="border-[3px] border-[#FFD233] p-6">
+              <div className="border-[3px] border-[#FFD233] p-6 h-full">
                 <h3 className="font-[var(--font-bebas-neue)] text-2xl text-[#FFD233] tracking-wide mb-3">
-                  INSTALL IN 10 SECONDS
+                  CLAUDE DESKTOP
                 </h3>
-                <code className="block text-sm font-mono bg-[#12122A] border-[3px] border-[#2A2A44] px-4 py-3 text-[#FFD233] leading-relaxed overflow-x-auto">
-                  npm i -g slideshot-mcp
-                </code>
-                <p className="text-white/50 text-sm mt-3">
-                  Then add it to your AI tool&apos;s MCP config. That&apos;s it.
+                <p className="text-white/50 text-xs mb-3 font-mono break-all">
+                  ~/Library/Application Support/Claude/claude_desktop_config.json
                 </p>
+                <CopyBlock text={`{\n  "mcpServers": {\n    "slideshot": {\n      "command": "npx",\n      "args": ["-y", "slideshot-mcp"]\n    }\n  }\n}`} dark multiline>
+                  <pre className="text-xs font-mono bg-[#12122A] border-[3px] border-[#2A2A44] px-4 py-3 pr-10 text-[#FFD233] leading-relaxed whitespace-pre overflow-x-auto">{`{
+  "mcpServers": {
+    "slideshot": {
+      "command": "npx",
+      "args": ["-y", "slideshot-mcp"]
+    }
+  }
+}`}</pre>
+                </CopyBlock>
+              </div>
+            </ScrollReveal>
+            <ScrollReveal delay={0.2}>
+              <div className="border-[3px] border-[#FFD233] p-6 h-full">
+                <h3 className="font-[var(--font-bebas-neue)] text-2xl text-[#FFD233] tracking-wide mb-3">
+                  CURSOR IDE
+                </h3>
+                <p className="text-white/50 text-xs mb-3 font-mono">
+                  .cursor/mcp.json
+                </p>
+                <CopyBlock text={`{\n  "mcpServers": {\n    "slideshot": {\n      "command": "npx",\n      "args": ["-y", "slideshot-mcp"]\n    }\n  }\n}`} dark multiline>
+                  <pre className="text-xs font-mono bg-[#12122A] border-[3px] border-[#2A2A44] px-4 py-3 pr-10 text-[#FFD233] leading-relaxed whitespace-pre overflow-x-auto">{`{
+  "mcpServers": {
+    "slideshot": {
+      "command": "npx",
+      "args": ["-y", "slideshot-mcp"]
+    }
+  }
+}`}</pre>
+                </CopyBlock>
+              </div>
+            </ScrollReveal>
+            <ScrollReveal delay={0.25}>
+              <div className="border-[3px] border-[#2A2A44] p-6 h-full">
+                <h3 className="font-[var(--font-bebas-neue)] text-2xl text-[#FFD233] tracking-wide mb-3">
+                  AVAILABLE TOOLS
+                </h3>
+                <div className="space-y-4">
+                  <div>
+                    <code className="text-sm font-mono text-[#FFD233] font-bold">render_html_to_images</code>
+                    <p className="text-white/50 text-xs mt-1 leading-relaxed">
+                      Render HTML slides to PNG, WebP, and PDF files. Pass html string, output directory, selector, dimensions, scale (1-6x), and formats.
+                    </p>
+                  </div>
+                  <div className="border-t border-[#2A2A44] pt-4">
+                    <code className="text-sm font-mono text-[#FFD233] font-bold">get_slide_prompt</code>
+                    <p className="text-white/50 text-xs mt-1 leading-relaxed">
+                      Returns an AI prompt template for generating slideshot-compatible HTML. Choose &quot;generic&quot; or &quot;branded&quot; variant.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </ScrollReveal>
+            <ScrollReveal delay={0.3}>
+              <div className="border-[3px] border-[#2A2A44] p-6 h-full">
+                <h3 className="font-[var(--font-bebas-neue)] text-2xl text-[#FFD233] tracking-wide mb-3">
+                  WORKFLOW
+                </h3>
+                <div className="space-y-4">
+                  {[
+                    { n: "01", text: "Ask AI to use get_slide_prompt for the prompt template" },
+                    { n: "02", text: "Provide your content topic -- AI generates slide HTML" },
+                    { n: "03", text: "AI calls render_html_to_images with the HTML and output path" },
+                    { n: "04", text: "Get PNG, WebP, and PDF files ready for LinkedIn, presentations, or anywhere" },
+                  ].map((step) => (
+                    <div key={step.n} className="flex gap-3 items-start">
+                      <span className="font-[var(--font-bebas-neue)] text-2xl text-[#FFD233] leading-none [-webkit-text-stroke:1px_#FFD233] shrink-0 w-8">
+                        {step.n}
+          </span>
+                      <p className="text-white/60 text-sm leading-relaxed">{step.text}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </ScrollReveal>
+      </div>
+
+          {/* HTTP API + npm banner */}
+          <ScrollReveal delay={0.35}>
+            <div className="border-[3px] border-[#FFD233] p-6 overflow-hidden">
+              <div className="min-w-0">
+                <h3 className="font-[var(--font-bebas-neue)] text-2xl text-[#FFD233] tracking-wide mb-2">
+                  NO MCP? USE THE HTTP API
+                </h3>
+                <p className="text-white/50 text-sm leading-relaxed mb-3">
+                  For ChatGPT Custom GPTs and OpenWebUI, import the OpenAPI spec as an Action or Tool. Same render + prompt endpoints, no MCP required.
+                </p>
+                <CopyBlock text="https://slideshot.vercel.app/api/openapi.json" dark>
+                  <code className="text-xs font-mono bg-[#12122A] border-[3px] border-[#2A2A44] px-4 py-2 pr-10 text-[#FFD233] block whitespace-nowrap overflow-x-auto">
+                    https://slideshot.vercel.app/api/openapi.json
+                  </code>
+                </CopyBlock>
+                <div className="flex flex-wrap gap-3 mt-4">
+                  <span className="text-[10px] font-bold tracking-wider uppercase bg-[#2A2A44] text-white/70 px-3 py-1.5 border-[3px] border-[#2A2A44]">
+                    ChatGPT Custom GPT → OpenAPI Action
+                  </span>
+                  <span className="text-[10px] font-bold tracking-wider uppercase bg-[#2A2A44] text-white/70 px-3 py-1.5 border-[3px] border-[#2A2A44]">
+                    OpenWebUI → OpenAPI Tool
+          </span>
+                </div>
                 <a
                   href="https://www.npmjs.com/package/slideshot-mcp"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 mt-4 text-xs font-bold text-[#FFD233] hover:text-white transition-colors duration-150"
+                  className="inline-flex items-center gap-2 bg-[#FFD233] text-[#0A0A0A] font-bold px-6 py-3 border-[3px] border-[#FFD233] hover:bg-white transition-colors duration-150 text-sm mt-4"
                 >
-                  View on npm <ExternalLink size={12} />
+                  View on npm <ExternalLink size={14} />
                 </a>
               </div>
-            </ScrollReveal>
-            <ScrollReveal delay={0.2}>
-              <div className="border-[3px] border-[#2A2A44] p-6">
-                <h3 className="font-[var(--font-bebas-neue)] text-2xl text-[#FFD233] tracking-wide mb-3">
-                  PRO TIP: SANDBOX ENVIRONMENTS
-                </h3>
-                <p className="text-white/60 text-sm leading-relaxed mb-3">
-                  In Claude and similar sandboxes, generated HTML is stored in{" "}
-                  <code className="text-[#FFD233] bg-[#12122A] px-1.5 py-0.5 text-xs">/tmp</code>.
-                  Pass the path directly to the MCP tool for instant rendering --
-                  no file upload needed.
-                </p>
-                <code className="block text-xs font-mono bg-[#12122A] border-[3px] border-[#2A2A44] px-4 py-3 text-[#FFD233] leading-relaxed overflow-x-auto">
-                  {`slideshot.render({ html_path: "/tmp/slides.html", scale: 4 })`}
-                </code>
-              </div>
-            </ScrollReveal>
-          </div>
+            </div>
+          </ScrollReveal>
         </div>
       </section>
 
@@ -314,7 +399,7 @@ export default async function HomePage() {
             </ScrollReveal>
 
             <ScrollReveal delay={0.1}>
-              <div className="bg-[#0A0A0A] border-[3px] border-[#0A0A0A] shadow-[8px_8px_0px_0px_#0A0A0A] overflow-hidden">
+              <div className="bg-[#0A0A0A] border-[3px] border-[#0A0A0A] shadow-[8px_8px_0px_0px_#0A0A0A] ">
                 <div className="flex items-center gap-2 px-4 h-10">
                   <div className="flex gap-[7px]">
                     <div className="w-[11px] h-[11px] rounded-full bg-[#FF6059]" />
@@ -328,7 +413,7 @@ export default async function HomePage() {
                 <div className="px-5 py-4 font-mono text-sm leading-loose">
                   <div className="text-white/50 mb-1"># Zero install -- just run it</div>
                   <div><span className="text-[#FFD233] font-bold">$</span> <span className="text-white">npx slideshot ./slides.html --scale 4</span></div>
-                  <div className="text-white/40 mt-3 mb-1"># Or install globally for speed</div>
+                  <div className="text-white/40 mt-3 mb-1"># Or install globally for speed & reusability</div>
                   <div><span className="text-[#FFD233] font-bold">$</span> <span className="text-white">npm i -g slideshot</span></div>
                   <div><span className="text-[#FFD233] font-bold">$</span> <span className="text-white">slideshot render ./deck.html --formats png,webp,pdf</span></div>
                   <div className="text-white/40 mt-3 mb-1"># Output</div>
@@ -379,7 +464,7 @@ export default async function HomePage() {
                 </div>
                 <span className="text-[10px] font-bold tracking-[3px] uppercase text-[#888]">
                   Web App
-                </span>
+          </span>
               </div>
               <h2 className="font-[var(--font-bebas-neue)] text-5xl md:text-6xl text-[#0A0A0A] mb-4">
                 PASTE. PREVIEW.
@@ -457,14 +542,14 @@ export default async function HomePage() {
           </div>
 
           <ScrollReveal delay={0.15} className="flex justify-center">
-            <a
-              href="https://github.com/06ketan/slideshot"
-              target="_blank"
-              rel="noopener noreferrer"
+          <a
+            href="https://github.com/06ketan/slideshot"
+            target="_blank"
+            rel="noopener noreferrer"
               className="inline-flex items-center gap-2 bg-[#0A0A0A] text-white font-bold px-6 py-3 border-[3px] border-[#0A0A0A] shadow-[5px_5px_0px_0px_#0A0A0A] hover:shadow-[8px_8px_0px_0px_#0A0A0A] hover:-translate-x-[1px] hover:-translate-y-[1px] active:shadow-none active:translate-x-[5px] active:translate-y-[5px] transition-all text-sm"
-            >
+          >
               <Star size={16} /> View Source on GitHub
-            </a>
+          </a>
           </ScrollReveal>
         </div>
       </section>
@@ -571,12 +656,14 @@ export default async function HomePage() {
               >
                 Browse Gallery
               </Link>
-            </div>
-            <div className="mt-8">
-              <code className="text-sm font-mono bg-[#0A0A0A] border-[3px] border-[#0A0A0A] px-4 py-2 text-[#FFD233] inline-block max-w-full overflow-x-auto">
-                npx slideshot ./slides.html
-              </code>
-            </div>
+          </div>
+            <div className="mt-8 inline-block max-w-full">
+              <CopyBlock text="npx slideshot ./slides.html" dark>
+                <code className="text-sm font-mono bg-[#0A0A0A] border-[3px] border-[#0A0A0A] px-4 py-2 pr-10 text-[#FFD233] block whitespace-nowrap">
+                  npx slideshot ./slides.html
+                </code>
+              </CopyBlock>
+          </div>
           </ScrollReveal>
         </div>
       </section>

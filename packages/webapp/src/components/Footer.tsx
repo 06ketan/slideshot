@@ -53,11 +53,11 @@ export default function Footer() {
               <FooterLink href="https://www.npmjs.com/package/slideshot" external>npm</FooterLink>
               <FooterLink href="https://www.npmjs.com/package/slideshot-mcp" external>MCP Server</FooterLink>
             </div>
-            <div className="mt-5">
+            {/* <div className="mt-5">
               <code className="text-[11px] font-mono bg-[#0A0A0A] border-[3px] border-[#0A0A0A] px-3 py-2 text-[#FFD233] block leading-relaxed overflow-x-auto">
                 npm i -g slideshot
               </code>
-            </div>
+            </div> */}
           </div>
         </div></ScrollReveal>
 
