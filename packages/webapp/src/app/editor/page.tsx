@@ -1,9 +1,8 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
-import { useEffect } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import Navbar from "@/components/Navbar";
-import { Copy, Check, RefreshCw, Download } from "lucide-react";
+import { RefreshCw, Download, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Maximize } from "lucide-react";
 
 const SAMPLE_HTML = `<!DOCTYPE html>
 <html lang="en">
@@ -42,26 +41,8 @@ body{background:#1A1A1A;padding:48px;font-family:'Space Mono',monospace;display:
 </body>
 </html>`;
 
-type Tab = "editor" | "prompts";
-type PromptVariant = "generic" | "branded" | "instagram-carousel" | "infographic" | "pitch-deck" | "dark-modern" | "editorial" | "obsio-carousel";
-
-const VARIANT_META: Record<PromptVariant, { name: string; style: string; palette: string[] }> = {
-  generic: { name: "Clean Minimal", style: "Inter, white/black", palette: ["#FFFFFF", "#1A1A1A", "#F5F5F5"] },
-  branded: { name: "Monospace", style: "Space Mono, teal accents", palette: ["#F0EDE7", "#00B894", "#1A1A1A"] },
-  "instagram-carousel": { name: "Bold Social", style: "Poppins, warm orange", palette: ["#FF6B35", "#1A1A1A", "#FFF8F0"] },
-  infographic: { name: "Data Cards", style: "DM Sans, green/amber", palette: ["#10B981", "#F59E0B", "#1A1A1A"] },
-  "pitch-deck": { name: "Corporate", style: "Inter, dark headers, red", palette: ["#0A0A0A", "#FF4444", "#E8E8E8"] },
-  "dark-modern": { name: "Dark Neon", style: "Coral/gold on dark", palette: ["#0A0A0F", "#FF6B6B", "#FFC107"] },
-  editorial: { name: "Editorial", style: "Serif, gold accents", palette: ["#FAF8F5", "#C9963B", "#2C2824"] },
-  "obsio-carousel": { name: "Browser Shell", style: "Bebas Neue, browser chrome", palette: ["#FFD233", "#12122A", "#0A0A0A"] },
-};
-
 export default function EditorPage() {
   const [html, setHtml] = useState(SAMPLE_HTML);
-  const [tab, setTab] = useState<Tab>("editor");
-  const [promptVariant, setPromptVariant] = useState<PromptVariant>("generic");
-  const [promptText, setPromptText] = useState<string>("Loading...");
-  const [promptLoading, setPromptLoading] = useState(false);
   const [selector, setSelector] = useState(".slide");
   const [width, setWidth] = useState(540);
   const [height, setHeight] = useState(675);
@@ -69,17 +50,32 @@ export default function EditorPage() {
   const [formats, setFormats] = useState({ png: true, webp: true, pdf: true });
   const [exporting, setExporting] = useState(false);
   const [status, setStatus] = useState("");
-  const [copied, setCopied] = useState(false);
+  const [showCode, setShowCode] = useState(true);
+  const [showPreview, setShowPreview] = useState(true);
+  const [previewZoom, setPreviewZoom] = useState(1);
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const previewContainerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    setPromptLoading(true);
-    fetch(`/api/prompt?variant=${promptVariant}`)
-      .then((r) => r.json())
-      .then((d) => setPromptText(d.prompt || d.error || "Not found"))
-      .catch(() => setPromptText("Failed to load prompt"))
-      .finally(() => setPromptLoading(false));
-  }, [promptVariant]);
+  const applyZoomToIframe = useCallback(() => {
+    const doc = iframeRef.current?.contentDocument;
+    if (doc?.body) doc.body.style.zoom = String(previewZoom);
+  }, [previewZoom]);
+
+  const autoFitOnLoad = useCallback(() => {
+    const doc = iframeRef.current?.contentDocument;
+    const container = previewContainerRef.current;
+    if (!doc?.body || !container) return;
+    doc.body.style.zoom = "1";
+    const contentW = doc.body.scrollWidth;
+    const containerW = container.clientWidth;
+    if (contentW > containerW && contentW > 0) {
+      const fit = +(containerW / contentW).toFixed(2);
+      doc.body.style.zoom = String(fit);
+      setPreviewZoom(fit);
+    } else {
+      doc.body.style.zoom = String(previewZoom);
+    }
+  }, [previewZoom]);
 
   const updatePreview = useCallback(() => {
     if (iframeRef.current) {
@@ -88,9 +84,10 @@ export default function EditorPage() {
         doc.open();
         doc.write(html);
         doc.close();
+        applyZoomToIframe();
       }
     }
-  }, [html]);
+  }, [html, applyZoomToIframe]);
 
   const handleExport = async () => {
     setExporting(true);
@@ -138,14 +135,47 @@ export default function EditorPage() {
   const toggleFormat = (f: keyof typeof formats) =>
     setFormats((prev) => ({ ...prev, [f]: !prev[f] }));
 
-  const copyPrompt = () => {
-    navigator.clipboard.writeText(promptText);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  const toggleCode = () => {
+    if (showCode && !showPreview) return;
+    setShowCode((p) => !p);
   };
 
+  const togglePreview = () => {
+    if (showPreview && !showCode) return;
+    setShowPreview((p) => !p);
+  };
+
+  const zoomIn = () => setPreviewZoom((z) => Math.min(2, +(z + 0.1).toFixed(1)));
+  const zoomOut = () => setPreviewZoom((z) => Math.max(0.25, +(z - 0.1).toFixed(1)));
+  const zoomFit = () => {
+    const doc = iframeRef.current?.contentDocument;
+    const container = previewContainerRef.current;
+    if (!doc?.body || !container) return;
+    doc.body.style.zoom = "1";
+    const contentW = doc.body.scrollWidth;
+    const containerW = container.clientWidth;
+    const fit = contentW > 0 ? Math.min(1, +(containerW / contentW).toFixed(2)) : 1;
+    doc.body.style.zoom = String(fit);
+    setPreviewZoom(fit);
+  };
+
+  useEffect(() => {
+    const iframe = iframeRef.current;
+    if (!iframe) return;
+    const doc = iframe.contentDocument;
+    if (!doc?.body) return;
+    doc.body.style.zoom = String(previewZoom);
+  }, [previewZoom]);
+
+  useEffect(() => {
+    const meta = document.querySelector('meta[name="viewport"]');
+    const original = meta?.getAttribute("content") || "";
+    meta?.setAttribute("content", "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no");
+    return () => { meta?.setAttribute("content", original); };
+  }, []);
+
   return (
-    <div className="flex flex-col h-screen bg-[#FFFDF5]">
+    <div className="flex flex-col h-dvh bg-[#FFFDF5] overflow-hidden" style={{ touchAction: "manipulation" }}>
       <Navbar />
 
       {/* Controls bar */}
@@ -212,7 +242,7 @@ export default function EditorPage() {
           <button
             onClick={handleExport}
             disabled={exporting}
-            className="flex items-center gap-1.5 bg-[#FFD233] text-[#0A0A0A] font-bold text-xs uppercase tracking-wider px-5 py-2 border-[3px] border-[#0A0A0A] shadow-[4px_4px_0px_0px_#0A0A0A] hover:shadow-[6px_6px_0px_0px_#0A0A0A] hover:-translate-x-[1px] hover:-translate-y-[1px] active:shadow-none active:translate-x-1 active:translate-y-1 disabled:opacity-50 disabled:cursor-wait transition-all"
+            className="flex items-center gap-1.5 bg-[#FFD233] text-[#0A0A0A] font-bold text-xs uppercase tracking-wider px-5 py-2 border-[3px] border-[#0A0A0A] shadow-[4px_4px_0px_0px_#0A0A0A] hover:shadow-[6px_6px_0px_0px_#0A0A0A] hover:-translate-x-px hover:-translate-y-px active:shadow-none active:translate-x-1 active:translate-y-1 disabled:opacity-50 disabled:cursor-wait transition-all"
           >
             <Download size={12} />
             {exporting ? "EXPORTING..." : "EXPORT"}
@@ -227,108 +257,110 @@ export default function EditorPage() {
 
       {/* Main content */}
       <div className="flex flex-1 min-h-0">
-        {/* Left: Code/Prompts */}
-        <div className="flex flex-col w-1/2 border-r-[3px] border-[#0A0A0A]">
-          <div className="flex shrink-0">
-            <button
-              onClick={() => setTab("editor")}
-              className={`px-5 py-2.5 text-xs uppercase tracking-widest font-black font-mono border-r-[3px] border-b-[3px] border-[#0A0A0A] ${
-                tab === "editor"
-                  ? "bg-[#FFD233] text-[#0A0A0A]"
-                  : "text-[#888] bg-[#F5F3EE] hover:bg-[#FFD233]/20"
-              }`}
-            >
-              HTML EDITOR
-            </button>
-            <button
-              onClick={() => setTab("prompts")}
-              className={`px-5 py-2.5 text-xs uppercase tracking-widest font-black font-mono border-b-[3px] border-[#0A0A0A] ${
-                tab === "prompts"
-                  ? "bg-[#FFD233] text-[#0A0A0A]"
-                  : "text-[#888] bg-[#F5F3EE] hover:bg-[#FFD233]/20"
-              }`}
-            >
-              AI PROMPTS
-            </button>
-            <div className="flex-1 border-b-[3px] border-[#0A0A0A] bg-[#FFFDF5]" />
-          </div>
-
-          {tab === "editor" ? (
-            <textarea
-              value={html}
-              onChange={(e) => setHtml(e.target.value)}
-              spellCheck={false}
-              className="flex-1 w-full p-4 bg-[#12122A] text-[#D4D4D8] font-mono text-xs leading-relaxed resize-none border-none focus:outline-none"
-              placeholder="Paste your HTML here..."
-            />
-          ) : (
-            <div className="flex-1 flex flex-col overflow-hidden">
-              <div className="flex items-center gap-2 px-4 py-2 border-b-[3px] border-[#0A0A0A] bg-[#FFFDF5] flex-wrap">
-                {(Object.keys(VARIANT_META) as PromptVariant[]).map((v) => (
-                  <button
-                    key={v}
-                    onClick={() => setPromptVariant(v)}
-                    className={`text-[10px] uppercase tracking-widest font-bold px-2.5 py-1 font-mono flex items-center gap-1.5 border-[3px] transition-all ${
-                      promptVariant === v
-                        ? "bg-[#FFD233] text-[#0A0A0A] border-[#0A0A0A] shadow-[2px_2px_0px_0px_#0A0A0A]"
-                        : "text-[#888] border-[#E5E3DE] hover:border-[#0A0A0A]"
-                    }`}
-                  >
-                    <span className="flex gap-0.5">
-                      {VARIANT_META[v].palette.slice(0, 3).map((c, i) => (
-                        <span key={i} className="w-2 h-2 inline-block border border-[#0A0A0A]" style={{ background: c }} />
-                      ))}
-                    </span>
-                    {VARIANT_META[v].name}
-                  </button>
-                ))}
-                <button
-                  onClick={copyPrompt}
-                  className="ml-auto flex items-center gap-1.5 text-xs uppercase tracking-wider font-bold bg-[#FFD233] text-[#0A0A0A] border-[3px] border-[#0A0A0A] px-3 py-1.5 shadow-[3px_3px_0px_0px_#0A0A0A] hover:shadow-[5px_5px_0px_0px_#0A0A0A] hover:-translate-x-[1px] hover:-translate-y-[1px] active:shadow-none active:translate-x-[3px] active:translate-y-[3px] transition-all"
-                >
-                  {copied ? <Check size={12} /> : <Copy size={12} />}
-                  {copied ? "COPIED!" : "COPY PROMPT"}
-                </button>
-              </div>
-              <div className="flex items-center gap-2 px-4 py-1.5 bg-[#12122A]">
-                <div className="flex gap-[5px]">
-                  <div className="w-[8px] h-[8px] rounded-full bg-[#FF6059]" />
-                  <div className="w-[8px] h-[8px] rounded-full bg-[#FEBC2E]" />
-                  <div className="w-[8px] h-[8px] rounded-full bg-[#2A2A44]" />
-                </div>
-                <span className="text-[10px] font-mono text-white/50 ml-2">
-                  {promptVariant}.md
-                </span>
-              </div>
-              <pre className="flex-1 overflow-auto p-4 text-xs leading-relaxed text-[#D4D4D8] font-mono whitespace-pre-wrap bg-[#12122A]">
-                {promptLoading ? "Loading..." : promptText}
-              </pre>
+        {/* Left: Code editor */}
+        <div
+          className={`flex flex-col border-r-[3px] border-[#0A0A0A] transition-all duration-200 ease-in-out min-h-0 ${
+            !showCode ? "w-0 overflow-hidden border-r-0" : showPreview ? "w-1/2" : "w-full"
+          }`}
+        >
+          <div className="flex items-center gap-2 px-4 py-2 bg-[#12122A] shrink-0 border-b-[3px] border-[#0A0A0A]">
+            <div className="flex gap-[6px]">
+              <div className="w-[10px] h-[10px] rounded-full bg-[#FF6059]" />
+              <div className="w-[10px] h-[10px] rounded-full bg-[#FEBC2E]" />
+              <div className="w-[10px] h-[10px] rounded-full bg-[#2A2A44]" />
             </div>
-          )}
+            <span className="text-[10px] font-mono font-bold text-[#FFD233] uppercase tracking-widest ml-2">
+              HTML Editor
+            </span>
+          </div>
+          <textarea
+            value={html}
+            onChange={(e) => setHtml(e.target.value)}
+            spellCheck={false}
+            className="flex-1 w-full p-4 bg-[#12122A] text-[#D4D4D8] font-mono text-xs leading-relaxed resize-none border-none focus:outline-none min-h-0"
+            placeholder="Paste your HTML here..."
+          />
+        </div>
+
+        {/* Collapse divider */}
+        <div className="flex flex-col items-center justify-center bg-[#F5F3EE] border-r-[3px] border-[#0A0A0A] shrink-0 w-8 gap-1">
+          <button
+            onClick={toggleCode}
+            className={`w-6 h-6 flex items-center justify-center border-2 border-[#0A0A0A] transition-all duration-150 ${
+              showCode && !showPreview
+                ? "bg-[#E5E3DE] text-[#aaa] cursor-not-allowed"
+                : "bg-[#FFD233] text-[#0A0A0A] hover:bg-[#0A0A0A] hover:text-[#FFD233]"
+            }`}
+            title={showCode ? "Collapse code" : "Expand code"}
+          >
+            {showCode ? <ChevronLeft size={12} /> : <ChevronRight size={12} />}
+          </button>
+          <button
+            onClick={togglePreview}
+            className={`w-6 h-6 flex items-center justify-center border-2 border-[#0A0A0A] transition-all duration-150 ${
+              showPreview && !showCode
+                ? "bg-[#E5E3DE] text-[#aaa] cursor-not-allowed"
+                : "bg-[#FFD233] text-[#0A0A0A] hover:bg-[#0A0A0A] hover:text-[#FFD233]"
+            }`}
+            title={showPreview ? "Collapse preview" : "Expand preview"}
+          >
+            {showPreview ? <ChevronRight size={12} /> : <ChevronLeft size={12} />}
+          </button>
         </div>
 
         {/* Right: Preview */}
-        <div className="flex flex-col w-1/2 bg-[#FFFDF5]">
+        <div
+          className={`flex flex-col bg-[#FFFDF5] transition-all duration-200 ease-in-out min-h-0 ${
+            !showPreview ? "w-0 overflow-hidden" : showCode ? "w-1/2" : "w-full"
+          }`}
+        >
           <div className="flex items-center justify-between px-4 py-2.5 border-b-[3px] border-[#0A0A0A] bg-[#F5F3EE] shrink-0">
             <span className="text-xs uppercase tracking-widest text-[#666] font-bold">
               PREVIEW
             </span>
-            <button
-              onClick={updatePreview}
-              className="flex items-center gap-1.5 text-xs uppercase tracking-wider font-bold text-[#0A0A0A] border-[3px] border-[#0A0A0A] px-3 py-1 shadow-[3px_3px_0px_0px_#0A0A0A] hover:shadow-[5px_5px_0px_0px_#0A0A0A] hover:-translate-x-[1px] hover:-translate-y-[1px] active:shadow-none active:translate-x-[3px] active:translate-y-[3px] transition-all bg-white"
-            >
-              <RefreshCw size={12} />
-              REFRESH
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={zoomOut}
+                className="w-6 h-6 flex items-center justify-center bg-white border-2 border-[#0A0A0A] hover:bg-[#FFD233] transition-all duration-150"
+                title="Zoom out"
+              >
+                <ZoomOut size={12} />
+              </button>
+              <span className="text-[10px] font-mono font-bold text-[#0A0A0A] w-10 text-center">
+                {Math.round(previewZoom * 100)}%
+              </span>
+              <button
+                onClick={zoomIn}
+                className="w-6 h-6 flex items-center justify-center bg-white border-2 border-[#0A0A0A] hover:bg-[#FFD233] transition-all duration-150"
+                title="Zoom in"
+              >
+                <ZoomIn size={12} />
+              </button>
+              <button
+                onClick={zoomFit}
+                className="w-6 h-6 flex items-center justify-center bg-white border-2 border-[#0A0A0A] hover:bg-[#FFD233] transition-all duration-150"
+                title="Fit to width"
+              >
+                <Maximize size={12} />
+              </button>
+              <div className="w-px h-5 bg-[#0A0A0A]/20 mx-1" />
+              <button
+                onClick={updatePreview}
+                className="flex items-center gap-1.5 text-xs uppercase tracking-wider font-bold text-[#0A0A0A] border-[3px] border-[#0A0A0A] px-3 py-1 shadow-[3px_3px_0px_0px_#0A0A0A] hover:shadow-[5px_5px_0px_0px_#0A0A0A] hover:-translate-x-px hover:-translate-y-px active:shadow-none active:translate-x-[3px] active:translate-y-[3px] transition-all bg-white"
+              >
+                <RefreshCw size={12} />
+                REFRESH
+              </button>
+            </div>
           </div>
-          <div className="flex-1 overflow-auto p-6 flex justify-center bg-[#F5F3EE]">
+          <div ref={previewContainerRef} className="flex-1 overflow-hidden min-h-0 bg-[#F5F3EE]">
             <iframe
               ref={iframeRef}
               srcDoc={html}
-              className="border-[3px] border-[#0A0A0A] shadow-[5px_5px_0px_0px_#0A0A0A] bg-white"
-              style={{ width: width + 96, minHeight: height + 96 }}
+              className="w-full h-full border-none bg-white"
               sandbox="allow-same-origin allow-scripts"
               title="Slide preview"
+              onLoad={autoFitOnLoad}
             />
           </div>
         </div>
