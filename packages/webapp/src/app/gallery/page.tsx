@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import GalleryCard from "@/components/GalleryCard";
 import CodePreviewModal from "@/components/CodePreviewModal";
 import { SAMPLE_HTML } from "@/lib/sample-html";
+import ScrollReveal from "@/components/ScrollReveal";
 
 type VariantKey =
   | "generic"
@@ -110,20 +111,24 @@ export default function GalleryPage() {
       <main className="flex-1">
         <section className="bg-[#FFD233] border-b-[3px] border-[#0A0A0A]">
           <div className="max-w-7xl mx-auto px-6 py-16 md:py-20">
-            <h1 className="font-[var(--font-bebas-neue)] text-6xl md:text-8xl text-[#0A0A0A] mb-4">
-              PROMPT GALLERY
-            </h1>
-            <p className="text-lg font-medium text-[#0A0A0A]/70 max-w-2xl">
-              Browse ready-made slide templates. Click any card to view the
-              full HTML+CSS code and a live preview. Copy and paste into
-              the editor or your AI tool.
-            </p>
+            <ScrollReveal animation="animate-slide-in-line">
+              <h1 className="font-[var(--font-bebas-neue)] text-6xl md:text-8xl text-[#0A0A0A] mb-4">
+                PROMPT GALLERY
+              </h1>
+            </ScrollReveal>
+            <ScrollReveal delay={0.1}>
+              <p className="text-lg font-medium text-[#0A0A0A]/70 max-w-2xl">
+                Browse ready-made slide templates. Click any card to view the
+                full HTML+CSS code and a live preview. Copy and paste into
+                the editor or your AI tool.
+              </p>
+            </ScrollReveal>
           </div>
         </section>
 
         <section className="max-w-7xl mx-auto px-6 py-12">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {(Object.keys(GALLERY_ITEMS) as VariantKey[]).map((key, idx) => {
+            {(Object.keys(GALLERY_ITEMS) as VariantKey[]).map((key) => {
               const item = GALLERY_ITEMS[key];
               return (
                 <GalleryCard
@@ -134,7 +139,6 @@ export default function GalleryPage() {
                   featured={item.featured}
                   sampleHtml={SAMPLE_HTML[key]}
                   onClick={() => openModal(key)}
-                  animationDelay={idx * 50}
                 />
               );
             })}

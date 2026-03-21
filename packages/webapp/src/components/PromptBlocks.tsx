@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Copy, Check, FileCode, Paintbrush } from "lucide-react";
+import ScrollReveal from "@/components/ScrollReveal";
 
 const BASE_PROMPT = `You are a slide layout engine. Given content (text, lists, stats), generate a single self-contained HTML file that works with slideshot.
 
@@ -129,7 +130,7 @@ export default function PromptBlocks() {
   return (
     <section className="bg-[#FFFDF5] border-y-[3px] border-[#0A0A0A]">
       <div className="max-w-7xl mx-auto px-6 py-20">
-        <div className="text-center mb-12">
+        <ScrollReveal className="text-center mb-12">
           <h2 className="font-[var(--font-bebas-neue)] text-5xl md:text-6xl text-[#0A0A0A] mb-3">
             SYSTEM PROMPTS
           </h2>
@@ -138,25 +139,29 @@ export default function PromptBlocks() {
             structure from your content, the other extracts a design system
             from a reference image.
           </p>
-        </div>
+        </ScrollReveal>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <PromptCard
-            icon={<FileCode size={20} />}
-            title="Base Prompt"
-            subtitle="Content to Slide Structure"
-            description="Turns your text, lists, and data into slideshot-compatible HTML. Handles multi-slide splitting, typography, and layout."
-            prompt={BASE_PROMPT}
-            accentColor="#FFD233"
-          />
-          <PromptCard
-            icon={<Paintbrush size={20} />}
-            title="Style Prompt"
-            subtitle="Image to Design System"
-            description="Reverse-engineers a visual style from a reference image into CSS tokens, typography, and colour palette."
-            prompt={STYLE_PROMPT}
-            accentColor="#FFD233"
-          />
+          <ScrollReveal delay={0}>
+            <PromptCard
+              icon={<FileCode size={20} />}
+              title="Base Prompt"
+              subtitle="Content to Slide Structure"
+              description="Turns your text, lists, and data into slideshot-compatible HTML. Handles multi-slide splitting, typography, and layout."
+              prompt={BASE_PROMPT}
+              accentColor="#FFD233"
+            />
+          </ScrollReveal>
+          <ScrollReveal delay={0.1}>
+            <PromptCard
+              icon={<Paintbrush size={20} />}
+              title="Style Prompt"
+              subtitle="Image to Design System"
+              description="Reverse-engineers a visual style from a reference image into CSS tokens, typography, and colour palette."
+              prompt={STYLE_PROMPT}
+              accentColor="#FFD233"
+            />
+          </ScrollReveal>
         </div>
       </div>
     </section>

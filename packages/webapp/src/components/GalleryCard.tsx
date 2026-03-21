@@ -1,6 +1,7 @@
 "use client";
 
 import { Eye } from "lucide-react";
+import { useInView } from "@/hooks/useInView";
 
 export default function GalleryCard({
   name,
@@ -9,7 +10,6 @@ export default function GalleryCard({
   featured,
   sampleHtml,
   onClick,
-  animationDelay,
 }: {
   name: string;
   style: string;
@@ -17,19 +17,20 @@ export default function GalleryCard({
   featured?: boolean;
   sampleHtml?: string;
   onClick: () => void;
-  animationDelay?: number;
 }) {
+  const { ref, inView } = useInView<HTMLButtonElement>({ threshold: 0.1 });
+
   const slideCount = sampleHtml
     ? (sampleHtml.match(/class="slide"/g) || []).length
     : 0;
 
   return (
     <button
+      ref={ref}
       onClick={onClick}
-      className={`group text-left border-[3px] border-[#0A0A0A] shadow-[5px_5px_0px_0px_#0A0A0A] hover:shadow-[8px_8px_0px_0px_#0A0A0A] hover:-translate-x-px hover:-translate-y-px transition-all duration-150 animate-fade-in-up ${
-        featured ? "bg-[#FFD233]/10" : "bg-white"
-      }`}
-      style={animationDelay ? { animationDelay: `${animationDelay}ms` } : undefined}
+      className={`group text-left border-[3px] border-[#0A0A0A] shadow-[5px_5px_0px_0px_#0A0A0A] hover:shadow-[8px_8px_0px_0px_#0A0A0A] hover:-translate-x-px hover:-translate-y-px transition-all duration-150 ${
+        inView ? "animate-fade-in-up" : "opacity-0"
+      } ${featured ? "bg-[#FFD233]/10" : "bg-white"}`}
     >
       {sampleHtml ? (
         <div className="h-[200px] overflow-hidden border-b-[3px] border-[#0A0A0A] bg-[#1a1a1a] relative">

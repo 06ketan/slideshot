@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { Github, ExternalLink } from "lucide-react";
+import ScrollReveal from "@/components/ScrollReveal";
 
 export default function Footer() {
   return (
     <footer className="bg-[#FFFDF5] border-t-[3px] border-[#0A0A0A] text-[#0A0A0A]">
       <div className="max-w-7xl mx-auto px-6 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+        <ScrollReveal><div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
           {/* Brand */}
           <div className="md:col-span-2">
             <div className="flex items-center gap-2.5 mb-4">
@@ -58,13 +59,13 @@ export default function Footer() {
               </code>
             </div>
           </div>
-        </div>
+        </div></ScrollReveal>
 
         {/* Bottom bar */}
-        <div className="border-t-2 border-[#E5E3DE] pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <code className="text-xs font-mono bg-[#0A0A0A] border-[3px] border-[#0A0A0A] w-full px-3 py-2 text-[#FFD233] overflow-x-auto max-w-full block">
+        <ScrollReveal delay={0.1}><div className="border-t-2 border-[#E5E3DE] pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+          {/* <code className="text-xs font-mono bg-[#0A0A0A] border-[3px] border-[#0A0A0A] w-full px-3 py-2 text-[#FFD233] overflow-x-auto max-w-full block">
             npx slideshot ./slides.html --scale 4
-          </code>
+          </code> */}
           <span className="text-xs text-[#888]">
             Built by{" "}
             <a
@@ -76,7 +77,7 @@ export default function Footer() {
               Ketan
             </a>
           </span>
-        </div>
+        </div></ScrollReveal>
       </div>
     </footer>
   );
