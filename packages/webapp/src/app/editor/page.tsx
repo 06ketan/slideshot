@@ -11,7 +11,7 @@ const SAMPLE_HTML = `<!DOCTYPE html>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
-body{background:#1A1A1A;padding:48px;font-family:'Space Mono',monospace;display:flex;flex-direction:column;align-items:flex-start;gap:40px;}
+body{background:#1A1A1A;padding:12px;font-family:'Space Mono',monospace;display:flex;flex-direction:column;align-items:flex-start;gap:40px;}
 .slide{position:relative;width:540px;height:675px;background:#F0EDE7;padding:32px 40px 52px;overflow:hidden;font-family:'Space Mono',monospace;flex-shrink:0;}
 .slide::before{content:'';position:absolute;top:24px;right:24px;width:80px;height:80px;border-top:1px solid #B8B4AD;border-right:1px solid #B8B4AD;pointer-events:none;}
 .slide::after{content:'';position:absolute;bottom:24px;left:24px;width:60px;height:60px;border-bottom:1px solid #B8B4AD;border-left:1px solid #B8B4AD;pointer-events:none;}
@@ -54,40 +54,30 @@ export default function EditorPage() {
   const [showPreview, setShowPreview] = useState(true);
   const [previewZoom, setPreviewZoom] = useState(1);
   const iframeRef = useRef<HTMLIFrameElement>(null);
-  const previewContainerRef = useRef<HTMLDivElement>(null);
-
-  const applyZoomToIframe = useCallback(() => {
-    const doc = iframeRef.current?.contentDocument;
-    if (doc?.body) doc.body.style.zoom = String(previewZoom);
-  }, [previewZoom]);
 
   const autoFitOnLoad = useCallback(() => {
-    const doc = iframeRef.current?.contentDocument;
-    const container = previewContainerRef.current;
-    if (!doc?.body || !container) return;
+    const iframe = iframeRef.current;
+    const doc = iframe?.contentDocument;
+    if (!doc?.body || !iframe) return;
     doc.body.style.zoom = "1";
     const contentW = doc.body.scrollWidth;
-    const containerW = container.clientWidth;
-    if (contentW > containerW && contentW > 0) {
-      const fit = +(containerW / contentW).toFixed(2);
+    const availableW = iframe.clientWidth - 40;
+    if (contentW > availableW && contentW > 0) {
+      const fit = Math.floor((availableW / contentW) * 100) / 100;
       doc.body.style.zoom = String(fit);
       setPreviewZoom(fit);
-    } else {
-      doc.body.style.zoom = String(previewZoom);
     }
-  }, [previewZoom]);
+  }, []);
 
   const updatePreview = useCallback(() => {
-    if (iframeRef.current) {
-      const doc = iframeRef.current.contentDocument;
-      if (doc) {
-        doc.open();
-        doc.write(html);
-        doc.close();
-        applyZoomToIframe();
-      }
+    const doc = iframeRef.current?.contentDocument;
+    if (doc) {
+      doc.open();
+      doc.write(html);
+      doc.close();
+      doc.body.style.zoom = String(previewZoom);
     }
-  }, [html, applyZoomToIframe]);
+  }, [html, previewZoom]);
 
   const handleExport = async () => {
     setExporting(true);
@@ -138,26 +128,29 @@ export default function EditorPage() {
   const toggleCode = () => {
     if (showCode && !showPreview) return;
     setShowCode((p) => !p);
+    setTimeout(zoomFit, 250);
   };
 
   const togglePreview = () => {
     if (showPreview && !showCode) return;
+    const willShow = !showPreview;
     setShowPreview((p) => !p);
+    if (willShow) setTimeout(zoomFit, 250);
   };
 
   const zoomIn = () => setPreviewZoom((z) => Math.min(2, +(z + 0.1).toFixed(1)));
   const zoomOut = () => setPreviewZoom((z) => Math.max(0.25, +(z - 0.1).toFixed(1)));
-  const zoomFit = () => {
-    const doc = iframeRef.current?.contentDocument;
-    const container = previewContainerRef.current;
-    if (!doc?.body || !container) return;
+  const zoomFit = useCallback(() => {
+    const iframe = iframeRef.current;
+    const doc = iframe?.contentDocument;
+    if (!doc?.body || !iframe) return;
     doc.body.style.zoom = "1";
     const contentW = doc.body.scrollWidth;
-    const containerW = container.clientWidth;
-    const fit = contentW > 0 ? Math.min(1, +(containerW / contentW).toFixed(2)) : 1;
+    const availableW = iframe.clientWidth - 2;
+    const fit = contentW > 0 ? Math.min(1, Math.floor((availableW / contentW) * 100) / 100) : 1;
     doc.body.style.zoom = String(fit);
     setPreviewZoom(fit);
-  };
+  }, []);
 
   useEffect(() => {
     const iframe = iframeRef.current;
@@ -343,21 +336,21 @@ export default function EditorPage() {
               >
                 <Maximize size={12} />
               </button>
-              <div className="w-px h-5 bg-[#0A0A0A]/20 mx-1" />
-              <button
+              {/* <div className="w-px h-5 bg-[#0A0A0A]/20 mx-1" /> */}
+              {/* <button
                 onClick={updatePreview}
                 className="flex items-center gap-1.5 text-xs uppercase tracking-wider font-bold text-[#0A0A0A] border-[3px] border-[#0A0A0A] px-3 py-1 shadow-[3px_3px_0px_0px_#0A0A0A] hover:shadow-[5px_5px_0px_0px_#0A0A0A] hover:-translate-x-px hover:-translate-y-px active:shadow-none active:translate-x-[3px] active:translate-y-[3px] transition-all bg-white"
               >
                 <RefreshCw size={12} />
                 REFRESH
-              </button>
+              </button> */}
             </div>
           </div>
-          <div ref={previewContainerRef} className="flex-1 overflow-hidden min-h-0 bg-[#F5F3EE]">
+          <div className="flex-1 overflow-hidden min-h-0 bg-[#F5F3EE] px-3 py-2 rounded-sm">
             <iframe
               ref={iframeRef}
               srcDoc={html}
-              className="w-full h-full border-none bg-white"
+              className="w-full h-full border-none bg-white rounded-sm"
               sandbox="allow-same-origin allow-scripts"
               title="Slide preview"
               onLoad={autoFitOnLoad}
