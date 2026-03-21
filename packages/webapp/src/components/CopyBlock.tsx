@@ -25,7 +25,7 @@ export default function CopyBlock({
   };
 
   return (
-    <div className={`relative group ${className}`}>
+    <div className={`relative group hide-scrollbar ${className}`}>
       {children}
       <button
         onClick={handleCopy}

@@ -85,7 +85,7 @@ export default async function HomePage() {
               </p>
 
               <CopyBlock text="npx slideshot ./slides.html --scale 4" className="inline-block mb-8 animate-slide-in-line max-w-full" dark>
-                <code className="block text-xs font-mono bg-[#0A0A0A] text-[#FFD233] px-4 py-2 pr-10 border-[3px] border-[#0A0A0A] whitespace-nowrap overflow-x-auto" style={{ animationDelay: "0.45s" }}>
+                <code className="block text-xs font-mono bg-[#0A0A0A] text-[#FFD233] px-4 py-2 pr-10 border-[3px] border-[#0A0A0A] whitespace-nowrap overflow-x-auto hide-scrollbar" style={{ animationDelay: "0.45s" }}>
                   npx slideshot ./slides.html --scale 4
                 </code>
               </CopyBlock>
@@ -247,7 +247,7 @@ export default async function HomePage() {
                   ~/Library/Application Support/Claude/claude_desktop_config.json
                 </p>
                 <CopyBlock text={`{\n  "mcpServers": {\n    "slideshot": {\n      "command": "npx",\n      "args": ["-y", "slideshot-mcp"]\n    }\n  }\n}`} dark multiline>
-                  <pre className="text-xs font-mono bg-[#12122A] border-[3px] border-[#2A2A44] px-4 py-3 pr-10 text-[#FFD233] leading-relaxed whitespace-pre overflow-x-auto">{`{
+                  <pre className="text-xs font-mono bg-[#12122A] border-[3px] border-[#2A2A44] px-4 py-3 pr-10 text-[#FFD233] leading-relaxed whitespace-pre overflow-x-auto hide-scrollbar">{`{
   "mcpServers": {
     "slideshot": {
       "command": "npx",
@@ -267,7 +267,7 @@ export default async function HomePage() {
                   .cursor/mcp.json
                 </p>
                 <CopyBlock text={`{\n  "mcpServers": {\n    "slideshot": {\n      "command": "npx",\n      "args": ["-y", "slideshot-mcp"]\n    }\n  }\n}`} dark multiline>
-                  <pre className="text-xs font-mono bg-[#12122A] border-[3px] border-[#2A2A44] px-4 py-3 pr-10 text-[#FFD233] leading-relaxed whitespace-pre overflow-x-auto">{`{
+                  <pre className="text-xs font-mono bg-[#12122A] border-[3px] border-[#2A2A44] px-4 py-3 pr-10 text-[#FFD233] leading-relaxed whitespace-pre overflow-x-auto hide-scrollbar">{`{
   "mcpServers": {
     "slideshot": {
       "command": "npx",
@@ -334,7 +334,7 @@ export default async function HomePage() {
                   For ChatGPT Custom GPTs and OpenWebUI, import the OpenAPI spec as an Action or Tool. Same render + prompt endpoints, no MCP required.
                 </p>
                 <CopyBlock text="https://slideshot.vercel.app/api/openapi.json" dark>
-                  <code className="text-xs font-mono bg-[#12122A] border-[3px] border-[#2A2A44] px-4 py-2 pr-10 text-[#FFD233] block whitespace-nowrap overflow-x-auto">
+                  <code className="text-xs font-mono bg-[#12122A] border-[3px] border-[#2A2A44] px-4 py-2 pr-10 text-[#FFD233] block whitespace-nowrap overflow-x-auto hide-scrollbar">
                     https://slideshot.vercel.app/api/openapi.json
                   </code>
                 </CopyBlock>
@@ -659,7 +659,7 @@ export default async function HomePage() {
           </div>
             <div className="mt-8 inline-block max-w-full">
               <CopyBlock text="npx slideshot ./slides.html" dark>
-                <code className="text-sm font-mono bg-[#0A0A0A] border-[3px] border-[#0A0A0A] px-4 py-2 pr-10 text-[#FFD233] block whitespace-nowrap">
+                <code className="text-sm font-mono bg-[#0A0A0A] border-[3px] border-[#0A0A0A] px-4 py-2 pr-10 text-[#FFD233] block whitespace-nowrap overflow-x-auto hide-scrollbar">
                   npx slideshot ./slides.html
                 </code>
               </CopyBlock>

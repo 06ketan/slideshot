@@ -73,7 +73,7 @@ export default function HeroTerminal() {
           </div>
 
           {showOutput && (
-            <div className="mt-3 space-y-px">
+            <div className="mt-3 space-y-px overflow-x-clip">
               {OUTPUT_LINES.slice(0, visibleLines).map((line, i) => (
                 <div
                   key={i}
