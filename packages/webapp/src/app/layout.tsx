@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist_Mono } from "next/font/google";
 import { Bebas_Neue, DM_Sans } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 
 const geistMono = Geist_Mono({
@@ -54,6 +55,7 @@ export default function RootLayout({
       >
         {children}
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
