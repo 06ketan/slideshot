@@ -250,7 +250,7 @@ export default function LinkedInCarouselMakerPage() {
                 text="npx slideshot ./carousel.html --formats png --scale 4"
                 dark
               >
-                <div className="bg-[#0A0A0A] border-[3px] border-[#0A0A0A] shadow-[5px_5px_0px_0px_#0A0A0A] p-6 font-mono text-sm">
+                <div className="bg-[#0A0A0A] border-[3px] border-[#0A0A0A] shadow-[5px_5px_0px_0px_#0A0A0A] p-6 font-mono text-sm overflow-x-auto hide-scrollbar">
                   <div className="text-white/40 mb-2"># LinkedIn carousel</div>
                   <div className="text-white pr-10">
                     <span className="text-[#FFD233]">$</span> npx slideshot

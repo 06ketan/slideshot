@@ -216,7 +216,7 @@ export default function AiSlideGeneratorPage() {
                 dark
                 multiline
               >
-                <div className="border-[3px] border-[#FFD233] p-6">
+                <div className="border-[3px] border-[#FFD233] p-6 overflow-x-auto hide-scrollbar">
                   <h3 className="font-[var(--font-bebas-neue)] text-2xl text-[#FFD233] mb-3">
                     INSTALL MCP SERVER
                   </h3>
