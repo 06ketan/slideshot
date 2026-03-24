@@ -111,7 +111,7 @@ export default function HtmlToPngPage() {
               text="npx slideshot ./file.html --formats png --scale 4"
               dark
             >
-              <code className="inline-flex items-center text-xs font-mono bg-[#0A0A0A] text-[#FFD233] px-4 py-3.5 pr-10 border-[3px] border-[#0A0A0A] whitespace-nowrap">
+              <code className="inline-flex items-center text-xs font-mono bg-[#0A0A0A] text-[#FFD233] px-4 py-3.5 pr-10 border-[3px] border-[#0A0A0A] whitespace-nowrap overflow-x-auto hide-scrollbar" >
                 npx slideshot ./file.html --formats png --scale 4
               </code>
             </CopyBlock>
