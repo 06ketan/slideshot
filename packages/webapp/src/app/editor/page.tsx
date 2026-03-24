@@ -3,6 +3,7 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import { RefreshCw, Download, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Maximize } from "lucide-react";
+import { trackEvent } from "@/components/TrackEvent";
 
 const SAMPLE_HTML = `<!DOCTYPE html>
 <html lang="en">
@@ -93,6 +94,8 @@ export default function EditorPage() {
       return;
     }
 
+    trackEvent("export_clicked", { formats: selectedFormats.join(","), scale });
+
     try {
       const res = await fetch("/api/render", {
         method: "POST",
@@ -103,6 +106,7 @@ export default function EditorPage() {
       if (!res.ok) {
         const err = await res.json();
         setStatus(`Error: ${err.error}`);
+        trackEvent("export_failed", { error: err.error || "unknown" });
         setExporting(false);
         return;
       }
@@ -115,8 +119,11 @@ export default function EditorPage() {
       a.click();
       URL.revokeObjectURL(url);
       setStatus("Export complete!");
+      trackEvent("export_completed", { formats: selectedFormats.join(","), scale });
     } catch (err: unknown) {
-      setStatus(`Export failed: ${err instanceof Error ? err.message : "Unknown error"}`);
+      const message = err instanceof Error ? err.message : "Unknown error";
+      setStatus(`Export failed: ${message}`);
+      trackEvent("export_failed", { error: message });
     } finally {
       setExporting(false);
     }

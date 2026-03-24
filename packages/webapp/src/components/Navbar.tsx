@@ -28,7 +28,7 @@ export default function Navbar({ stars }: { stars?: number }) {
           {[
             { href: "/", label: "Home" },
             { href: "/editor", label: "Editor" },
-            { href: "/gallery", label: "Gallery" },
+            { href: "/gallery", label: "Templates" },
           ].map(({ href, label }) => (
             <Link
               key={href}
@@ -42,6 +42,14 @@ export default function Navbar({ stars }: { stars?: number }) {
               {label}
             </Link>
           ))}
+          <a
+            href="https://github.com/06ketan/slideshot#readme"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-4 py-1.5 text-sm font-bold text-[#666] hover:text-[#0A0A0A] flex items-center gap-1 border-[3px] border-transparent"
+          >
+            Docs <ExternalLink size={12} />
+          </a>
           <a
             href="/api/openapi.json"
             target="_blank"
@@ -86,7 +94,7 @@ export default function Navbar({ stars }: { stars?: number }) {
           {[
             { href: "/", label: "Home" },
             { href: "/editor", label: "Editor" },
-            { href: "/gallery", label: "Gallery" },
+            { href: "/gallery", label: "Templates" },
           ].map(({ href, label }) => (
             <Link
               key={href}
@@ -99,6 +107,15 @@ export default function Navbar({ stars }: { stars?: number }) {
               {label}
             </Link>
           ))}
+          <a
+            href="https://github.com/06ketan/slideshot#readme"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block py-3 text-base font-bold text-[#666] border-b-[2px] border-[#E5E3DE] flex items-center gap-1"
+            onClick={() => setMobileOpen(false)}
+          >
+            Docs <ExternalLink size={12} />
+          </a>
           <a
             href="/api/openapi.json"
             target="_blank"

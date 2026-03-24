@@ -1,0 +1,36 @@
+# slideshot — https://slideshot.chavan.in
+# Allow all search engines and AI bots to crawl the site
+
+User-agent: *
+Allow: /
+Disallow: /api/render
+Disallow: /api/prompt
+Disallow: /api/openapi.json
+
+# AI Bot Access — explicitly allowed
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Googlebot
+Allow: /
+
+# Sitemap
+Sitemap: https://slideshot.chavan.in/sitemap.xml

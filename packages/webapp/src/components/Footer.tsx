@@ -6,7 +6,7 @@ export default function Footer() {
   return (
     <footer className="bg-[#FFFDF5] border-t-[3px] border-[#0A0A0A] text-[#0A0A0A]">
       <div className="max-w-7xl mx-auto px-6 py-16">
-        <ScrollReveal><div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+        <ScrollReveal><div className="grid grid-cols-1 md:grid-cols-5 gap-10 mb-12">
           {/* Brand */}
           <div className="md:col-span-2">
             <div className="flex items-center gap-2.5 mb-4">
@@ -37,9 +37,21 @@ export default function Footer() {
               Product
             </h4>
             <div className="flex flex-col gap-3">
-              <FooterLink href="/editor">Editor</FooterLink>
-              <FooterLink href="/gallery">Gallery</FooterLink>
-              <FooterLink href="/api/openapi.json" external>API</FooterLink>
+              <FooterLink href="/editor">Web Editor</FooterLink>
+              <FooterLink href="/gallery">Template Gallery</FooterLink>
+              <FooterLink href="/api/openapi.json" external>REST API</FooterLink>
+            </div>
+          </div>
+
+          {/* Use Cases */}
+          <div>
+            <h4 className="text-xs font-bold tracking-[2px] uppercase text-[#0A0A0A] mb-4 border-b-2 border-[#E5E3DE] pb-2">
+              Use Cases
+            </h4>
+            <div className="flex flex-col gap-3">
+              <FooterLink href="/html-to-png">HTML to PNG</FooterLink>
+              <FooterLink href="/linkedin-carousel-maker">LinkedIn Carousel Maker</FooterLink>
+              <FooterLink href="/ai-slide-generator">AI Slide Generator</FooterLink>
             </div>
           </div>
 
@@ -50,14 +62,10 @@ export default function Footer() {
             </h4>
             <div className="flex flex-col gap-3">
               <FooterLink href="https://github.com/06ketan/slideshot" external>GitHub</FooterLink>
-              <FooterLink href="https://www.npmjs.com/package/slideshot" external>npm</FooterLink>
+              <FooterLink href="https://www.npmjs.com/package/slideshot" external>npm Package</FooterLink>
               <FooterLink href="https://www.npmjs.com/package/slideshot-mcp" external>MCP Server</FooterLink>
+              <FooterLink href="https://github.com/06ketan/slideshot#readme" external>Documentation</FooterLink>
             </div>
-            {/* <div className="mt-5">
-              <code className="text-[11px] font-mono bg-[#0A0A0A] border-[3px] border-[#0A0A0A] px-3 py-2 text-[#FFD233] block leading-relaxed overflow-x-auto">
-                npm i -g slideshot
-              </code>
-            </div> */}
           </div>
         </div></ScrollReveal>
 
