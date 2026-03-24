@@ -86,7 +86,7 @@ export default function LinkedInCarouselMakerPage() {
 
       {/* Hero */}
       <section className="bg-[#FFD233] border-b-[3px] border-[#0A0A0A]">
-        <div className="max-w-5xl mx-auto px-6 py-16 md:py-24">
+        <div className="max-w-7xl mx-auto px-6 py-20 md:py-28">
           <div className="mb-6">
             <Breadcrumb
               items={[
@@ -109,13 +109,13 @@ export default function LinkedInCarouselMakerPage() {
           <div className="flex flex-wrap gap-4">
             <Link
               href="/editor"
-              className="inline-flex items-center gap-2 bg-[#0A0A0A] text-white font-bold px-8 py-3.5 border-[3px] border-[#0A0A0A] shadow-[5px_5px_0px_0px_#0A0A0A] hover:shadow-[8px_8px_0px_0px_#0A0A0A] hover:-translate-x-[1px] hover:-translate-y-[1px] transition-all text-sm"
+              className="inline-flex items-center gap-2 bg-[#0A0A0A] text-white font-bold px-8 py-3.5 border-[3px] border-[#0A0A0A] shadow-[5px_5px_0px_0px_#0A0A0A] hover:shadow-[8px_8px_0px_0px_#0A0A0A] hover:-translate-x-[1px] hover:-translate-y-[1px] active:shadow-none active:translate-x-[5px] active:translate-y-[5px] transition-all duration-150 text-sm"
             >
               Create Your Carousel <ArrowRight size={16} />
             </Link>
             <Link
               href="/gallery"
-              className="inline-flex items-center gap-2 bg-white text-[#0A0A0A] font-bold px-8 py-3.5 border-[3px] border-[#0A0A0A] shadow-[5px_5px_0px_0px_#0A0A0A] hover:shadow-[8px_8px_0px_0px_#0A0A0A] hover:-translate-x-[1px] hover:-translate-y-[1px] transition-all text-sm"
+              className="inline-flex items-center gap-2 bg-white text-[#0A0A0A] font-bold px-8 py-3.5 border-[3px] border-[#0A0A0A] shadow-[5px_5px_0px_0px_#0A0A0A] hover:shadow-[8px_8px_0px_0px_#0A0A0A] hover:-translate-x-[1px] hover:-translate-y-[1px] active:shadow-none active:translate-x-[5px] active:translate-y-[5px] transition-all duration-150 text-sm"
             >
               Browse Templates <Palette size={16} />
             </Link>
@@ -125,7 +125,7 @@ export default function LinkedInCarouselMakerPage() {
 
       {/* Why use slideshot for LinkedIn */}
       <section className="border-b-[3px] border-[#0A0A0A]">
-        <div className="max-w-5xl mx-auto px-6 py-20">
+        <div className="max-w-7xl mx-auto px-6 py-20">
           <ScrollReveal>
             <h2 className="font-[var(--font-bebas-neue)] text-5xl text-[#0A0A0A] mb-12 text-center">
               WHY USE SLIDESHOT FOR LINKEDIN
@@ -169,7 +169,7 @@ export default function LinkedInCarouselMakerPage() {
 
       {/* How to create */}
       <section className="bg-[#0A0A0A] border-b-[3px] border-[#0A0A0A]">
-        <div className="max-w-5xl mx-auto px-6 py-20">
+        <div className="max-w-7xl mx-auto px-6 py-20">
           <ScrollReveal>
             <h2 className="font-[var(--font-bebas-neue)] text-5xl text-white mb-12">
               HOW TO CREATE A LINKEDIN CAROUSEL
@@ -218,7 +218,7 @@ export default function LinkedInCarouselMakerPage() {
 
       {/* CLI option */}
       <section className="border-b-[3px] border-[#0A0A0A]">
-        <div className="max-w-5xl mx-auto px-6 py-16">
+        <div className="max-w-7xl mx-auto px-6 py-20">
           <ScrollReveal>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
               <div>
@@ -312,7 +312,7 @@ export default function LinkedInCarouselMakerPage() {
 
       {/* CTA */}
       <section className="border-b-[3px] border-[#0A0A0A]">
-        <div className="max-w-4xl mx-auto px-6 py-16 text-center">
+        <div className="max-w-4xl mx-auto px-6 py-20 text-center">
           <h2 className="font-[var(--font-bebas-neue)] text-5xl md:text-6xl text-[#0A0A0A] mb-4">
             CREATE YOUR LINKEDIN CAROUSEL
           </h2>
@@ -322,13 +322,13 @@ export default function LinkedInCarouselMakerPage() {
           <div className="flex flex-wrap justify-center gap-4">
             <Link
               href="/editor"
-              className="inline-flex items-center gap-2 bg-[#FFD233] text-[#0A0A0A] font-bold px-8 py-3.5 border-[3px] border-[#0A0A0A] shadow-[5px_5px_0px_0px_#0A0A0A] hover:shadow-[8px_8px_0px_0px_#0A0A0A] hover:-translate-x-[1px] hover:-translate-y-[1px] transition-all text-sm"
+              className="inline-flex items-center gap-2 bg-[#FFD233] text-[#0A0A0A] font-bold px-8 py-3.5 border-[3px] border-[#0A0A0A] shadow-[5px_5px_0px_0px_#0A0A0A] hover:shadow-[8px_8px_0px_0px_#0A0A0A] hover:-translate-x-[1px] hover:-translate-y-[1px] active:shadow-none active:translate-x-[5px] active:translate-y-[5px] transition-all duration-150 text-sm"
             >
               Try the Editor Free <ArrowRight size={16} />
             </Link>
             <Link
               href="/gallery"
-              className="inline-flex items-center gap-2 bg-white text-[#0A0A0A] font-bold px-8 py-3.5 border-[3px] border-[#0A0A0A] shadow-[5px_5px_0px_0px_#0A0A0A] hover:shadow-[8px_8px_0px_0px_#0A0A0A] hover:-translate-x-[1px] hover:-translate-y-[1px] transition-all text-sm"
+              className="inline-flex items-center gap-2 bg-white text-[#0A0A0A] font-bold px-8 py-3.5 border-[3px] border-[#0A0A0A] shadow-[5px_5px_0px_0px_#0A0A0A] hover:shadow-[8px_8px_0px_0px_#0A0A0A] hover:-translate-x-[1px] hover:-translate-y-[1px] active:shadow-none active:translate-x-[5px] active:translate-y-[5px] transition-all duration-150 text-sm"
             >
               Browse Templates
             </Link>

@@ -84,9 +84,10 @@ export default function AiSlideGeneratorPage() {
 
       {/* Hero */}
       <section className="bg-[#0A0A0A] border-b-[3px] border-[#0A0A0A]">
-        <div className="max-w-5xl mx-auto px-6 py-16 md:py-24">
+        <div className="max-w-7xl mx-auto px-6 py-20 md:py-28">
           <div className="mb-6">
             <Breadcrumb
+              dark
               items={[
                 { name: "Home", href: "/" },
                 { name: "AI Slide Generator", href: "/ai-slide-generator" },
@@ -113,13 +114,13 @@ export default function AiSlideGeneratorPage() {
           <div className="flex flex-wrap gap-4">
             <Link
               href="/gallery"
-              className="inline-flex items-center gap-2 bg-[#FFD233] text-[#0A0A0A] font-bold px-8 py-3.5 border-[3px] border-[#FFD233] shadow-[3px_3px_0px_0px_#FFD233] hover:shadow-[5px_5px_0px_0px_#FFD233] hover:-translate-x-[1px] hover:-translate-y-[1px] transition-all text-sm"
+              className="inline-flex items-center gap-2 bg-[#FFD233] text-[#0A0A0A] font-bold px-8 py-3.5 border-[3px] border-[#FFD233] shadow-[3px_3px_0px_0px_#FFD233] hover:shadow-[5px_5px_0px_0px_#FFD233] hover:-translate-x-[1px] hover:-translate-y-[1px] active:shadow-none active:translate-x-[5px] active:translate-y-[5px] transition-all duration-150 text-sm"
             >
               Get AI Prompt Templates <ArrowRight size={16} />
             </Link>
             <Link
               href="/editor"
-              className="inline-flex items-center gap-2 bg-transparent text-white font-bold px-8 py-3.5 border-[3px] border-white/30 hover:border-[#FFD233] hover:text-[#FFD233] transition-all text-sm"
+              className="inline-flex items-center gap-2 bg-[#0A0A0A] text-white font-bold px-8 py-3.5 border-[3px] border-[#FFD233] hover:bg-[#FFD233] hover:text-[#0A0A0A] transition-all duration-150 text-sm"
             >
               Open Editor
             </Link>
@@ -129,7 +130,7 @@ export default function AiSlideGeneratorPage() {
 
       {/* How it works */}
       <section className="border-b-[3px] border-[#0A0A0A]">
-        <div className="max-w-5xl mx-auto px-6 py-20">
+        <div className="max-w-7xl mx-auto px-6 py-20">
           <ScrollReveal>
             <h2 className="font-[var(--font-bebas-neue)] text-5xl text-[#0A0A0A] mb-12 text-center">
               HOW AI SLIDE GENERATION WORKS
@@ -187,7 +188,7 @@ export default function AiSlideGeneratorPage() {
 
       {/* MCP Server section */}
       <section className="bg-[#0A0A0A] border-b-[3px] border-[#0A0A0A]">
-        <div className="max-w-5xl mx-auto px-6 py-20">
+        <div className="max-w-7xl mx-auto px-6 py-20">
           <ScrollReveal>
             <div className="flex items-center gap-3 mb-3">
               <div className="w-10 h-10 bg-[#FFD233] border-[3px] border-[#FFD233] flex items-center justify-center">
@@ -261,7 +262,7 @@ export default function AiSlideGeneratorPage() {
 
       {/* Templates preview */}
       <section className="bg-[#FFD233] border-b-[3px] border-[#0A0A0A]">
-        <div className="max-w-5xl mx-auto px-6 py-20">
+        <div className="max-w-7xl mx-auto px-6 py-20">
           <ScrollReveal>
             <h2 className="font-[var(--font-bebas-neue)] text-5xl text-[#0A0A0A] mb-4 text-center">
               8 AI PROMPT TEMPLATES
@@ -294,7 +295,7 @@ export default function AiSlideGeneratorPage() {
           <div className="text-center mt-8">
             <Link
               href="/gallery"
-              className="inline-flex items-center gap-2 bg-[#0A0A0A] text-white font-bold px-8 py-3.5 border-[3px] border-[#0A0A0A] shadow-[5px_5px_0px_0px_#0A0A0A] hover:shadow-[8px_8px_0px_0px_#0A0A0A] hover:-translate-x-[1px] hover:-translate-y-[1px] transition-all text-sm"
+              className="inline-flex items-center gap-2 bg-[#0A0A0A] text-white font-bold px-8 py-3.5 border-[3px] border-[#0A0A0A] shadow-[5px_5px_0px_0px_#0A0A0A] hover:shadow-[8px_8px_0px_0px_#0A0A0A] hover:-translate-x-[1px] hover:-translate-y-[1px] active:shadow-none active:translate-x-[5px] active:translate-y-[5px] transition-all duration-150 text-sm"
             >
               View All Templates <ArrowRight size={16} />
             </Link>
@@ -348,7 +349,7 @@ export default function AiSlideGeneratorPage() {
 
       {/* CTA */}
       <section className="bg-[#FFD233]">
-        <div className="max-w-4xl mx-auto px-6 py-16 text-center">
+        <div className="max-w-4xl mx-auto px-6 py-20 text-center">
           <h2 className="font-[var(--font-bebas-neue)] text-5xl md:text-6xl text-[#0A0A0A] mb-4">
             GENERATE SLIDES WITH AI
           </h2>
@@ -358,13 +359,13 @@ export default function AiSlideGeneratorPage() {
           <div className="flex flex-wrap justify-center gap-4">
             <Link
               href="/gallery"
-              className="inline-flex items-center gap-2 bg-[#0A0A0A] text-white font-bold px-8 py-3.5 border-[3px] border-[#0A0A0A] shadow-[5px_5px_0px_0px_#0A0A0A] hover:shadow-[8px_8px_0px_0px_#0A0A0A] hover:-translate-x-[1px] hover:-translate-y-[1px] transition-all text-sm"
+              className="inline-flex items-center gap-2 bg-[#0A0A0A] text-white font-bold px-8 py-3.5 border-[3px] border-[#0A0A0A] shadow-[5px_5px_0px_0px_#0A0A0A] hover:shadow-[8px_8px_0px_0px_#0A0A0A] hover:-translate-x-[1px] hover:-translate-y-[1px] active:shadow-none active:translate-x-[5px] active:translate-y-[5px] transition-all duration-150 text-sm"
             >
               Get AI Prompt Templates <ArrowRight size={16} />
             </Link>
             <Link
               href="/editor"
-              className="inline-flex items-center gap-2 bg-white text-[#0A0A0A] font-bold px-8 py-3.5 border-[3px] border-[#0A0A0A] shadow-[5px_5px_0px_0px_#0A0A0A] hover:shadow-[8px_8px_0px_0px_#0A0A0A] hover:-translate-x-[1px] hover:-translate-y-[1px] transition-all text-sm"
+              className="inline-flex items-center gap-2 bg-white text-[#0A0A0A] font-bold px-8 py-3.5 border-[3px] border-[#0A0A0A] shadow-[5px_5px_0px_0px_#0A0A0A] hover:shadow-[8px_8px_0px_0px_#0A0A0A] hover:-translate-x-[1px] hover:-translate-y-[1px] active:shadow-none active:translate-x-[5px] active:translate-y-[5px] transition-all duration-150 text-sm"
             >
               Try the Editor Free
             </Link>

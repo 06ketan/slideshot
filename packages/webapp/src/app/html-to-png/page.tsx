@@ -83,7 +83,7 @@ export default function HtmlToPngPage() {
 
       {/* Hero */}
       <section className="bg-[#FFD233] border-b-[3px] border-[#0A0A0A]">
-        <div className="max-w-5xl mx-auto px-6 py-16 md:py-24">
+        <div className="max-w-7xl mx-auto px-6 py-20 md:py-28">
           <div className="mb-6">
             <Breadcrumb
               items={[
@@ -103,7 +103,7 @@ export default function HtmlToPngPage() {
           <div className="flex flex-wrap gap-4">
             <Link
               href="/editor"
-              className="inline-flex items-center gap-2 bg-[#0A0A0A] text-white font-bold px-8 py-3.5 border-[3px] border-[#0A0A0A] shadow-[5px_5px_0px_0px_#0A0A0A] hover:shadow-[8px_8px_0px_0px_#0A0A0A] hover:-translate-x-[1px] hover:-translate-y-[1px] transition-all text-sm"
+              className="inline-flex items-center gap-2 bg-[#0A0A0A] text-white font-bold px-8 py-3.5 border-[3px] border-[#0A0A0A] shadow-[5px_5px_0px_0px_#0A0A0A] hover:shadow-[8px_8px_0px_0px_#0A0A0A] hover:-translate-x-[1px] hover:-translate-y-[1px] active:shadow-none active:translate-x-[5px] active:translate-y-[5px] transition-all duration-150 text-sm"
             >
               Try the Editor Free <ArrowRight size={16} />
             </Link>
@@ -121,7 +121,7 @@ export default function HtmlToPngPage() {
 
       {/* How it works */}
       <section className="border-b-[3px] border-[#0A0A0A]">
-        <div className="max-w-5xl mx-auto px-6 py-20">
+        <div className="max-w-7xl mx-auto px-6 py-20">
           <ScrollReveal>
             <h2 className="font-[var(--font-bebas-neue)] text-5xl text-[#0A0A0A] mb-12 text-center">
               HOW IT WORKS
@@ -173,7 +173,7 @@ export default function HtmlToPngPage() {
 
       {/* Three methods */}
       <section className="bg-[#0A0A0A] border-b-[3px] border-[#0A0A0A]">
-        <div className="max-w-5xl mx-auto px-6 py-20">
+        <div className="max-w-7xl mx-auto px-6 py-20">
           <ScrollReveal>
             <h2 className="font-[var(--font-bebas-neue)] text-5xl text-white mb-4">
               THREE WAYS TO CONVERT
@@ -219,7 +219,7 @@ export default function HtmlToPngPage() {
                   </p>
                   <Link
                     href={item.href}
-                    className="inline-flex items-center gap-2 text-sm font-bold text-[#FFD233] hover:text-white transition-colors"
+                    className="inline-flex items-center gap-2 text-sm font-bold text-[#FFD233] hover:text-white transition-colors duration-150"
                   >
                     {item.cta} <ArrowRight size={14} />
                   </Link>
@@ -232,7 +232,7 @@ export default function HtmlToPngPage() {
 
       {/* Comparison: slideshot vs alternatives */}
       <section className="border-b-[3px] border-[#0A0A0A]">
-        <div className="max-w-5xl mx-auto px-6 py-20">
+        <div className="max-w-7xl mx-auto px-6 py-20">
           <ScrollReveal>
             <h2 className="font-[var(--font-bebas-neue)] text-5xl text-[#0A0A0A] mb-8 text-center">
               SLIDESHOT VS OTHER METHODS
@@ -276,7 +276,7 @@ export default function HtmlToPngPage() {
                         <span className="inline-flex items-center gap-1">
                           <CheckCircle
                             size={14}
-                            className="text-green-600"
+                            className="text-[#FFD233]"
                           />
                           {ss}
                         </span>
@@ -342,7 +342,7 @@ export default function HtmlToPngPage() {
 
       {/* CTA */}
       <section className="border-b-[3px] border-[#0A0A0A]">
-        <div className="max-w-4xl mx-auto px-6 py-16 text-center">
+        <div className="max-w-4xl mx-auto px-6 py-20 text-center">
           <h2 className="font-[var(--font-bebas-neue)] text-5xl md:text-6xl text-[#0A0A0A] mb-4">
             CONVERT HTML TO PNG NOW
           </h2>
@@ -353,13 +353,13 @@ export default function HtmlToPngPage() {
           <div className="flex flex-wrap justify-center gap-4">
             <Link
               href="/editor"
-              className="inline-flex items-center gap-2 bg-[#FFD233] text-[#0A0A0A] font-bold px-8 py-3.5 border-[3px] border-[#0A0A0A] shadow-[5px_5px_0px_0px_#0A0A0A] hover:shadow-[8px_8px_0px_0px_#0A0A0A] hover:-translate-x-[1px] hover:-translate-y-[1px] transition-all text-sm"
+              className="inline-flex items-center gap-2 bg-[#FFD233] text-[#0A0A0A] font-bold px-8 py-3.5 border-[3px] border-[#0A0A0A] shadow-[5px_5px_0px_0px_#0A0A0A] hover:shadow-[8px_8px_0px_0px_#0A0A0A] hover:-translate-x-[1px] hover:-translate-y-[1px] active:shadow-none active:translate-x-[5px] active:translate-y-[5px] transition-all duration-150 text-sm"
             >
               Try the Editor Free <ArrowRight size={16} />
             </Link>
             <Link
               href="/"
-              className="inline-flex items-center gap-2 bg-white text-[#0A0A0A] font-bold px-8 py-3.5 border-[3px] border-[#0A0A0A] shadow-[5px_5px_0px_0px_#0A0A0A] hover:shadow-[8px_8px_0px_0px_#0A0A0A] hover:-translate-x-[1px] hover:-translate-y-[1px] transition-all text-sm"
+              className="inline-flex items-center gap-2 bg-white text-[#0A0A0A] font-bold px-8 py-3.5 border-[3px] border-[#0A0A0A] shadow-[5px_5px_0px_0px_#0A0A0A] hover:shadow-[8px_8px_0px_0px_#0A0A0A] hover:-translate-x-[1px] hover:-translate-y-[1px] active:shadow-none active:translate-x-[5px] active:translate-y-[5px] transition-all duration-150 text-sm"
             >
               Learn More
             </Link>

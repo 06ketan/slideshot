@@ -242,7 +242,7 @@ export default function EditorPage() {
           <button
             onClick={handleExport}
             disabled={exporting}
-            className="flex items-center gap-1.5 bg-[#FFD233] text-[#0A0A0A] font-bold text-xs uppercase tracking-wider px-5 py-2 border-[3px] border-[#0A0A0A] shadow-[4px_4px_0px_0px_#0A0A0A] hover:shadow-[6px_6px_0px_0px_#0A0A0A] hover:-translate-x-px hover:-translate-y-px active:shadow-none active:translate-x-1 active:translate-y-1 disabled:opacity-50 disabled:cursor-wait transition-all"
+            className="flex items-center gap-1.5 bg-[#FFD233] text-[#0A0A0A] font-bold text-xs uppercase tracking-wider px-5 py-2 border-[3px] border-[#0A0A0A] shadow-[4px_4px_0px_0px_#0A0A0A] hover:shadow-[6px_6px_0px_0px_#0A0A0A] hover:-translate-x-px hover:-translate-y-px active:shadow-none active:translate-x-1 active:translate-y-1 disabled:opacity-50 disabled:cursor-wait transition-all duration-150"
           >
             <Download size={12} />
             {exporting ? "EXPORTING..." : "EXPORT"}
