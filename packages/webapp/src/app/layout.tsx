@@ -23,23 +23,58 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "slideshot — HTML to High-Res Slides, PNG, WebP & PDF",
+  title: {
+    default: "slideshot — Convert HTML to High-Res PNG, WebP & PDF Slides",
+    template: "%s | slideshot",
+  },
   description:
-    "Convert HTML+CSS into beautiful carousel slides. Export to high-res PNG, WebP, and PDF. AI prompt templates, CLI, and MCP server included.",
-  metadataBase: new URL("https://slideshot.vercel.app"),
+    "Slideshot is a free, open-source tool that converts HTML+CSS into high-resolution PNG, WebP, and PDF carousel slides. Use the web editor, CLI (npx slideshot), or MCP server for AI-powered slide generation.",
+  metadataBase: new URL("https://slideshot.chavan.in"),
+  alternates: {
+    canonical: "/",
+  },
+  keywords: [
+    "html to slides",
+    "html to png",
+    "html to webp",
+    "html to pdf",
+    "html to image",
+    "carousel maker",
+    "linkedin carousel maker",
+    "AI slide generator",
+    "html to carousel",
+    "npx slideshot",
+    "open source slide generator",
+    "MCP server slides",
+  ],
+  authors: [{ name: "Ketan Chavan", url: "https://github.com/06ketan" }],
+  creator: "Ketan Chavan",
+  publisher: "slideshot",
   openGraph: {
-    title: "slideshot — HTML to High-Res Slides",
+    title: "slideshot — Convert HTML to High-Res PNG, WebP & PDF Slides",
     description:
-      "Convert HTML+CSS into carousel slides. Export PNG, WebP, PDF. AI prompts, CLI & MCP.",
-    url: "https://slideshot.vercel.app",
+      "Free, open-source tool to convert HTML+CSS into high-res carousel slides. Web editor, CLI, and MCP server included.",
+    url: "https://slideshot.chavan.in",
     siteName: "slideshot",
     type: "website",
+    locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
-    title: "slideshot — HTML to High-Res Slides",
+    title: "slideshot — Convert HTML to High-Res Slides",
     description:
-      "Convert HTML+CSS into carousel slides. Export PNG, WebP, PDF.",
+      "Free, open-source tool to convert HTML+CSS into PNG, WebP & PDF carousel slides.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
 };
 

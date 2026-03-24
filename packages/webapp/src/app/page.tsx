@@ -18,11 +18,13 @@ import {
   MousePointerClick,
   Workflow,
   ExternalLink,
+  HelpCircle,
 } from "lucide-react";
 import PromptBlocks from "@/components/PromptBlocks";
 import HeroTerminal from "@/components/HeroTerminal";
 import ScrollReveal from "@/components/ScrollReveal";
 import CopyBlock from "@/components/CopyBlock";
+import { HomePageSchemas } from "@/components/JsonLd";
 
 async function getStats() {
   try {
@@ -53,6 +55,7 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen bg-[#FFFDF5] flex flex-col">
+      <HomePageSchemas />
       <Navbar />
 
       {/* HERO */}
@@ -80,8 +83,7 @@ export default async function HomePage() {
           </h1>
 
               <p className="text-lg font-medium text-[#444] max-w-md mb-4 leading-relaxed animate-slide-in-line" style={{ animationDelay: "0.35s" }}>
-                Paste HTML+CSS, get high-res PNG, WebP &amp; PDF carousels.
-                Use the web editor, CLI, or MCP server.
+                Slideshot is a free, open-source tool that converts HTML+CSS into high-resolution PNG, WebP, and PDF carousel slides. Use the web editor, CLI, or MCP server to generate slides from code or AI.
               </p>
 
               <CopyBlock text="npx slideshot ./slides.html --scale 4" className="inline-block mb-8 animate-slide-in-line max-w-full" dark>
@@ -93,15 +95,15 @@ export default async function HomePage() {
               <div className="flex flex-wrap gap-4 animate-slide-in-line" style={{ animationDelay: "0.55s" }}>
                 <Link
                   href="/editor"
-                  className="inline-flex items-center gap-2 bg-[#FFD233] text-[#0A0A0A] font-bold px-8 py-3.5 border-[3px] border-[#0A0A0A] shadow-[5px_5px_0px_0px_#0A0A0A] hover:shadow-[8px_8px_0px_0px_#0A0A0A] hover:-translate-x-[1px] hover:-translate-y-[1px] active:shadow-none active:translate-x-[5px] active:translate-y-[5px] transition-all text-sm"
+                  className="inline-flex items-center gap-2 bg-[#FFD233] text-[#0A0A0A] font-bold px-8 py-3.5 border-[3px] border-[#0A0A0A] shadow-[5px_5px_0px_0px_#0A0A0A] hover:shadow-[8px_8px_0px_0px_#0A0A0A] hover:-translate-x-[1px] hover:-translate-y-[1px] active:shadow-none active:translate-x-[5px] active:translate-y-[5px] transition-all duration-150 text-sm"
                 >
-                  Open Editor <ArrowRight size={16} />
+                  Try the Editor Free <ArrowRight size={16} />
                 </Link>
                 <Link
                   href="/gallery"
-                  className="inline-flex items-center gap-2 bg-white text-[#0A0A0A] font-bold px-8 py-3.5 border-[3px] border-[#0A0A0A] shadow-[5px_5px_0px_0px_#0A0A0A] hover:shadow-[8px_8px_0px_0px_#0A0A0A] hover:-translate-x-[1px] hover:-translate-y-[1px] active:shadow-none active:translate-x-[5px] active:translate-y-[5px] transition-all text-sm"
+                  className="inline-flex items-center gap-2 bg-white text-[#0A0A0A] font-bold px-8 py-3.5 border-[3px] border-[#0A0A0A] shadow-[5px_5px_0px_0px_#0A0A0A] hover:shadow-[8px_8px_0px_0px_#0A0A0A] hover:-translate-x-[1px] hover:-translate-y-[1px] active:shadow-none active:translate-x-[5px] active:translate-y-[5px] transition-all duration-150 text-sm"
                 >
-                  Browse Gallery <Palette size={16} />
+                  Browse Templates <Palette size={16} />
                 </Link>
               </div>
             </div>
@@ -333,9 +335,9 @@ export default async function HomePage() {
                 <p className="text-white/50 text-sm leading-relaxed mb-3">
                   For ChatGPT Custom GPTs and OpenWebUI, import the OpenAPI spec as an Action or Tool. Same render + prompt endpoints, no MCP required.
                 </p>
-                <CopyBlock text="https://slideshot.vercel.app/api/openapi.json" dark>
+                <CopyBlock text="https://slideshot.chavan.in/api/openapi.json" dark>
                   <code className="text-xs font-mono bg-[#12122A] border-[3px] border-[#2A2A44] px-4 py-2 pr-10 text-[#FFD233] block whitespace-nowrap overflow-x-auto hide-scrollbar">
-                    https://slideshot.vercel.app/api/openapi.json
+                    https://slideshot.chavan.in/api/openapi.json
                   </code>
                 </CopyBlock>
                 <div className="flex flex-wrap gap-3 mt-4">
@@ -478,7 +480,7 @@ export default async function HomePage() {
               </p>
               <Link
                 href="/editor"
-                className="inline-flex items-center gap-2 bg-[#FFD233] text-[#0A0A0A] font-bold px-8 py-3.5 border-[3px] border-[#0A0A0A] shadow-[5px_5px_0px_0px_#0A0A0A] hover:shadow-[8px_8px_0px_0px_#0A0A0A] hover:-translate-x-[1px] hover:-translate-y-[1px] active:shadow-none active:translate-x-[5px] active:translate-y-[5px] transition-all text-sm"
+                className="inline-flex items-center gap-2 bg-[#FFD233] text-[#0A0A0A] font-bold px-8 py-3.5 border-[3px] border-[#0A0A0A] shadow-[5px_5px_0px_0px_#0A0A0A] hover:shadow-[8px_8px_0px_0px_#0A0A0A] hover:-translate-x-[1px] hover:-translate-y-[1px] active:shadow-none active:translate-x-[5px] active:translate-y-[5px] transition-all duration-150 text-sm"
               >
                 Open Editor <ArrowRight size={16} />
               </Link>
@@ -546,7 +548,7 @@ export default async function HomePage() {
             href="https://github.com/06ketan/slideshot"
             target="_blank"
             rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-[#0A0A0A] text-white font-bold px-6 py-3 border-[3px] border-[#0A0A0A] shadow-[5px_5px_0px_0px_#0A0A0A] hover:shadow-[8px_8px_0px_0px_#0A0A0A] hover:-translate-x-[1px] hover:-translate-y-[1px] active:shadow-none active:translate-x-[5px] active:translate-y-[5px] transition-all text-sm"
+              className="inline-flex items-center gap-2 bg-[#0A0A0A] text-white font-bold px-6 py-3 border-[3px] border-[#0A0A0A] shadow-[5px_5px_0px_0px_#0A0A0A] hover:shadow-[8px_8px_0px_0px_#0A0A0A] hover:-translate-x-[1px] hover:-translate-y-[1px] active:shadow-none active:translate-x-[5px] active:translate-y-[5px] transition-all duration-150 text-sm"
           >
               <Star size={16} /> View Source on GitHub
           </a>
@@ -614,7 +616,7 @@ export default async function HomePage() {
               </div>
               <Link
                 href="/gallery"
-                className="inline-flex items-center gap-2 bg-[#FFD233] text-[#0A0A0A] font-bold px-6 py-3 border-[3px] border-[#FFD233] shadow-[3px_3px_0px_0px_#FFD233] hover:shadow-[5px_5px_0px_0px_#FFD233] hover:-translate-x-[1px] hover:-translate-y-[1px] active:shadow-none active:translate-x-[3px] active:translate-y-[3px] transition-all text-sm shrink-0"
+                className="inline-flex items-center gap-2 bg-[#FFD233] text-[#0A0A0A] font-bold px-6 py-3 border-[3px] border-[#FFD233] shadow-[3px_3px_0px_0px_#FFD233] hover:shadow-[5px_5px_0px_0px_#FFD233] hover:-translate-x-[1px] hover:-translate-y-[1px] active:shadow-none active:translate-x-[3px] active:translate-y-[3px] transition-all duration-150 text-sm shrink-0"
               >
                 Get Prompts <ArrowRight size={14} />
               </Link>
@@ -625,6 +627,61 @@ export default async function HomePage() {
 
       {/* PROMPT SECTIONS */}
       <PromptBlocks />
+
+      {/* FAQ SECTION */}
+      <section className="border-b-[3px] border-[#0A0A0A]">
+        <div className="max-w-4xl mx-auto px-6 py-20">
+          <ScrollReveal className="text-center mb-12">
+            <h2 className="font-[var(--font-bebas-neue)] text-5xl md:text-6xl text-[#0A0A0A] mb-3">
+              FREQUENTLY ASKED QUESTIONS
+            </h2>
+          </ScrollReveal>
+
+          <div className="space-y-4">
+            {[
+              {
+                q: "What is slideshot?",
+                a: "Slideshot is a free, open-source tool that converts HTML+CSS into high-resolution PNG, WebP, and PDF carousel slides. It works via a web editor, CLI (npx slideshot), or MCP server for AI tool integration with Claude, Cursor, and ChatGPT.",
+              },
+              {
+                q: "How do I convert HTML to slides?",
+                a: "Use the web editor at slideshot.chavan.in/editor to paste your HTML and export instantly. Or run 'npx slideshot ./slides.html --scale 4' in your terminal. Each element with the .slide class becomes one image in the output.",
+              },
+              {
+                q: "Is slideshot free to use?",
+                a: "Yes. Slideshot is 100% free and open source under the MIT license. No account required, no data stored, no usage limits on the CLI.",
+              },
+              {
+                q: "What export formats does slideshot support?",
+                a: "Slideshot exports to PNG, WebP, and PDF at up to 6x scale resolution (giving you images up to 3240x4050px from a 540x675 slide). All formats are bundled into a single ZIP file.",
+              },
+              {
+                q: "Can I use slideshot with AI tools like Claude or ChatGPT?",
+                a: "Yes. Install the MCP server (npx slideshot-mcp) to integrate with Claude Desktop, Cursor IDE, Windsurf, or any MCP client. For ChatGPT, create a Custom GPT using the OpenAPI spec at slideshot.chavan.in/api/openapi.json.",
+              },
+              {
+                q: "How is slideshot different from Canva or screenshot tools?",
+                a: "Slideshot is code-first: you write or generate HTML, and it renders pixel-perfect slides at up to 6x resolution. Unlike Canva, it's fully automatable via CLI and API. Unlike browser screenshots, it produces print-quality output without quality loss.",
+              },
+            ].map((faq, i) => (
+              <ScrollReveal key={i} delay={i * 0.05}>
+                <details className="group border-[3px] border-[#0A0A0A] bg-white shadow-[3px_3px_0px_0px_#0A0A0A]">
+                  <summary className="flex items-center justify-between px-6 py-4 cursor-pointer font-bold text-[#0A0A0A] text-sm select-none">
+                    <span className="flex items-center gap-3">
+                      <HelpCircle size={16} className="text-[#FFD233] shrink-0" />
+                      {faq.q}
+                    </span>
+                    <span className="font-[var(--font-bebas-neue)] text-xl text-[#FFD233] group-open:rotate-45 transition-transform">+</span>
+                  </summary>
+                  <div className="px-6 pb-5 text-sm text-[#666] leading-relaxed border-t-2 border-[#E5E3DE] pt-4">
+                    {faq.a}
+                  </div>
+                </details>
+              </ScrollReveal>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* CTA */}
       <section className="bg-[#FFD233] border-t-[3px] border-[#0A0A0A]">
@@ -646,13 +703,13 @@ export default async function HomePage() {
             <div className="flex flex-wrap justify-center gap-4">
               <Link
                 href="/editor"
-                className="inline-flex items-center gap-2 bg-[#0A0A0A] text-white font-bold px-8 py-3.5 border-[3px] border-[#0A0A0A] shadow-[5px_5px_0px_0px_#0A0A0A] hover:shadow-[8px_8px_0px_0px_#0A0A0A] hover:-translate-x-[1px] hover:-translate-y-[1px] active:shadow-none active:translate-x-[5px] active:translate-y-[5px] transition-all text-sm"
+                className="inline-flex items-center gap-2 bg-[#0A0A0A] text-white font-bold px-8 py-3.5 border-[3px] border-[#0A0A0A] shadow-[5px_5px_0px_0px_#0A0A0A] hover:shadow-[8px_8px_0px_0px_#0A0A0A] hover:-translate-x-[1px] hover:-translate-y-[1px] active:shadow-none active:translate-x-[5px] active:translate-y-[5px] transition-all duration-150 text-sm"
               >
                 Open Editor <ArrowRight size={16} />
               </Link>
               <Link
                 href="/gallery"
-                className="inline-flex items-center gap-2 bg-white text-[#0A0A0A] font-bold px-8 py-3.5 border-[3px] border-[#0A0A0A] shadow-[5px_5px_0px_0px_#0A0A0A] hover:shadow-[8px_8px_0px_0px_#0A0A0A] hover:-translate-x-[1px] hover:-translate-y-[1px] active:shadow-none active:translate-x-[5px] active:translate-y-[5px] transition-all text-sm"
+                className="inline-flex items-center gap-2 bg-white text-[#0A0A0A] font-bold px-8 py-3.5 border-[3px] border-[#0A0A0A] shadow-[5px_5px_0px_0px_#0A0A0A] hover:shadow-[8px_8px_0px_0px_#0A0A0A] hover:-translate-x-[1px] hover:-translate-y-[1px] active:shadow-none active:translate-x-[5px] active:translate-y-[5px] transition-all duration-150 text-sm"
               >
                 Browse Gallery
               </Link>

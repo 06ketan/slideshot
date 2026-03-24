@@ -28,12 +28,12 @@ export default function Navbar({ stars }: { stars?: number }) {
           {[
             { href: "/", label: "Home" },
             { href: "/editor", label: "Editor" },
-            { href: "/gallery", label: "Gallery" },
+            { href: "/gallery", label: "Templates" },
           ].map(({ href, label }) => (
             <Link
               key={href}
               href={href}
-              className={`px-4 py-1.5 text-sm font-bold transition-all ${
+              className={`px-4 py-1.5 text-sm font-bold transition-all duration-150 ${
                 isActive(href)
                   ? "bg-[#FFD233] border-[3px] border-[#0A0A0A] shadow-[3px_3px_0px_0px_#0A0A0A] text-[#0A0A0A]"
                   : "text-[#666] hover:text-[#0A0A0A] border-[3px] border-transparent"
@@ -42,6 +42,14 @@ export default function Navbar({ stars }: { stars?: number }) {
               {label}
             </Link>
           ))}
+          <a
+            href="https://github.com/06ketan/slideshot#readme"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-4 py-1.5 text-sm font-bold text-[#666] hover:text-[#0A0A0A] flex items-center gap-1 border-[3px] border-transparent"
+          >
+            Docs <ExternalLink size={12} />
+          </a>
           <a
             href="/api/openapi.json"
             target="_blank"
@@ -57,7 +65,7 @@ export default function Navbar({ stars }: { stars?: number }) {
             href="https://www.npmjs.com/package/slideshot"
             target="_blank"
             rel="noopener noreferrer"
-            className="hidden sm:flex items-center gap-1.5 text-xs font-mono font-bold bg-white border-[3px] border-[#0A0A0A] px-3 py-1 text-[#0A0A0A] shadow-[2px_2px_0px_0px_#0A0A0A] hover:shadow-[4px_4px_0px_0px_#0A0A0A] hover:-translate-x-[1px] hover:-translate-y-[1px] transition-all"
+            className="hidden sm:flex items-center gap-1.5 text-xs font-mono font-bold bg-white border-[3px] border-[#0A0A0A] px-3 py-1 text-[#0A0A0A] shadow-[2px_2px_0px_0px_#0A0A0A] hover:shadow-[4px_4px_0px_0px_#0A0A0A] hover:-translate-x-[1px] hover:-translate-y-[1px] transition-all duration-150"
           >
             npm
           </a>
@@ -65,7 +73,7 @@ export default function Navbar({ stars }: { stars?: number }) {
             href="https://github.com/06ketan/slideshot"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1.5 text-sm font-bold bg-[#0A0A0A] text-white px-4 py-1.5 border-[3px] border-[#0A0A0A] shadow-[3px_3px_0px_0px_#FFD233] hover:shadow-[5px_5px_0px_0px_#FFD233] hover:-translate-x-[1px] hover:-translate-y-[1px] transition-all"
+            className="flex items-center gap-1.5 text-sm font-bold bg-[#0A0A0A] text-white px-4 py-1.5 border-[3px] border-[#0A0A0A] shadow-[3px_3px_0px_0px_#FFD233] hover:shadow-[5px_5px_0px_0px_#FFD233] hover:-translate-x-[1px] hover:-translate-y-[1px] transition-all duration-150"
           >
             <Github size={14} />
             {stars !== undefined && (
@@ -74,7 +82,7 @@ export default function Navbar({ stars }: { stars?: number }) {
           </a>
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="md:hidden p-2 border-[3px] border-[#0A0A0A] bg-white hover:bg-[#FFD233] transition-colors"
+            className="md:hidden p-2 border-[3px] border-[#0A0A0A] bg-white hover:bg-[#FFD233] transition-colors duration-150"
           >
             {mobileOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
@@ -86,7 +94,7 @@ export default function Navbar({ stars }: { stars?: number }) {
           {[
             { href: "/", label: "Home" },
             { href: "/editor", label: "Editor" },
-            { href: "/gallery", label: "Gallery" },
+            { href: "/gallery", label: "Templates" },
           ].map(({ href, label }) => (
             <Link
               key={href}
@@ -99,6 +107,15 @@ export default function Navbar({ stars }: { stars?: number }) {
               {label}
             </Link>
           ))}
+          <a
+            href="https://github.com/06ketan/slideshot#readme"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block py-3 text-base font-bold text-[#666] border-b-[2px] border-[#E5E3DE] flex items-center gap-1"
+            onClick={() => setMobileOpen(false)}
+          >
+            Docs <ExternalLink size={12} />
+          </a>
           <a
             href="/api/openapi.json"
             target="_blank"
