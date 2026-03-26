@@ -19,14 +19,18 @@ export const RenderInputSchema = {
 export const PromptInputSchema = {
   variant: z
     .enum(["generic", "branded", "instagram-carousel", "infographic", "pitch-deck", "dark-modern", "editorial", "browser-shell"])
-    .describe("Theme variant ID"),
+    .describe(
+      "Theme variant ID. MUST be selected by the user via create_slides discover — DO NOT auto-select.",
+    ),
 };
 
 export const CreateInputSchema = {
   step: z.enum(["discover", "preview", "review"]).describe(
-    "discover=themes+questions, preview=save HTML+check slide 1, review=confirm all slides",
+    "'discover' = MUST be called first — returns themes + questions you MUST ask user. " +
+    "'preview' = saves HTML to disk, returns htmlPath (JSON-only, no images). MUST show to user and wait for approval. " +
+    "'review' = confirms all slides. MUST wait for user approval before render.",
   ),
   html: z.string().optional().describe("HTML string (required on first preview call)"),
   htmlPath: z.string().optional().describe("Path to saved HTML file (returned by preview, use for review/render)"),
-  aspectRatio: z.enum(["portrait", "landscape"]).optional().describe("portrait or landscape"),
+  aspectRatio: z.enum(["portrait", "landscape"]).optional().describe("portrait (540x675, PDF/social) or landscape (1920x1080, PPTX/presentations)"),
 };

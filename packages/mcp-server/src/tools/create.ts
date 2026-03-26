@@ -40,15 +40,29 @@ function countSlides(html: string): number {
   return matches ? matches.length : 0;
 }
 
+const OUTPUT_PRESETS: Record<string, { formats: string[]; orientation: string; description: string }> = {
+  instagram: { formats: ["webp"], orientation: "portrait", description: "Instagram post/carousel (1080x1350)" },
+  linkedin: { formats: ["pdf", "webp"], orientation: "portrait", description: "LinkedIn carousel (2160x2700 @4x)" },
+  presentation: { formats: ["pptx"], orientation: "landscape", description: "PowerPoint deck (1920x1080)" },
+  custom: { formats: ["pdf"], orientation: "portrait", description: "Custom — pick your own formats" },
+};
+
 function discoverStep() {
   return {
     content: [{
       type: "text" as const,
       text: JSON.stringify({
         themes: THEME_CATALOG,
-        formats: ["png", "webp", "pdf", "pptx"],
-        workflow: "discover → user picks theme/topic/orientation/formats → get_slide_prompt → generate HTML → preview (saves HTML, shows code) → user approves → review → user approves → render_html_to_images with htmlPath",
-        instruction: "Present themes as a numbered menu. Ask user: (1) theme, (2) topic/content, (3) portrait or landscape, (4) output formats (pdf/pptx/png/webp). If PPTX: ask native or image mode. Wait for answers before proceeding.",
+        outputPresets: OUTPUT_PRESETS,
+        availableFormats: ["png", "webp", "pdf", "pptx"],
+        requiredQuestions: [
+          { id: "theme", ask: "Which theme? Present the numbered list above and let the user pick." },
+          { id: "topic", ask: "What content/topic for the slides?" },
+          { id: "aspectRatio", ask: "Portrait (PDF, social media) or Landscape (PPTX, presentations)?" },
+          { id: "formats", ask: "Output formats: png, webp, pdf, pptx? (or pick a preset above)" },
+          { id: "pptxMode", ask: "If PPTX selected: editable text (native) or pixel-perfect screenshot (image)?" },
+        ],
+        instruction: "STOP. You MUST present the theme list as a numbered menu and ask ALL requiredQuestions above in ONE message. DO NOT call get_slide_prompt or generate any HTML until the user has answered. Wait for the user's response before proceeding.",
       }),
     }],
   };
@@ -78,8 +92,9 @@ function previewStep(html?: string, htmlPath?: string) {
         htmlPath: resolvedPath,
         previewSlide: 1,
         confirmationRequired: true,
-        instruction: `Show the full HTML to the user as a code block (the user's client will render it as a live preview). Say: "Here's slide 1 of ${slideCount} — approve or request changes?" Use htmlPath="${resolvedPath}" for all subsequent calls (review + render_html_to_images). Do NOT re-send the HTML string.`,
-        onApproval: `Call create_slides with step='review' and htmlPath='${resolvedPath}'.`,
+        blockedNextStep: "review or render_html_to_images",
+        instruction: `Show the HTML as a code block. Ask: "Here's slide 1 of ${slideCount} — approve or request changes?" You MUST wait for explicit user approval before proceeding. DO NOT auto-advance.`,
+        onApproval: `Call create_slides with step='review' and htmlPath='${resolvedPath}'. Do NOT re-send the HTML string.`,
         onChangesRequested: "Edit the HTML, then call create_slides with step='preview' and the updated html string.",
       }),
     }],
@@ -109,7 +124,8 @@ function reviewStep(html?: string, htmlPath?: string) {
         slideCount,
         htmlPath: resolvedPath,
         confirmationRequired: true,
-        instruction: `Show the full HTML to the user as a code block for review of all ${slideCount} slides. Ask: "All ${slideCount} slides look good? Ready to render?" Wait for explicit approval.`,
+        blockedNextStep: "render_html_to_images",
+        instruction: `Show the HTML as a code block for review of all ${slideCount} slides. Ask: "All ${slideCount} slides look good? Render to final files?" You MUST wait for explicit user approval before calling render_html_to_images. DO NOT auto-advance.`,
         onApproval: `Call render_html_to_images with htmlPath='${resolvedPath}' and user-chosen formats/orientation. Do NOT pass the html string — use htmlPath only.`,
         onChangesRequested: `Edit the HTML, then call create_slides with step='preview' and the updated html string to re-save.`,
       }),

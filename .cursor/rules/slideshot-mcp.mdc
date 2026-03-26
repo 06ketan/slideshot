@@ -19,16 +19,17 @@ alwaysApply: false
 | "Get prompt for X theme" | `get_slide_prompt` | Returns CSS + component reference |
 | "Render fails" | `health_check` | Diagnose Puppeteer/Chromium issues |
 
-## Token-Optimized Workflow
+## Enforced Workflow (MUST follow)
 
-1. `create_slides` step=discover → get themes (no SVGs, compact)
-2. Present themes to user, ask: theme, topic, orientation, formats
-3. `get_slide_prompt` with chosen variant → CSS reference
-4. Generate HTML with `.slide` elements
-5. `create_slides` step=preview with html → saves to disk, returns `htmlPath`
-6. Show HTML as code block (client renders live preview). Wait for approval
-7. `create_slides` step=review with htmlPath → confirms all slides
-8. `render_html_to_images` with htmlPath + formats → final files
+1. `create_slides` step=discover → get themes + required questions
+2. **MUST** present themes as numbered menu and ask ALL questions (theme, topic, orientation, formats, pptxMode). **DO NOT** skip.
+3. **Wait for user answers** before calling `get_slide_prompt`
+4. `get_slide_prompt` with user-chosen variant → CSS reference
+5. Generate HTML with `.slide` elements
+6. `create_slides` step=preview with html → saves to disk, returns `htmlPath` (JSON-only)
+7. Show HTML as code block. **MUST wait for explicit user approval** before proceeding
+8. `create_slides` step=review with htmlPath → confirms all slides. **MUST wait for approval**
+9. `render_html_to_images` with htmlPath + formats → final files
 
 ## Critical: Token Savings Rules
 
