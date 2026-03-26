@@ -13,31 +13,34 @@ alwaysApply: false
 | User intent | Tool to use | Notes |
 |-------------|-------------|-------|
 | "Make slides about X" | `create_slides` (discover) | Start here for any new slide request |
-| "Quick preview" | `create_slides` (preview) | Pass HTML, get 1x WebP of slide 1 |
-| "Render my HTML" | `render_html_to_images` | User already has HTML ready |
-| "Which themes?" | `create_slides` (discover) | Returns full theme catalog |
+| "Quick preview" | `create_slides` (preview) | Pass HTML, saves to disk, returns htmlPath |
+| "Render my HTML" | `render_html_to_images` | Use htmlPath (preferred) or html string |
+| "Which themes?" | `create_slides` (discover) | Returns compact theme catalog |
 | "Get prompt for X theme" | `get_slide_prompt` | Returns CSS + component reference |
 | "Render fails" | `health_check` | Diagnose Puppeteer/Chromium issues |
 
-## Guided Workflow (Recommended)
+## Token-Optimized Workflow
 
-1. `create_slides` step=discover → get themes + presets
-2. Present themes to user, ask: theme, topic, platform
-3. `get_slide_prompt` with chosen variant → get full CSS reference
+1. `create_slides` step=discover → get themes (no SVGs, compact)
+2. Present themes to user, ask: theme, topic, orientation, formats
+3. `get_slide_prompt` with chosen variant → CSS reference
 4. Generate HTML with `.slide` elements
-5. `create_slides` step=preview → show slide 1 preview
-6. `render_html_to_images` → full render with chosen formats
+5. `create_slides` step=preview with html → saves to disk, returns `htmlPath`
+6. Show HTML as code block (client renders live preview). Wait for approval
+7. `create_slides` step=review with htmlPath → confirms all slides
+8. `render_html_to_images` with htmlPath + formats → final files
 
-## Output Presets
+## Critical: Token Savings Rules
 
-- **Instagram**: webp, 1080x1350, scale 1
-- **LinkedIn**: pdf + webp, 540x675, scale 4
-- **Presentation**: pptx, 1920x1080, scale 2, landscape
-- **Custom**: all formats, 540x675, scale 4
+- **Never re-send HTML as a string after preview** — use `htmlPath` for review and render
+- **Preview/review return JSON only** — no base64 images, no Puppeteer needed
+- **Default format is PDF** — direct `page.pdf()`, no raster screenshots
+- Only request png/webp formats when the user explicitly needs image files
+- Show HTML as a code block for preview — the client renders it visually
 
-## 7 Theme Variants
+## 8 Theme Variants
 
-generic, branded, instagram-carousel, infographic, pitch-deck, dark-modern, editorial
+generic, branded, instagram-carousel, infographic, pitch-deck, dark-modern, editorial, browser-shell
 
 ## PPTX Modes
 
@@ -46,7 +49,7 @@ generic, branded, instagram-carousel, infographic, pitch-deck, dark-modern, edit
 
 ## Common Patterns
 
-- Always pass `outDir` to `render_html_to_images` — defaults to `~/Desktop/slideshot-output`
+- Always use `htmlPath` from preview step for render_html_to_images
 - Use `slideRange: [1, 3]` for partial renders during iteration
-- Use `htmlPath` instead of `html` for large slide decks (avoids string size limits)
+- Default output: `~/Desktop/slideshot-output`
 - Include Google Fonts via `<link>` tags in the HTML `<head>`

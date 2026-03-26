@@ -118,13 +118,16 @@ export async function handleRender(args: {
       }, null, 2),
     });
 
-    const previewFile = result.files.find(f => f.endsWith(".webp") || f.endsWith(".png"));
-    if (previewFile && fs.existsSync(previewFile)) {
-      try {
-        const data = fs.readFileSync(previewFile).toString("base64");
-        const mimeType = previewFile.endsWith(".webp") ? "image/webp" : "image/png";
-        content.push({ type: "image" as const, data, mimeType });
-      } catch {}
+    const hasRasterFormats = resolvedFormats.some(f => f === "png" || f === "webp");
+    if (hasRasterFormats) {
+      const previewFile = result.files.find(f => f.endsWith(".webp") || f.endsWith(".png"));
+      if (previewFile && fs.existsSync(previewFile)) {
+        try {
+          const data = fs.readFileSync(previewFile).toString("base64");
+          const mimeType = previewFile.endsWith(".webp") ? "image/webp" : "image/png";
+          content.push({ type: "image" as const, data, mimeType });
+        } catch {}
+      }
     }
 
     return { content };

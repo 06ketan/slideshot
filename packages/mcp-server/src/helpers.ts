@@ -24,7 +24,7 @@ export function defaultOutDir(): string {
 }
 
 export function resolveFormats(formats?: ImageFormat[]): ImageFormat[] {
-  if (!formats || formats.length === 0) return ["webp", "pdf"];
+  if (!formats || formats.length === 0) return ["pdf"];
   return formats;
 }
 

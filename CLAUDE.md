@@ -58,14 +58,15 @@ No test suite exists in this project.
 - `next.config.ts` configures file tracing to include the Chromium binary for the render API route
 
 ### MCP Server (`packages/mcp-server/src/`)
-- `server.ts` — MCP server factory (v2.8.1) exposing 4 tools:
-  - `create_slides` — guided workflow with theme catalog + output presets + preview + review
-  - `render_html_to_images` — full render to PNG/WebP/PDF/PPTX
+- `server.ts` — MCP server factory (v2.9.0) exposing 4 tools:
+  - `create_slides` — guided workflow: discover (themes) → preview (saves HTML to disk, returns htmlPath) → review (confirms all slides)
+  - `render_html_to_images` — full render to PNG/WebP/PDF/PPTX (default: PDF only). Accepts `htmlPath` from preview step
   - `get_slide_prompt` — AI prompt template for 8 theme variants
   - `health_check` — Puppeteer/Chromium diagnostics
 - `schema.ts` — Zod validation schemas for tool inputs
 - 8 MCP prompts registered: `{variant}-slides` for each theme
 - Delegates rendering to the CLI package
+- **Token optimization**: preview/review return JSON-only (no base64 images). HTML is saved to disk on first preview; subsequent calls use `htmlPath` to avoid re-sending HTML strings. Default render format is PDF (direct `page.pdf()`, no raster screenshots)
 
 ### Prompt Templates (`prompts/`)
 8 AI prompt variants (generic, branded, dark-modern, editorial, infographic, instagram-carousel, pitch-deck, browser-shell) that instruct AI to generate HTML with `.slide` elements at 540×675 default dimensions.
@@ -78,17 +79,17 @@ No test suite exists in this project.
 - Plus marketing/SEO skills: ai-seo, analytics-tracking, page-cro, programmatic-seo, schema-markup, seo-audit, site-architecture, remotion-best-practices
 
 ### MCP Workflow (Claude Desktop / Cursor)
-The slideshot MCP follows an iterative loop:
-1. `discover` (themes + presets) — user picks theme, topic, platform
-2. `get_slide_prompt` — AI generates HTML using the theme's CSS reference
-3. `preview` (shows code + slide 1 image) — user reviews
-4. revise if needed — preview again (loop until approved)
-5. `review` (all slides as thumbnails) — user confirms full deck
-6. `render_html_to_images` — final files saved to disk
+The slideshot MCP follows a token-optimized iterative loop:
+1. `discover` → compact theme list + questions (no SVGs, no presets)
+2. `get_slide_prompt` with chosen variant → compressed CSS + component reference
+3. AI generates HTML
+4. `preview` with `html` → MCP saves to `slides.html`, returns `{ htmlPath, slideCount }`. Show HTML as code block for user to preview
+5. User approves or requests changes → edit HTML → preview again
+6. `review` with `htmlPath` → confirms all slides. Show HTML as code block
+7. User approves
+8. `render_html_to_images` with `htmlPath` + chosen formats → final files
 
-Unlike Google Workspace connectors (where files appear inline in Claude),
-MCP tool outputs are saved to `~/Desktop/slideshot-output/` and paths are
-returned in the response. The preview/review steps return base64 images inline.
+Key: HTML is persisted to disk on preview. All subsequent calls use `htmlPath` — never re-send the HTML string. Preview/review return JSON-only (no base64 images). Default render format is `pdf` (direct Chromium print, no raster screenshots).
 
 ## Webapp Design System (Neobrutalist)
 
