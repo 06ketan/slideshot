@@ -3,8 +3,8 @@ const spec = {
   info: {
     title: "slideshot API",
     description:
-      "Convert HTML slides to high-res PNG, WebP, and PDF. Use as ChatGPT Action, OpenWebUI tool, or any OpenAPI client.",
-    version: "2.0.0",
+      "Convert HTML slides to high-res PNG, WebP, PDF, and PPTX. Use as ChatGPT Action, OpenWebUI tool, or any OpenAPI client.",
+    version: "2.8.0",
     contact: {
       name: "Ketan Chavan",
       url: "https://github.com/06ketan/slideshot",
@@ -130,11 +130,11 @@ const spec = {
             required: false,
             schema: {
               type: "string",
-              enum: ["generic", "branded"],
+              enum: ["generic", "branded", "instagram-carousel", "infographic", "pitch-deck", "dark-modern", "editorial", "browser-shell"],
               default: "generic",
             },
             description:
-              "'generic' for clean minimal slides, 'branded' for the Ketan Slides design system",
+              "Theme variant: 'generic' (clean minimal), 'branded' (Ketan Slides), 'instagram-carousel' (bold vibrant), 'infographic' (data-heavy), 'pitch-deck' (professional), 'dark-modern' (neon glassmorphism), 'editorial' (magazine serif), 'browser-shell' (browser window chrome)",
           },
         ],
         responses: {

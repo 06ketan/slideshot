@@ -7,7 +7,7 @@ import fs from "node:fs";
 
 const VARIANTS = [
   "generic", "branded", "instagram-carousel", "infographic",
-  "pitch-deck", "dark-modern", "editorial",
+  "pitch-deck", "dark-modern", "editorial", "browser-shell",
 ] as const;
 
 function promptsDir(): string {

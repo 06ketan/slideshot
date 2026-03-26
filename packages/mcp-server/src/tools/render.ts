@@ -102,6 +102,13 @@ export async function handleRender(args: {
         formatSummary: formatSummary(result.files),
         ...(outDirFallback && { outDirFallback: true, requestedOutDir }),
         ...(htmlPathFallback && { htmlPathFallback: true, note: "htmlPath was inaccessible; used html string via temp file" }),
+        ...(result.nativeFallbackUsed && {
+          nativeFallbackUsed: true,
+          pptxNote: "PPTX was generated using image mode (native text extraction encountered issues). Text may not be editable in PowerPoint.",
+        }),
+        ...(result.nativeWarnings && result.nativeWarnings.length > 0 && {
+          nativeWarnings: result.nativeWarnings,
+        }),
       }, null, 2),
     });
 

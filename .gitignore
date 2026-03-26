@@ -13,3 +13,9 @@ build/
 # Build-copied prompts (source of truth is /prompts/)
 packages/cli/prompts/
 packages/mcp-server/prompts/
+
+# Demo video (Remotion project, large media files)
+packages/demo-video/
+
+# Claude Code worktrees (auto-generated, large)
+.claude/worktrees/

@@ -6,7 +6,7 @@
 [![GitHub stars](https://img.shields.io/github/stars/06ketan/slideshot)](https://github.com/06ketan/slideshot)
 [![license](https://img.shields.io/github/license/06ketan/slideshot)](LICENSE)
 
-Convert AI-generated HTML carousels into high-res PNG, WebP, and PDF — via **CLI**, **Web App**, **MCP Server**, or **REST API**.
+Convert AI-generated HTML carousels into high-res PNG, WebP, PDF, and PPTX — via **CLI**, **Web App**, **MCP Server**, or **REST API**.
 
 **[Web App](https://slideshot.vercel.app)** · **[npm CLI](https://www.npmjs.com/package/slideshot)** · **[npm MCP](https://www.npmjs.com/package/slideshot-mcp)** · **[API Spec](https://slideshot.vercel.app/api/openapi.json)**
 
@@ -15,13 +15,17 @@ Convert AI-generated HTML carousels into high-res PNG, WebP, and PDF — via **C
 ```
 slideshot/
   packages/
-    core/          ← Shared Puppeteer rendering engine
-    cli/           ← npx slideshot ./file.html
+    cli/           ← Core Puppeteer rendering engine + CLI
     mcp-server/    ← MCP stdio server for AI tools
     webapp/        ← Next.js web app with live preview
   prompts/
-    generic.md     ← AI prompt template (any style)
-    branded.md     ← AI prompt template (Ketan Slides design system)
+    generic.md           ← Clean minimal
+    branded.md           ← Ketan Slides design system
+    instagram-carousel.md ← Bold vibrant IG style
+    infographic.md       ← Data-heavy charts
+    pitch-deck.md        ← Professional presentations
+    dark-modern.md       ← Neon glassmorphism
+    editorial.md         ← Magazine serif
 ```
 
 ## Quick Start
@@ -40,7 +44,7 @@ npx slideshot ./my-carousel.html --formats png,webp,pdf --scale 4
 | `-W, --width` | `540` | Slide width (CSS px) |
 | `-H, --height` | `675` | Slide height (CSS px) |
 | `--scale` | `4` | Device scale (4x = 2160x2700) |
-| `-f, --formats` | `png,webp,pdf` | Output formats |
+| `-f, --formats` | `png,webp,pdf` | Output formats (png, webp, pdf, pptx) |
 | `-q, --quality` | `95` | WebP quality (0-100) |
 | `-o, --out` | `./slides` | Output directory |
 
@@ -73,13 +77,20 @@ Add to Claude Desktop or Cursor config:
 
 **Tools:**
 
-- `render_html_to_images` — render HTML to images/PDF
-- `get_slide_prompt` — get AI prompt templates
+- `create_slides` — guided creation workflow with 7 themes and output presets
+- `render_html_to_images` — render HTML to PNG/WebP/PDF/PPTX
+- `get_slide_prompt` — get AI prompt template for any theme variant
+- `health_check` — verify Puppeteer/Chromium availability
 
-**Prompts:**
+**Prompts (7 themes):**
 
-- `generic-slides` — clean minimal slide prompt
-- `branded-slides` — Ketan Slides design system prompt
+- `generic-slides` — clean minimal
+- `branded-slides` — Ketan Slides design system
+- `instagram-carousel-slides` — bold vibrant IG style
+- `infographic-slides` — data-heavy charts and stats
+- `pitch-deck-slides` — professional presentations
+- `dark-modern-slides` — neon glassmorphism
+- `editorial-slides` — magazine serif with gold accents
 
 ### REST API (ChatGPT Actions / OpenWebUI)
 
@@ -93,17 +104,6 @@ The web app exposes an OpenAPI-compatible REST API at `https://slideshot.vercel.
 | `GET` | `/api/prompt?variant=generic` | Get AI prompt template |
 | `GET` | `/api/openapi.json` | OpenAPI 3.1.0 spec |
 
-**ChatGPT Custom GPT:**
-
-1. Create a Custom GPT at [chat.openai.com](https://chat.openai.com)
-2. Add Action → Import URL: `https://slideshot.vercel.app/api/openapi.json`
-3. The GPT can now render slides via the API
-
-**OpenWebUI:**
-
-1. Admin → Tools → Add Tool
-2. Paste: `https://slideshot.vercel.app/api/openapi.json`
-
 **Platform support:**
 
 | Platform | Method | Setup |
@@ -115,7 +115,17 @@ The web app exposes an OpenAPI-compatible REST API at `https://slideshot.vercel.
 
 ## AI Prompt Templates
 
-See `prompts/generic.md` and `prompts/branded.md` for copy-paste prompts you can give to ChatGPT, Claude, or any AI to generate compatible carousel HTML.
+7 prompt variants in `prompts/` — copy-paste or use via `get_slide_prompt` tool:
+
+| Variant | File | Style |
+|---------|------|-------|
+| Generic | `prompts/generic.md` | Clean minimal, Inter font |
+| Branded | `prompts/branded.md` | Space Mono, teal/coral accents |
+| Instagram | `prompts/instagram-carousel.md` | Bold gradients, Poppins |
+| Infographic | `prompts/infographic.md` | DM Sans, stat cards |
+| Pitch Deck | `prompts/pitch-deck.md` | Professional, KPI cards |
+| Dark Modern | `prompts/dark-modern.md` | Neon, glassmorphism |
+| Editorial | `prompts/editorial.md` | Playfair Display, gold |
 
 ## Build All
 

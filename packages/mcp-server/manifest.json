@@ -2,9 +2,9 @@
   "manifest_version": "0.3",
   "name": "slideshot",
   "display_name": "Slideshot - HTML to Slides",
-  "version": "2.1.0",
-  "description": "Render HTML slides to high-resolution PNG, WebP, and PDF using Puppeteer. Generate carousels for LinkedIn, Instagram, and presentations.",
-  "long_description": "Slideshot converts HTML into pixel-perfect slide images. Give it HTML with `.slide` divs and it renders each one as a 4x resolution PNG, WebP, or combined PDF — ready for LinkedIn carousels, Instagram posts, or presentation decks. Includes two built-in prompt templates: a generic clean layout and the Ketan Slides branded design system.",
+  "version": "2.8.0",
+  "description": "Render HTML slides to high-resolution PNG, WebP, PDF, and PPTX using Puppeteer. Generate carousels for LinkedIn, Instagram, and presentations with a guided AI workflow.",
+  "long_description": "Slideshot converts HTML into pixel-perfect slide images and documents. Give it HTML with `.slide` divs and it renders each one as a high-resolution PNG, WebP, combined PDF, or editable/image-based PPTX — ready for LinkedIn carousels, Instagram posts, pitch decks, or presentation decks. Includes 8 built-in prompt templates (generic, branded, instagram-carousel, infographic, pitch-deck, dark-modern, editorial, browser-shell) and a guided creation workflow.",
   "author": {
     "name": "Ketan Chavan",
     "url": "https://github.com/06ketan"
@@ -20,7 +20,7 @@
   "privacy_policies": [
     "https://github.com/06ketan/slideshot/blob/main/PRIVACY.md"
   ],
-  "keywords": ["slides", "carousel", "html-to-image", "puppeteer", "linkedin", "instagram", "pdf"],
+  "keywords": ["slides", "carousel", "html-to-image", "puppeteer", "linkedin", "instagram", "pdf", "pptx", "powerpoint", "presentation", "pptx-native", "pitch-deck", "infographic"],
   "server": {
     "type": "node",
     "entry_point": "dist/index.js",
@@ -31,24 +31,54 @@
   },
   "tools": [
     {
+      "name": "create_slides",
+      "description": "Guided slide creation workflow with theme catalog and output presets. step='discover' returns themes + questions; step='preview' renders slide 1 for fast preview."
+    },
+    {
       "name": "render_html_to_images",
-      "description": "Render HTML slides to high-resolution PNG, WebP, and/or PDF files"
+      "description": "Render HTML slides to high-resolution PNG, WebP, PDF, and/or PPTX files. Supports native editable PPTX and image-based PPTX modes."
     },
     {
       "name": "get_slide_prompt",
-      "description": "Get AI prompt template for generating slide HTML compatible with slideshot"
+      "description": "Get AI prompt template with full CSS + component reference for a theme variant (generic, branded, instagram-carousel, infographic, pitch-deck, dark-modern, editorial, browser-shell)."
+    },
+    {
+      "name": "health_check",
+      "description": "Verify Puppeteer/Chromium can launch in this environment. Run first to diagnose render failures."
     }
   ],
   "prompts": [
     {
       "name": "generic-slides",
-      "description": "Clean minimal slide generation prompt",
-      "text": "Generate HTML slides using .slide divs at 540x675px with clean, minimal styling."
+      "description": "Clean minimal slide generation prompt with Inter font and white cards"
     },
     {
       "name": "branded-slides",
-      "description": "Ketan Slides design system prompt with monospace typography and corner accents",
-      "text": "Generate HTML slides using the Ketan Slides design system with Space Mono font, corner accents, and teal/coral accent colors."
+      "description": "Ketan Slides design system prompt with Space Mono font, teal/coral accents, and corner decorations"
+    },
+    {
+      "name": "instagram-carousel-slides",
+      "description": "Bold vibrant Instagram carousel style with Poppins font and gradient backgrounds"
+    },
+    {
+      "name": "infographic-slides",
+      "description": "Data-heavy infographic style with DM Sans, progress bars, and stat cards"
+    },
+    {
+      "name": "pitch-deck-slides",
+      "description": "Professional pitch deck style with DM Sans, KPI cards, and timelines"
+    },
+    {
+      "name": "dark-modern-slides",
+      "description": "Neon glassmorphism style with Inter font and code blocks on dark backgrounds"
+    },
+    {
+      "name": "editorial-slides",
+      "description": "Magazine serif style with Playfair Display and gold accents"
+    },
+    {
+      "name": "browser-shell-slides",
+      "description": "Browser shell chrome style with Bebas Neue + DM Sans, yellow/navy palette"
     }
   ],
   "compatibility": {

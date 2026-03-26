@@ -3,7 +3,7 @@ import path from "node:path";
 
 const VARIANTS = [
   "generic", "branded", "instagram-carousel", "infographic",
-  "pitch-deck", "dark-modern", "editorial", "obsio-carousel",
+  "pitch-deck", "dark-modern", "editorial", "browser-shell",
 ] as const;
 
 type Variant = (typeof VARIANTS)[number];

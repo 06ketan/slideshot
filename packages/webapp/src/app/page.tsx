@@ -83,7 +83,8 @@ export default async function HomePage() {
           </h1>
 
               <p className="text-lg font-medium text-[#444] max-w-md mb-4 leading-relaxed animate-slide-in-line" style={{ animationDelay: "0.35s" }}>
-                Slideshot is a free, open-source tool that converts HTML+CSS into high-resolution PNG, WebP, and PDF carousel slides. Use the web editor, CLI, or MCP server to generate slides from code or AI.
+              Paste HTML+CSS, get high-res PNG, WebP &amp; PDF carousels.
+              Use the web editor, CLI, or MCP server.              
               </p>
 
               <CopyBlock text="npx slideshot ./slides.html --scale 4" className="inline-block mb-8 animate-slide-in-line max-w-full" dark>

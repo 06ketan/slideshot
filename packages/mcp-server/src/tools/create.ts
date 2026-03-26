@@ -53,6 +53,12 @@ const THEME_CATALOG: ThemeEntry[] = [
     style: "Magazine serif, Playfair Display, gold accents",
     palette: ["#FAF8F5", "#C9963B", "#2C2824", "#1A1814"],
   },
+  {
+    id: "browser-shell", name: "Browser Shell", emoji: "\ud83d\udda5\ufe0f",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none"><rect x="2" y="3" width="20" height="17" rx="2" fill="#12122A"/><rect x="2" y="3" width="20" height="4" rx="2" fill="#FFD233"/><circle cx="6" cy="5" r="1" fill="#FF6059"/><circle cx="9" cy="5" r="1" fill="#FFBD2E"/><circle cx="12" cy="5" r="1" fill="#27C93F"/><rect x="5" y="10" width="14" height="2" rx="1" fill="#fff"/><rect x="5" y="14" width="8" height="1.5" rx=".75" fill="#FFD233"/></svg>`,
+    style: "Bebas Neue + DM Sans, yellow/navy browser chrome, versatile layout",
+    palette: ["#FFD233", "#12122A", "#0A0A0A", "#FFFFFF"],
+  },
 ];
 
 const OUTPUT_PRESETS: Record<string, { formats: string[]; width: number; height: number; scale: number; orientation: string; description: string }> = {
@@ -70,14 +76,23 @@ function discoverStep() {
         themes: THEME_CATALOG,
         outputPresets: OUTPUT_PRESETS,
         availableFormats: ["png", "webp", "pdf", "pptx"],
+        workflow: [
+          "1. discover -> user picks theme/topic/platform",
+          "2. get_slide_prompt with chosen theme -> AI generates HTML",
+          "3. preview (slide 1) -> show code + image to user",
+          "4. IF changes needed -> revise HTML -> preview again",
+          "5. review (all slides) -> user confirms entire deck",
+          "6. render_html_to_images -> final high-res files",
+        ],
         askUser: [
           "Present the theme list as a numbered menu using each theme's emoji, name, and style description.",
           "Ask these in ONE bundled message:",
           "1. Which theme? (pick from the list or describe your own style)",
           "2. What content/topic for the slides? (or paste existing content)",
           "3. Target platform: Instagram, LinkedIn, Presentation (PPTX), or Custom?",
-          "4. Orientation: Portrait or Landscape? (default: portrait for social, landscape for presentations)",
+          "4. Ratio: Portrait (PDF, social) or Landscape (PPTX, presentations)? (default: portrait)",
           "After the user answers, use get_slide_prompt with the chosen theme variant to get the full CSS/prompt, then generate the HTML.",
+          "IMPORTANT: Always show the generated HTML code AND call preview before rendering. Loop preview until user approves.",
         ].join(" "),
       }, null, 2),
     }],
@@ -114,15 +129,68 @@ async function previewStep(html?: string) {
     text: JSON.stringify({
       slideCount: result.slideCount,
       previewSlide: 1,
-      askUser: `Show the preview image above and ask: "Here's slide 1 of ${result.slideCount}. Any changes, or should I render all slides at full resolution?"`,
+      htmlIncluded: true,
+      askUser: [
+        `Show the HTML code as a code block AND the preview image above to the user.`,
+        `Ask: "Here's slide 1 of ${result.slideCount}. Review the code and preview — any changes needed?"`,
+        `If user wants changes: revise the HTML and call preview again.`,
+        `If user approves: call review with the full HTML to see all slides, or call render_html_to_images to generate final files.`,
+      ].join(" "),
+    }, null, 2),
+  });
+
+  content.push({
+    type: "text" as const,
+    text: `\n---HTML CODE---\n${html}\n---END HTML---`,
+  });
+
+  return { content };
+}
+
+async function reviewStep(html?: string) {
+  if (!html) {
+    throw new Error("html is required for review step");
+  }
+
+  const result = await renderToBuffers({
+    html,
+    scale: 1,
+    formats: ["webp"],
+  });
+
+  const content: Array<
+    | { type: "text"; text: string }
+    | { type: "image"; data: string; mimeType: string }
+  > = [];
+
+  for (const img of result.images) {
+    content.push({
+      type: "image" as const,
+      data: img.buffer.toString("base64"),
+      mimeType: "image/webp",
+    });
+  }
+
+  content.push({
+    type: "text" as const,
+    text: JSON.stringify({
+      slideCount: result.slideCount,
+      totalPreviews: result.images.length,
+      askUser: [
+        `Show ALL ${result.slideCount} slide preview images above to the user.`,
+        `Ask: "Here are all ${result.slideCount} slides. Does everything look good?"`,
+        `If user wants changes: ask which slide(s) to fix, revise the HTML, and call review again.`,
+        `If user approves: call render_html_to_images with the final HTML and desired formats (portrait=PDF, landscape=PPTX).`,
+      ].join(" "),
     }, null, 2),
   });
 
   return { content };
 }
 
-export async function handleCreate(args: { step: string; html?: string }) {
+export async function handleCreate(args: { step: string; html?: string; aspectRatio?: string }) {
   if (args.step === "discover") return discoverStep();
   if (args.step === "preview") return previewStep(args.html);
-  throw new Error(`Unknown step "${args.step}". Use "discover" or "preview".`);
+  if (args.step === "review") return reviewStep(args.html);
+  throw new Error(`Unknown step "${args.step}". Use "discover", "preview", or "review".`);
 }

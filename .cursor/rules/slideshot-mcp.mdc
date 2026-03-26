@@ -1,0 +1,52 @@
+---
+description: Slideshot MCP server usage guidance for optimal tool selection and workflow
+globs:
+  - packages/mcp-server/**
+  - prompts/**
+alwaysApply: false
+---
+
+# Slideshot MCP — Tool Usage Guide
+
+## Tool Selection
+
+| User intent | Tool to use | Notes |
+|-------------|-------------|-------|
+| "Make slides about X" | `create_slides` (discover) | Start here for any new slide request |
+| "Quick preview" | `create_slides` (preview) | Pass HTML, get 1x WebP of slide 1 |
+| "Render my HTML" | `render_html_to_images` | User already has HTML ready |
+| "Which themes?" | `create_slides` (discover) | Returns full theme catalog |
+| "Get prompt for X theme" | `get_slide_prompt` | Returns CSS + component reference |
+| "Render fails" | `health_check` | Diagnose Puppeteer/Chromium issues |
+
+## Guided Workflow (Recommended)
+
+1. `create_slides` step=discover → get themes + presets
+2. Present themes to user, ask: theme, topic, platform
+3. `get_slide_prompt` with chosen variant → get full CSS reference
+4. Generate HTML with `.slide` elements
+5. `create_slides` step=preview → show slide 1 preview
+6. `render_html_to_images` → full render with chosen formats
+
+## Output Presets
+
+- **Instagram**: webp, 1080x1350, scale 1
+- **LinkedIn**: pdf + webp, 540x675, scale 4
+- **Presentation**: pptx, 1920x1080, scale 2, landscape
+- **Custom**: all formats, 540x675, scale 4
+
+## 7 Theme Variants
+
+generic, branded, instagram-carousel, infographic, pitch-deck, dark-modern, editorial
+
+## PPTX Modes
+
+- `native` (default) — editable text in PowerPoint
+- `image` — pixel-perfect but not editable
+
+## Common Patterns
+
+- Always pass `outDir` to `render_html_to_images` — defaults to `~/Desktop/slideshot-output`
+- Use `slideRange: [1, 3]` for partial renders during iteration
+- Use `htmlPath` instead of `html` for large slide decks (avoids string size limits)
+- Include Google Fonts via `<link>` tags in the HTML `<head>`

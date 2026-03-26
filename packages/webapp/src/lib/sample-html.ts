@@ -1972,370 +1972,77 @@ export const SAMPLE_HTML: Record<string, string> = {
 
 
   // ─────────────────────────────────────────────────────
-  // OBSIO CAROUSEL — Browser Shell — Hiring Poster
+  // BROWSER SHELL — Browser Window Chrome — Nature Example
   // Colors: #FFD233, #12122A, #0A0A0A, #FFFFFF
   // Font: Bebas Neue + DM Sans
-  // (kept as-is from original — this is the reference style)
   // ─────────────────────────────────────────────────────
-  "obsio-carousel": `<!DOCTYPE html>
+  "browser-shell": `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&display=swap" rel="stylesheet">
   <style>
-    /*
-    ===================================================
-    BROWSER SHELL — HIRING CAROUSEL
-    ===================================================
-    Colors:
-      Primary Yellow:   #FFD233  — Slide bg, accents, tags
-      Dark Navy:        #12122A  — Browser shell, footer bar
-      Black Text:       #0A0A0A  — Headlines, body, outlines
-      White:            #FFFFFF  — Content area
-      Body Copy:        #444444  — Paragraphs
-      Subtle Gray:      #F4F4F4  — Backgrounds
-
-    Typography:
-      Display:  Bebas Neue (Google Fonts) — all headlines
-      Body:     DM Sans (Google Fonts)   — all UI/body copy
-
-    Layout:
-      Outer slide:      20px padding (yellow border)
-      Browser shell:    14px border-radius
-      Content padding:  24px horizontal
-      HR dividers:      2.5px solid #12122A
-    ===================================================
-    */
     ${SLIDE_BASE}
-
-    .slide {
-      position: relative;
-      width: 540px;
-      height: 675px;
-      overflow: hidden;
-      font-family: 'DM Sans', sans-serif;
-      flex-shrink: 0;
-      background: #FFD233;
-      padding: 20px;
-    }
-
-    .browser {
-      width: 100%;
-      height: 100%;
-      background: #12122A;
-      border-radius: 14px;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      box-shadow:
-        0 2px 0 rgba(255,255,255,0.06) inset,
-        0 20px 50px rgba(0,0,0,0.35);
-    }
-
-    .browser-bar {
-      background: #12122A;
-      padding: 0 18px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-shrink: 0;
-      height: 42px;
-    }
-
-    .dots { display: flex; gap: 7px; align-items: center; }
-    .dot  { width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0; }
-    .dot-r { background: #FF6059; }
-    .dot-o { background: #FEBC2E; }
-    .dot-g { background: #2A2A44; }
-
-    .brand-name {
-      color: #fff;
-      font-size: 17px;
-      font-weight: 700;
-      letter-spacing: -0.3px;
-      font-family: 'DM Sans', sans-serif;
-    }
-
-    .browser-body {
-      background: #fff;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      min-height: 0;
-    }
-
-    .browser-foot {
-      background: #12122A;
-      padding: 10px 24px;
-      text-align: center;
-      flex-shrink: 0;
-    }
-
-    .foot-txt {
-      color: #fff;
-      font-size: 9.5px;
-      font-weight: 600;
-      letter-spacing: 2.2px;
-      text-transform: uppercase;
-    }
-
-    .s-top {
-      padding: 16px 24px 12px;
-      border-bottom: 2.5px solid #12122A;
-      flex-shrink: 0;
-    }
-
-    .big-headline {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 70px;
-      color: #0A0A0A;
-      line-height: 0.9;
-      letter-spacing: 1px;
-    }
-
-    .sub-headline {
-      font-size: 9.5px;
-      font-weight: 600;
-      letter-spacing: 2.8px;
-      color: #0A0A0A;
-      margin-top: 7px;
-      text-transform: uppercase;
-    }
-
-    .s-body {
-      padding: 16px 24px;
-      flex: 1;
-      min-height: 0;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .job-title {
-      font-size: 14px;
-      font-weight: 800;
-      color: #0A0A0A;
-      margin-bottom: 10px;
-      text-transform: uppercase;
-    }
-
-    .desc-p {
-      font-size: 10px;
-      color: #555;
-      line-height: 1.6;
-      margin-bottom: 12px;
-    }
-
-    .s2-accent {
-      background: #FFD233;
-      padding: 18px 24px;
-      border-bottom: 2.5px solid #12122A;
-      flex-shrink: 0;
-    }
-
-    .open-badge {
-      display: inline-block;
-      background: #12122A;
-      color: #FFD233;
-      font-size: 8px;
-      font-weight: 700;
-      letter-spacing: 2px;
-      padding: 4px 10px;
-      margin-bottom: 6px;
-      text-transform: uppercase;
-    }
-
-    .role-big {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 44px;
-      color: #0A0A0A;
-      line-height: 0.92;
-    }
-
-    .stat-row {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 16px;
-    }
-
-    .stat-card {
-      flex: 1;
-      border: 2px solid #0A0A0A;
-      border-radius: 8px;
-      padding: 10px 12px;
-    }
-
-    .stat-lbl {
-      font-size: 7.5px;
-      font-weight: 700;
-      letter-spacing: 2px;
-      color: #999;
-      text-transform: uppercase;
-      margin-bottom: 2px;
-    }
-
-    .stat-val {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 26px;
-      color: #0A0A0A;
-      line-height: 1;
-    }
-
-    .stat-sub {
-      font-size: 8px;
-      color: #666;
-      margin-top: 2px;
-    }
-
-    .sec-lbl {
-      font-size: 8px;
-      font-weight: 700;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: #aaa;
-      margin-bottom: 8px;
-    }
-
-    .skill-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-bottom: 14px;
-    }
-
-    .stag {
-      background: #FFD233;
-      color: #0A0A0A;
-      font-size: 10px;
-      font-weight: 700;
-      padding: 4px 10px;
-      border-radius: 4px;
-      border: 1.5px solid #0A0A0A;
-    }
-    .stag.outline { background: #fff; }
-
-    .s3-eyebrow {
-      font-size: 8.5px;
-      font-weight: 700;
-      letter-spacing: 2.5px;
-      color: #aaa;
-      text-transform: uppercase;
-      margin-bottom: 4px;
-    }
-
-    .s3-headline {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 52px;
-      color: #0A0A0A;
-      line-height: 0.9;
-    }
-
-    .resp-list {
-      list-style: none;
-      padding: 0;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-evenly;
-    }
-
-    .resp-item {
-      display: flex;
-      gap: 12px;
-      align-items: flex-start;
-      padding: 8px 0;
-      border-bottom: 1px solid #F0F0F0;
-    }
-    .resp-item:last-child { border-bottom: none; }
-
-    .resp-num {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 32px;
-      color: #FFD233;
-      -webkit-text-stroke: 1.5px #0A0A0A;
-      line-height: 1;
-      flex-shrink: 0;
-      width: 28px;
-    }
-
-    .resp-title {
-      font-size: 11px;
-      font-weight: 700;
-      color: #0A0A0A;
-      margin-bottom: 2px;
-    }
-
-    .resp-desc {
-      font-size: 9px;
-      color: #666;
-      line-height: 1.4;
-    }
-
-    .s4-body {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-      text-align: center;
-    }
-
-    .apply-eyebrow {
-      font-size: 8.5px;
-      font-weight: 700;
-      letter-spacing: 3px;
-      color: #bbb;
-      text-transform: uppercase;
-      margin-bottom: 10px;
-    }
-
-    .apply-headline {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 64px;
-      color: #0A0A0A;
-      line-height: 0.88;
-      margin-bottom: 12px;
-    }
-
-    .apply-divider {
-      width: 48px;
-      height: 3px;
-      background: #FFD233;
-      border: 1.5px solid #0A0A0A;
-      margin: 0 auto 14px;
-    }
-
-    .apply-desc {
-      font-size: 11px;
-      color: #666;
-      line-height: 1.6;
-      max-width: 310px;
-      margin-bottom: 18px;
-    }
-
-    .email-box {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      background: #FFD233;
-      border: 2.5px solid #0A0A0A;
-      border-radius: 6px;
-      padding: 12px 20px;
-    }
-
-    .email-at {
-      font-size: 18px;
-      font-weight: 800;
-      color: #0A0A0A;
-    }
-
-    .email-addr {
-      font-size: 13px;
-      font-weight: 800;
-      color: #0A0A0A;
-      letter-spacing: 0.3px;
-    }
+    .slide{position:relative;width:540px;height:675px;overflow:hidden;font-family:'DM Sans',sans-serif;flex-shrink:0;background:#FFD233;padding:20px}
+    .browser{width:100%;height:100%;background:#12122A;border-radius:14px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 2px 0 rgba(255,255,255,0.06) inset,0 20px 50px rgba(0,0,0,0.35)}
+    .browser-bar{background:#12122A;padding:0 18px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;height:42px}
+    .dots{display:flex;gap:7px;align-items:center}.dot{width:11px;height:11px;border-radius:50%;flex-shrink:0}
+    .dot-r{background:#FF6059}.dot-o{background:#FEBC2E}.dot-g{background:#2A2A44}
+    .brand-name{color:#fff;font-size:17px;font-weight:700;letter-spacing:-0.3px;font-family:'DM Sans',sans-serif}
+    .browser-body{background:#fff;flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0}
+    .browser-foot{background:#12122A;padding:10px 24px;text-align:center;flex-shrink:0}
+    .foot-txt{color:#fff;font-size:9.5px;font-weight:600;letter-spacing:2.2px;text-transform:uppercase}
+    .s1-top{padding:16px 24px 12px;border-bottom:2.5px solid #12122A;flex-shrink:0}
+    .big-headline{font-family:'Bebas Neue',sans-serif;font-size:70px;color:#0A0A0A;line-height:0.9;letter-spacing:1px}
+    .sub-headline{font-size:9.5px;font-weight:600;letter-spacing:2.8px;color:#0A0A0A;margin-top:7px;text-transform:uppercase}
+    .illus-wrap{margin:10px 24px 0;border-radius:10px;background:#FFD233;height:188px;overflow:hidden;position:relative;flex-shrink:0}
+    .illus-wrap svg{width:100%;height:100%}
+    .job-body{padding:10px 24px 12px;display:flex;gap:16px;flex:1;min-height:0}
+    .jb-left{flex:0 0 44%}.jb-right{flex:1}
+    .job-title{font-size:13px;font-weight:800;color:#0A0A0A;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.3px}
+    .d-list{list-style:none;margin-bottom:9px}
+    .d-list li{font-size:10.5px;font-weight:700;color:#0A0A0A;display:flex;align-items:flex-start;gap:5px;margin-bottom:4px;line-height:1.3}
+    .d-list li::before{content:'\\25C6';color:#FFD233;font-size:8px;margin-top:2px;flex-shrink:0;-webkit-text-stroke:0.8px #0A0A0A}
+    .desc-p{font-size:9px;color:#555;line-height:1.55}
+    .b-list{list-style:none}
+    .b-list li{font-size:9.5px;color:#444;display:flex;gap:5px;margin-bottom:5px;line-height:1.4}
+    .b-list li::before{content:'\\2022';color:#0A0A0A;flex-shrink:0}
+    .s2-accent-bar{background:#FFD233;padding:20px 24px 18px;border-bottom:2.5px solid #12122A;flex-shrink:0}
+    .open-badge{display:inline-block;background:#12122A;color:#FFD233;font-size:8px;font-weight:700;letter-spacing:2px;padding:4px 10px;border-radius:2px;margin-bottom:8px;text-transform:uppercase}
+    .role-big{font-family:'Bebas Neue',sans-serif;font-size:48px;color:#0A0A0A;line-height:0.92}
+    .s2-content{padding:16px 24px;flex:1;display:flex;flex-direction:column;min-height:0}
+    .stat-row{display:flex;gap:10px;margin-bottom:18px}
+    .stat-card{flex:1;border:2px solid #0A0A0A;border-radius:8px;padding:12px 14px}
+    .stat-lbl{font-size:7.5px;font-weight:700;letter-spacing:2px;color:#999;text-transform:uppercase;margin-bottom:3px}
+    .stat-val{font-family:'Bebas Neue',sans-serif;font-size:30px;color:#0A0A0A;line-height:1}
+    .stat-sub{font-size:9px;color:#666;margin-top:2px;font-weight:500}
+    .sec-lbl{font-size:8px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#aaa;margin-bottom:8px}
+    .skill-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px}
+    .stag{background:#FFD233;color:#0A0A0A;font-size:10px;font-weight:700;padding:5px 12px;border-radius:4px;border:1.5px solid #0A0A0A}
+    .stag.outline{background:#fff}
+    .perk-row{display:flex;gap:10px}
+    .perk-chip{flex:1;display:flex;align-items:center;gap:8px;border:1.5px solid #E8E8E8;border-radius:8px;padding:10px 12px}
+    .perk-icon{font-size:20px}
+    .perk-txt{font-size:9.5px;font-weight:600;color:#0A0A0A;line-height:1.3}
+    .perk-sub{font-size:8.5px;color:#888;font-weight:400}
+    .s3-top{padding:16px 24px 12px;border-bottom:2.5px solid #12122A;flex-shrink:0}
+    .s3-eyebrow{font-size:8.5px;font-weight:700;letter-spacing:2.5px;color:#aaa;text-transform:uppercase;margin-bottom:4px}
+    .s3-headline{font-family:'Bebas Neue',sans-serif;font-size:56px;color:#0A0A0A;line-height:0.9}
+    .resp-list{padding:8px 24px 12px;flex:1;list-style:none;display:flex;flex-direction:column;justify-content:space-evenly;min-height:0}
+    .resp-item{display:flex;gap:14px;align-items:flex-start;padding:10px 0;border-bottom:1px solid #F0F0F0}
+    .resp-item:last-child{border-bottom:none}
+    .resp-num{font-family:'Bebas Neue',sans-serif;font-size:36px;color:#FFD233;line-height:1;flex-shrink:0;width:32px;-webkit-text-stroke:1.5px #0A0A0A}
+    .resp-title{font-size:11px;font-weight:700;color:#0A0A0A;margin-bottom:2px;line-height:1.2}
+    .resp-desc{font-size:9px;color:#666;line-height:1.45}
+    .s4-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;position:relative}
+    .apply-eyebrow{font-size:8.5px;font-weight:700;letter-spacing:3px;color:#bbb;text-transform:uppercase;margin-bottom:10px}
+    .apply-headline{font-family:'Bebas Neue',sans-serif;font-size:68px;color:#0A0A0A;line-height:0.88;margin-bottom:14px}
+    .apply-divider{width:48px;height:3px;background:#FFD233;border:1.5px solid #0A0A0A;margin:0 auto 16px}
+    .apply-desc{font-size:11px;color:#666;line-height:1.65;max-width:310px;margin-bottom:22px}
+    .email-box{display:inline-flex;align-items:center;gap:10px;background:#FFD233;border:2.5px solid #0A0A0A;border-radius:6px;padding:13px 22px;margin-bottom:10px}
+    .email-at{font-size:18px;font-weight:800;color:#0A0A0A}
+    .email-addr{font-size:13px;font-weight:800;color:#0A0A0A;letter-spacing:0.3px}
+    .apply-note{font-size:8.5px;color:#bbb;letter-spacing:1px;text-transform:uppercase}
   </style>
 </head>
 <body>
@@ -2344,20 +2051,42 @@ export const SAMPLE_HTML: Record<string, string> = {
     <div class="browser">
       <div class="browser-bar">
         <div class="dots"><div class="dot dot-r"></div><div class="dot dot-o"></div><div class="dot dot-g"></div></div>
-        <div class="brand-name">obsio</div>
+        <div class="brand-name">nature.wiki</div>
       </div>
       <div class="browser-body">
-        <div class="s-top">
-          <div class="big-headline">WE ARE<br>HIRING</div>
-          <div class="sub-headline">BECOME A PART OF OUR CREATIVE STORY.</div>
+        <div class="s1-top">
+          <div class="big-headline">MANTIS<br>SHRIMP</div>
+          <div class="sub-headline">NATURE'S MOST EXTRAORDINARY HUNTER.</div>
         </div>
-        <div class="s-body">
-          <div class="job-title">React JS Developer</div>
-          <p class="desc-p">Obsio Solutions is looking for talented React developers. 1–5 years experience, 3 positions open, fully remote.</p>
-          <p class="desc-p">Build modern web apps, convert designs to components, optimize for performance, collaborate with backend and design teams.</p>
+        <div class="illus-wrap">
+          <svg viewBox="0 0 452 188" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+            <rect width="452" height="188" fill="#FFD233"/><ellipse cx="226" cy="200" rx="260" ry="80" fill="#12122A" opacity="0.08"/>
+            <rect x="130" y="70" width="192" height="48" rx="24" fill="#12122A"/><rect x="148" y="78" width="156" height="32" rx="16" fill="#FFD233" opacity="0.4"/>
+            <circle cx="150" cy="84" r="14" fill="#12122A"/><circle cx="146" cy="80" r="6" fill="#FFD233"/><circle cx="146" cy="80" r="3" fill="#12122A"/>
+          </svg>
+        </div>
+        <div class="job-body">
+          <div class="jb-left">
+            <div class="job-title">Quick Facts</div>
+            <ul class="d-list">
+              <li>16 Color Receptors</li>
+              <li>Strike: 23 m/s</li>
+              <li>Force: 1,500 N</li>
+            </ul>
+            <p class="desc-p">A tiny crustacean with superhuman vision and a punch powerful enough to boil water and shatter aquarium glass.</p>
+          </div>
+          <div class="jb-right">
+            <ul class="b-list">
+              <li>Sees ultraviolet, infrared &amp; circular polarized light</li>
+              <li>Creates cavitation bubbles at solar-surface temps</li>
+              <li>Strikes with bullet-equivalent speed</li>
+              <li>Two distinct variants — Spearers &amp; Smashers</li>
+              <li>Bio-structure inspires modern armor &amp; helmets</li>
+            </ul>
+          </div>
         </div>
       </div>
-      <div class="browser-foot"><div class="foot-txt">HR@OBSIO.TECH</div></div>
+      <div class="browser-foot"><div class="foot-txt">DEEP SEA CHRONICLES — STOMATOPODA EDITION</div></div>
     </div>
   </div>
 
@@ -2365,43 +2094,57 @@ export const SAMPLE_HTML: Record<string, string> = {
     <div class="browser">
       <div class="browser-bar">
         <div class="dots"><div class="dot dot-r"></div><div class="dot dot-o"></div><div class="dot dot-g"></div></div>
-        <div class="brand-name">obsio</div>
+        <div class="brand-name">nature.wiki</div>
       </div>
       <div class="browser-body">
-        <div class="s2-accent">
-          <div class="open-badge">● NOW HIRING</div>
-          <div class="role-big">REACT JS<br>DEVELOPER</div>
+        <div class="s2-accent-bar">
+          <div class="open-badge">SENSORY BIOLOGY</div>
+          <div class="role-big">VISION &amp;<br>STRIKE POWER</div>
         </div>
-        <div class="s-body">
+        <div class="s2-content">
           <div class="stat-row">
             <div class="stat-card">
-              <div class="stat-lbl">Experience</div>
-              <div class="stat-val">1–5</div>
-              <div class="stat-sub">Years</div>
+              <div class="stat-lbl">Color Cones</div>
+              <div class="stat-val">16</div>
+              <div class="stat-sub">vs human's 3</div>
             </div>
-            <div class="stat-card" style="background:#FFD233">
-              <div class="stat-lbl" style="color:#665500">Openings</div>
-              <div class="stat-val">03</div>
-              <div class="stat-sub">Positions</div>
+            <div class="stat-card" style="background:#FFD233;border-color:#0A0A0A;">
+              <div class="stat-lbl" style="color:#665500;">Strike Speed</div>
+              <div class="stat-val">23</div>
+              <div class="stat-sub">m/s — bullet speed</div>
             </div>
             <div class="stat-card">
-              <div class="stat-lbl">Type</div>
-              <div class="stat-val" style="font-size:18px;margin-top:2px">100%</div>
-              <div class="stat-sub">Remote</div>
+              <div class="stat-lbl">Impact Force</div>
+              <div class="stat-val" style="font-size:22px;line-height:1.1;margin-top:2px;">1,500</div>
+              <div class="stat-sub">Newtons of force</div>
             </div>
           </div>
-          <div class="sec-lbl">Tech Stack</div>
+          <div class="sec-lbl">Vision Capabilities</div>
           <div class="skill-tags">
-            <span class="stag">React.js</span>
-            <span class="stag">JavaScript</span>
-            <span class="stag">TypeScript</span>
-            <span class="stag outline">REST APIs</span>
-            <span class="stag outline">Git</span>
-            <span class="stag outline">Tailwind</span>
+            <span class="stag">Ultraviolet</span>
+            <span class="stag">Infrared</span>
+            <span class="stag">Circular Polarized</span>
+            <span class="stag outline">16 Photoreceptors</span>
+            <span class="stag outline">Speed-optimized</span>
+          </div>
+          <div class="sec-lbl">Strike Mechanics</div>
+          <div class="perk-row">
+            <div class="perk-chip">
+              <div class="perk-icon">💥</div>
+              <div><div class="perk-txt">Double Impact</div><div class="perk-sub">Cavitation 2nd hit</div></div>
+            </div>
+            <div class="perk-chip">
+              <div class="perk-icon">🌞</div>
+              <div><div class="perk-txt">~5,500°C</div><div class="perk-sub">Bubble temperature</div></div>
+            </div>
+            <div class="perk-chip">
+              <div class="perk-icon">🔬</div>
+              <div><div class="perk-txt">2× Per Strike</div><div class="perk-sub">Direct + shockwave</div></div>
+            </div>
           </div>
         </div>
       </div>
-      <div class="browser-foot"><div class="foot-txt">HR@OBSIO.TECH</div></div>
+      <div class="browser-foot"><div class="foot-txt">DEEP SEA CHRONICLES — STOMATOPODA EDITION</div></div>
     </div>
   </div>
 
@@ -2409,37 +2152,37 @@ export const SAMPLE_HTML: Record<string, string> = {
     <div class="browser">
       <div class="browser-bar">
         <div class="dots"><div class="dot dot-r"></div><div class="dot dot-o"></div><div class="dot dot-g"></div></div>
-        <div class="brand-name">obsio</div>
+        <div class="brand-name">nature.wiki</div>
       </div>
       <div class="browser-body">
-        <div class="s-top">
-          <div class="s3-eyebrow">React JS Developer — Your Role</div>
-          <div class="s3-headline">WHAT YOU'LL<br>DO HERE</div>
+        <div class="s3-top">
+          <div class="s3-eyebrow">Mantis Shrimp — Classification &amp; Engineering</div>
+          <div class="s3-headline">WHAT MAKES<br>IT DEADLY</div>
         </div>
-        <ol class="resp-list" style="padding:8px 24px">
+        <ol class="resp-list">
           <li class="resp-item">
             <div class="resp-num">01</div>
-            <div><div class="resp-title">Build Modern Web Apps</div><div class="resp-desc">Production-grade React.js applications with modern tooling.</div></div>
+            <div><div class="resp-title">Spearers — Precision Hunters</div><div class="resp-desc">Sharp spine appendages designed to impale soft-bodied fish mid-water with pinpoint accuracy.</div></div>
           </li>
           <li class="resp-item">
             <div class="resp-num">02</div>
-            <div><div class="resp-title">Convert Designs to Code</div><div class="resp-desc">Pixel-perfect UI components from Figma designs.</div></div>
+            <div><div class="resp-title">Smashers — Brute Force Specialists</div><div class="resp-desc">Club-like dactyl appendages crack open crabs, snails and mollusks.</div></div>
           </li>
           <li class="resp-item">
             <div class="resp-num">03</div>
-            <div><div class="resp-title">Optimize Performance</div><div class="resp-desc">Profile and improve load times and rendering.</div></div>
+            <div><div class="resp-title">Helicoidal Fiber Structure</div><div class="resp-desc">The dactyl club is built like a spiral staircase — rotating fiber layers distribute impact.</div></div>
           </li>
           <li class="resp-item">
             <div class="resp-num">04</div>
-            <div><div class="resp-title">Cross-Team Collaboration</div><div class="resp-desc">Work with backend engineers and designers.</div></div>
+            <div><div class="resp-title">Bio-Inspired Material Science</div><div class="resp-desc">Engineers replicate this structure to design stronger helmets and body armor.</div></div>
           </li>
           <li class="resp-item">
             <div class="resp-num">05</div>
-            <div><div class="resp-title">Write Clean Code</div><div class="resp-desc">Readable, documented, well-structured code.</div></div>
+            <div><div class="resp-title">Cavitation Phenomenon</div><div class="resp-desc">Strike collapses water bubbles at near-solar temps, generating a second shockwave.</div></div>
           </li>
         </ol>
       </div>
-      <div class="browser-foot"><div class="foot-txt">HR@OBSIO.TECH</div></div>
+      <div class="browser-foot"><div class="foot-txt">DEEP SEA CHRONICLES — STOMATOPODA EDITION</div></div>
     </div>
   </div>
 
@@ -2447,21 +2190,22 @@ export const SAMPLE_HTML: Record<string, string> = {
     <div class="browser">
       <div class="browser-bar">
         <div class="dots"><div class="dot dot-r"></div><div class="dot dot-o"></div><div class="dot dot-g"></div></div>
-        <div class="brand-name">obsio</div>
+        <div class="brand-name">nature.wiki</div>
       </div>
-      <div class="browser-body">
+      <div class="browser-body" style="position:relative;">
         <div class="s4-body">
-          <div class="apply-eyebrow">React JS Developer · Remote · 3 Openings</div>
-          <div class="apply-headline">READY TO<br>JOIN THE<br>STORY?</div>
+          <div class="apply-eyebrow">Stomatopoda · ~450 Species · Ocean Floors</div>
+          <div class="apply-headline">NATURE'S<br>MOST<br>EXTREME</div>
           <div class="apply-divider"></div>
-          <p class="apply-desc">Send us your CV and portfolio. We review every application personally and get back within 5 working days.</p>
+          <p class="apply-desc">The mantis shrimp has been perfecting its design for over 400 million years. Its body is a masterclass in biological engineering.</p>
           <div class="email-box">
-            <div class="email-at">@</div>
-            <div class="email-addr">HR@OBSIO.TECH</div>
+            <div class="email-at">🦐</div>
+            <div class="email-addr">MANTIS SHRIMP</div>
           </div>
+          <div class="apply-note">The apex micro-predator of the ocean floor</div>
         </div>
       </div>
-      <div class="browser-foot"><div class="foot-txt">HR@OBSIO.TECH</div></div>
+      <div class="browser-foot"><div class="foot-txt">DEEP SEA CHRONICLES — STOMATOPODA EDITION</div></div>
     </div>
   </div>
 
