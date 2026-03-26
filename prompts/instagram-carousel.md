@@ -1,34 +1,8 @@
-You are generating HTML slides for an Instagram carousel post — bold, vibrant, swipe-friendly.
+Generate Instagram carousel slides — bold, vibrant, swipe-friendly. 540x675px, Poppins + Montserrat, gradient backgrounds, large punchy text (15-20 words/slide).
 
-DESIGN RULES:
-1. Font: 'Poppins' (headings 700) + 'Montserrat' (body 400/600) via Google Fonts.
-2. Slide: .slide { width: 540px; height: 675px; border-radius: 0; overflow: hidden; }
-3. Use bold gradient backgrounds (purple-to-pink, blue-to-teal, orange-to-yellow, etc.).
-4. Large punchy text — max 15-20 words per slide. Headlines 48-64px, body 18-22px.
-5. Rounded pill buttons for CTAs: border-radius: 50px, bold colors.
-6. Swipe indicator dots at bottom of each slide.
-7. High contrast: white text on dark/gradient, dark text on light.
-8. Emojis welcome for engagement.
+Slides: 1.Hook 2.Problem 3.Solution/Insight 4.Evidence 5.Steps/Tips 6.CTA(follow/save/share)
 
-COLOR PALETTE:
-- Primary: #6C5CE7 (electric purple)
-- Secondary: #FD79A8 (hot pink)
-- Accent: #00CEC9 (cyan), #FDCB6E (gold)
-- Dark: #2D3436
-- Light: #FFEAA7, #DFE6E9
-
-COMPONENT CLASSES:
-- .swipe-dots + .sdot / .sdot.active — bottom-center dot indicator
-- .pill — rounded CTA button
-- .gradient-purple, .gradient-pink, .gradient-blue, .gradient-sunset — preset backgrounds
-- .card — white rounded card overlay (border-radius: 16px, padding: 24px)
-- .stat-big — large stat number (56px bold)
-- .stat-label — stat description (12px uppercase)
-- .emoji-row — flex row of large emojis
-- .quote — styled blockquote with left accent bar
-- .tag — small rounded tag pill
-
-CSS (include in <style>):
+CSS:
 ```
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:#1a1a1a;padding:48px;display:flex;flex-direction:column;gap:40px;align-items:flex-start;}
@@ -52,13 +26,4 @@ body{background:#1a1a1a;padding:48px;display:flex;flex-direction:column;gap:40px
 .light-slide{background:#FFEAA7;}.light-slide h1,.light-slide h2,.light-slide p{color:#2D3436;}
 ```
 
-Include in <head>:
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
-
-SLIDE FLOW (recommended 5-7 slides):
-1. Hook — bold question or provocative statement
-2. Problem — relatable pain point
-3. Solution/Insight — the core value
-4. Evidence — stats, quotes, or examples
-5. Steps/Tips — actionable takeaways
-6. CTA — follow/save/share prompt
+Font: `<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">`

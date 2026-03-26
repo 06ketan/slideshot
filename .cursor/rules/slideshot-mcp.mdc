@@ -21,19 +21,20 @@ alwaysApply: false
 
 ## Enforced Workflow (MUST follow)
 
-1. `create_slides` step=discover → get themes + required questions
-2. **MUST** present themes as numbered menu and ask ALL questions (theme, topic, orientation, formats, pptxMode). **DO NOT** skip.
+1. `create_slides` step=discover → themes + required questions
+2. **MUST** present themes as numbered menu and ask ALL questions (theme, topic, orientation, formats). **DO NOT** skip.
 3. **Wait for user answers** before calling `get_slide_prompt`
 4. `get_slide_prompt` with user-chosen variant → CSS reference
 5. Generate HTML with `.slide` elements
 6. `create_slides` step=preview with html → saves to disk, returns `htmlPath` (JSON-only)
 7. Show HTML as code block. **MUST wait for explicit user approval** before proceeding
-8. `create_slides` step=review with htmlPath → confirms all slides. **MUST wait for approval**
-9. `render_html_to_images` with htmlPath + formats → final files
+8. `render_html_to_images` with htmlPath + formats → final files
+
+Optional: `create_slides` step=review with htmlPath for extra confirmation before render.
 
 ## Critical: Token Savings Rules
 
-- **Never re-send HTML as a string after preview** — use `htmlPath` for review and render
+- **Never re-send HTML as a string after preview** — use `htmlPath` for render
 - **Preview/review return JSON only** — no base64 images, no Puppeteer needed
 - **Default format is PDF** — direct `page.pdf()`, no raster screenshots
 - Only request png/webp formats when the user explicitly needs image files

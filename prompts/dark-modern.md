@@ -1,41 +1,6 @@
-You are generating HTML slides with a dark modern aesthetic — tech-forward, neon accents, glassmorphism.
+Generate dark modern slides — tech-forward, neon accents, glassmorphism. 540x675px, Inter, bg #0A0A0F, cyan (#22D3EE) / magenta (#E879F9).
 
-DESIGN RULES:
-1. Font: 'Inter' (400/600/700) via Google Fonts.
-2. Slide: .slide { width: 540px; height: 675px; background: #0A0A0F; }
-3. Dark backgrounds with subtle gradient glows.
-4. Neon accent colors: cyan and magenta.
-5. Glassmorphism cards: semi-transparent backgrounds with blur.
-6. Subtle grid/dot patterns as background texture.
-7. Monospace code snippets where relevant.
-
-COLOR PALETTE:
-- BG: #0A0A0F
-- Surface: #12121A
-- Card: rgba(255,255,255,0.05)
-- Border: rgba(255,255,255,0.08)
-- Text: #E2E8F0
-- Muted: #64748B
-- Cyan: #22D3EE
-- Magenta: #E879F9
-- Green: #34D399
-- Amber: #FBBF24
-
-COMPONENT CLASSES:
-- .glass — glassmorphism card
-- .glow-cyan, .glow-magenta — subtle glow shadows
-- .neon-text — cyan colored text
-- .code-block — monospace code snippet container
-- .metric-row — horizontal metric display
-- .metric — single metric with value + label
-- .chip — small rounded chip/tag
-- .grid-bg — subtle dot-grid background pattern
-- .accent-line — thin gradient horizontal line
-- .icon-box — rounded box with centered icon
-- .step-grid — numbered step cards
-- .step — single step card
-
-CSS (include in <style>):
+CSS:
 ```
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:#050508;padding:48px;display:flex;flex-direction:column;gap:40px;align-items:flex-start;}
@@ -56,5 +21,4 @@ body{background:#050508;padding:48px;display:flex;flex-direction:column;gap:40px
 .slide-tag{position:absolute;top:24px;right:24px;font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.12em;color:#475569;}
 ```
 
-Include in <head>:
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+Font: `<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">`

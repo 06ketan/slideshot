@@ -1,47 +1,6 @@
-# Browser Shell Carousel — Browser Window Chrome Style
+Generate slides with browser-window chrome. 540x675px, Bebas Neue + DM Sans, yellow (#FFD233) / navy (#12122A).
 
-Generate slides using a browser-window chrome design.
-
-## Design Tokens
-
-```
-Colors:
-  Primary Yellow:   #FFD233
-  Dark Navy:        #12122A
-  Black Text:       #0A0A0A
-  White:            #FFFFFF
-  Body Copy:        #444444
-  Subtle Gray:      #F4F4F4
-  Border/HR:        #12122A
-
-Typography:
-  Display / Hero:   Bebas Neue (Google Fonts)
-  Body / UI:        DM Sans (Google Fonts)
-  Weights:          300, 400, 500, 600, 700, 800
-
-Spacing Scale:
-  Base unit: 8px
-  Sections: 24px padding (3 units)
-  Slide outer: 20px (2.5 units)
-
-Border Radius:
-  Browser shell: 14px
-  Illustration box: 10px
-  Tags: 4px
-  Stat cards: 8px
-```
-
-## Layout System
-
-- Outer slide: `#FFD233` bg + 20px padding = visible yellow border
-- Browser shell: 14px border-radius, navy with subtle inset highlight
-- Traffic lights: red `#FF6059`, amber `#FEBC2E`, inactive `#2A2A44`
-- Content padding: 24px horizontal throughout
-- HR dividers: 2.5px solid `#12122A`
-
-## Slide Structure
-
-Each slide is 540x675px with this shell:
+Each slide uses this shell:
 
 ```html
 <div class="slide">
@@ -56,14 +15,9 @@ Each slide is 540x675px with this shell:
 </div>
 ```
 
-## Recommended Slides
+Slides: 1.Cover(headline+facts) 2.Stats(cards+chips) 3.Breakdown(numbered list) 4.CTA(headline+action box)
 
-1. **Cover** — Bold headline (Bebas Neue ~70px), illustration area, key facts in 2-column layout
-2. **Stats** — Yellow accent header with badge, 3 stat cards, tag chips, info chips
-3. **Breakdown** — Numbered list (01-05) with Bebas Neue numbers, title + description per item
-4. **Closing CTA** — Centered layout, large headline, CTA box with yellow bg
-
-## CSS (include in `<style>`)
+CSS:
 
 ```css
 *{margin:0;padding:0;box-sizing:border-box;}
@@ -139,9 +93,6 @@ body{background:#1a1a1a;padding:48px;display:flex;flex-direction:column;gap:40px
 .s4-tagline{font-size:8px;color:#bbb;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;}
 ```
 
-Include in `<head>`:
-```html
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&display=swap" rel="stylesheet">
-```
+Font: `<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&display=swap" rel="stylesheet">`
 
-Use SVG or emoji for illustration placeholders — keep them simple. The tool screenshots each `.slide` at 4x.
+Use SVG or emoji for illustrations. Tool screenshots each `.slide` at 4x.

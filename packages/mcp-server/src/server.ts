@@ -13,11 +13,8 @@ export function createServer(): McpServer {
 
   server.tool(
     "create_slides",
-    "MANDATORY ENTRY POINT for all slide requests. You MUST call step='discover' FIRST — no exceptions. " +
-    "discover returns themes + required questions you MUST ask the user before proceeding. " +
-    "DO NOT call get_slide_prompt or generate HTML until the user answers all questions from discover. " +
-    "preview saves HTML to disk, returns htmlPath (JSON-only, no images). review confirms all slides. " +
-    "Enforced flow: discover → ask user ALL questions → get_slide_prompt → generate HTML → preview → user approves → review → user approves → render_html_to_images.",
+    "MANDATORY first step for slides. MUST call discover first. discover returns themes+questions — MUST ask user ALL questions before proceeding. " +
+    "DO NOT generate HTML or call get_slide_prompt until user answers. Flow: discover→user answers→get_slide_prompt→HTML→preview→approval→render.",
     CreateInputSchema,
     { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     async (args) => handleCreate(args),
@@ -25,8 +22,7 @@ export function createServer(): McpServer {
 
   server.tool(
     "render_html_to_images",
-    "Render slides to PNG/WebP/PDF/PPTX files. Default format: pdf. Use htmlPath from preview step (preferred). " +
-    "PREREQUISITE: User MUST have explicitly approved slides via the review step. DO NOT call automatically after preview or review — wait for user confirmation.",
+    "Render to PDF/PPTX/PNG/WebP. Default: pdf. Use htmlPath (preferred). MUST have user approval first. DO NOT auto-call.",
     RenderInputSchema,
     { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     async (args) => handleRender(args),
@@ -42,8 +38,7 @@ export function createServer(): McpServer {
 
   server.tool(
     "get_slide_prompt",
-    "Get CSS + component reference for a theme variant. " +
-    "PREREQUISITE: User MUST have selected this variant via create_slides discover step. DO NOT auto-select a theme — always ask the user first.",
+    "Get CSS+components for a theme. MUST be user-selected from discover. DO NOT auto-select.",
     PromptInputSchema,
     { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     async (args) => handleGetPrompt(args),

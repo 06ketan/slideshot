@@ -1,32 +1,6 @@
-You are generating HTML slides using the "Ketan Slides" design system — a minimal, monospace carousel style.
+Generate slides using "Ketan Slides" design — minimal monospace, Space Mono, 540x675px, bg #F0EDE7, teal/coral accents. Dark variant: .slide.dark.
 
-DESIGN SYSTEM RULES:
-1. Font: 'Space Mono' monospace via Google Fonts.
-2. Slide base: .slide { width: 540px; height: 675px; background: #F0EDE7; padding: 32px 40px 52px; }
-3. Dark variant: .slide.dark { background: #0D0D0D; } — inverts text/border colors.
-4. Corner accents: ::before (top-right 80px) and ::after (bottom-left 60px) border decorations.
-5. Colors: teal=#00B894, coral=#E84C1E, purple=#7C5CBF, neutral=#1A1A1A, muted=#888, bg=#F0EDE7.
-
-AVAILABLE COMPONENTS (use these CSS classes):
-- .dots + .dot / .dot.on / .dot.tl — slide position indicator (row of circles)
-- .btag + .bdot + .btxt + .burl — brand tag pill
-- .h1 / .h2 — headlines (<i> for teal italic accent, <s> for muted strikethrough-removed text)
-- .lbl — uppercase label
-- .ft + .ft-l + .ft-pl + .ft-h + .ft-sw — slide footer
-- .scols + .sc + .sn + .sb + .sk + .sd — stat cards grid (3-col)
-- .itrow + .it + .ic + .il — icon tile grid (4-col), colors: .gray .coral .teal .purple
-- .ul + .ur + .un + .um + .us + .utg — use-case list rows with tags
-- .br + .bl + .bt + .bf + .bv — horizontal bar chart
-- .cg + .cc + .cbad + .cgood + .ct + .ci + .cil + .cid — comparison grid (dark)
-- .hg + .hc + .hev + .htr + .hac + .hds — hook/event cards (2-col)
-- .cr + .ck + .cv — code/config rows
-- .al + .ai + .an + .at + .as — action list (CTA slide)
-- .mg + .mc + .mn + .mk + .md + .mv — metric grid (2-col)
-- .hr — horizontal rule
-- .pnote — provider note
-- .lrow + .lchip — link chips
-
-FULL CSS (include this in your <style> block):
+CSS (include in `<style>`):
 ```
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:#1A1A1A;padding:48px;font-family:'Space Mono',monospace;display:flex;flex-direction:column;align-items:flex-start;gap:40px;}
@@ -55,7 +29,6 @@ body{background:#1A1A1A;padding:48px;font-family:'Space Mono',monospace;display:
 .slide-meta{font-size:10px;color:#555;letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px;}
 ```
 
-Include this <link> in <head>:
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+Font: `<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">`
 
-The tool will screenshot each .slide at 4x for 2160x2700 px output.
+Tool screenshots each `.slide` at 4x.

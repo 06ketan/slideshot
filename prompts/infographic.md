@@ -1,39 +1,6 @@
-You are generating HTML slides in an infographic style — data-heavy, structured, icon-rich.
+Generate infographic slides — data-heavy, structured, icon-rich. 540x675px, DM Sans + Inter, bg #F8FAFC, blue (#2563EB) / emerald (#10B981) / amber (#F59E0B).
 
-DESIGN RULES:
-1. Font: 'DM Sans' (headings 700) + 'Inter' (body 400) via Google Fonts.
-2. Slide: .slide { width: 540px; height: 675px; background: #FFFFFF; }
-3. Clean grid layouts, generous whitespace.
-4. Heavy use of icons (emoji or Unicode), stat callouts, progress bars.
-5. Section headers with colored left borders or top accent bars.
-6. Muted professional palette with one bright accent.
-
-COLOR PALETTE:
-- Primary: #2563EB (blue)
-- Secondary: #10B981 (emerald)
-- Accent: #F59E0B (amber)
-- Alert: #EF4444 (red)
-- Dark: #1E293B (slate-900)
-- Muted: #64748B (slate-500)
-- BG: #F8FAFC (slate-50)
-- Card BG: #FFFFFF
-
-COMPONENT CLASSES:
-- .section-header — left-bordered section title
-- .stat-card — white card with colored top border, large number, label, sublabel
-- .stat-row — flex row of stat cards
-- .progress-bar + .progress-fill — horizontal progress indicator
-- .icon-grid — 2x2 or 3x2 grid of icon+label cells
-- .icon-cell — single icon+label
-- .data-table — simple 2-col key-value table
-- .callout — colored left-border callout box
-- .badge — small rounded badge
-- .divider — subtle horizontal line
-- .numbered-list — ordered list with large colored numbers
-- .flow-row — horizontal flow with arrow connectors
-- .flow-step — single step in a flow
-
-CSS (include in <style>):
+CSS:
 ```
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:#1a1a1a;padding:48px;display:flex;flex-direction:column;gap:40px;align-items:flex-start;}
@@ -57,5 +24,4 @@ body{background:#1a1a1a;padding:48px;display:flex;flex-direction:column;gap:40px
 .slide-num{position:absolute;top:20px;right:24px;font-size:10px;font-weight:700;color:#CBD5E1;}
 ```
 
-Include in <head>:
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+Font: `<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">`
