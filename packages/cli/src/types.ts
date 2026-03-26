@@ -20,6 +20,8 @@ export interface RenderOptions {
 export interface RenderResult {
   files: string[];
   slideCount: number;
+  nativeFallbackUsed?: boolean;
+  nativeWarnings?: string[];
 }
 
 export const ORIENTATION_PRESETS = {

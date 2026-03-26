@@ -18,18 +18,24 @@ export const RenderInputSchema = {
 
 export const PromptInputSchema = {
   variant: z
-    .enum(["generic", "branded", "instagram-carousel", "infographic", "pitch-deck", "dark-modern", "editorial"])
+    .enum(["generic", "branded", "instagram-carousel", "infographic", "pitch-deck", "dark-modern", "editorial", "browser-shell"])
     .describe(
       "'generic' = clean minimal, 'branded' = Ketan Slides, 'instagram-carousel' = bold vibrant IG style, " +
       "'infographic' = data-heavy charts, 'pitch-deck' = professional presentation, " +
-      "'dark-modern' = neon glassmorphism, 'editorial' = magazine serif style",
+      "'dark-modern' = neon glassmorphism, 'editorial' = magazine serif style, " +
+      "'browser-shell' = browser window chrome with Bebas Neue + DM Sans",
     ),
 };
 
 export const CreateInputSchema = {
-  step: z.enum(["discover", "preview"]).describe(
+  step: z.enum(["discover", "preview", "review"]).describe(
     "'discover' = get theme catalog + output presets + smart questions to ask user. " +
-    "'preview' = render slide 1 only at 1x for fast preview before full render",
+    "'preview' = render slide 1 only at 1x for fast preview before full render. " +
+    "'review' = render ALL slides at 1x as thumbnails for full review before final render",
   ),
-  html: z.string().optional().describe("HTML to preview (required for 'preview' step)"),
+  html: z.string().optional().describe("HTML to preview/review (required for 'preview' and 'review' steps)"),
+  aspectRatio: z.enum(["portrait", "landscape"]).optional().describe(
+    "Simplified ratio selection: 'portrait' = 540x675 (PDF-friendly, social), 'landscape' = 1920x1080 (PPTX-friendly, presentations). " +
+    "Default: portrait",
+  ),
 };

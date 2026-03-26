@@ -4,7 +4,7 @@ import type { ImageFormat, RenderOptions, RenderResult } from "./types.js";
 import { DEFAULTS, ORIENTATION_PRESETS } from "./types.js";
 import { launchBrowser, setupPage } from "./browser.js";
 import { loadHtml, screenshotSlides, generatePdf, PRINT_CSS } from "./renderer.js";
-import { generateImagePptx, generateNativePptx, extractSlideData } from "./pptx.js";
+import { generateImagePptx, generateNativePptx, extractSlideData, captureSlideImages } from "./pptx.js";
 
 function resolveOrientation(options: RenderOptions) {
   let width = options.width;
@@ -55,6 +55,9 @@ export async function renderSlides(options: RenderOptions): Promise<RenderResult
       files.push(pdfFile);
     }
 
+    let nativeFallbackUsed = false;
+    let nativeWarnings: string[] = [];
+
     if (formats.includes("pptx")) {
       const pptxPath = path.join(outDir, options.pptxFilename || "carousel.pptx");
       const useNative = options.pptxMode !== "image";
@@ -63,9 +66,13 @@ export async function renderSlides(options: RenderOptions): Promise<RenderResult
         try {
           await loadHtml(page, options);
           const slidesData = await extractSlideData(page, selector, options.slideRange);
-          await generateNativePptx(slidesData, width, height, pptxPath);
+          await captureSlideImages(page, selector, slidesData, options.slideRange);
+          const result = await generateNativePptx(slidesData, width, height, pptxPath);
+          nativeWarnings = result.warnings;
           files.push(pptxPath);
-        } catch {
+        } catch (err: any) {
+          nativeFallbackUsed = true;
+          nativeWarnings.push(`Native extraction failed: ${err.message ?? "unknown error"}`);
           await loadHtml(page, options);
           const allSlides = await page.$$(selector);
           const start = options.slideRange ? options.slideRange[0] - 1 : 0;
@@ -94,7 +101,7 @@ export async function renderSlides(options: RenderOptions): Promise<RenderResult
     }
 
     const slideCount = (await page.$$(selector)).length || files.length;
-    return { files, slideCount };
+    return { files, slideCount, nativeFallbackUsed: nativeFallbackUsed || undefined, nativeWarnings: nativeWarnings.length > 0 ? nativeWarnings : undefined };
   } finally {
     await browser.close();
   }

@@ -58,12 +58,37 @@ No test suite exists in this project.
 - `next.config.ts` configures file tracing to include the Chromium binary for the render API route
 
 ### MCP Server (`packages/mcp-server/src/`)
-- `server.ts` — MCP server factory exposing tools: `render_html_to_images`, `get_slide_prompt`, `create_slides`, `health_check`
+- `server.ts` — MCP server factory (v2.8.0) exposing 4 tools:
+  - `create_slides` — guided workflow with theme catalog + output presets + preview + review
+  - `render_html_to_images` — full render to PNG/WebP/PDF/PPTX
+  - `get_slide_prompt` — AI prompt template for 8 theme variants
+  - `health_check` — Puppeteer/Chromium diagnostics
 - `schema.ts` — Zod validation schemas for tool inputs
+- 8 MCP prompts registered: `{variant}-slides` for each theme
 - Delegates rendering to the CLI package
 
 ### Prompt Templates (`prompts/`)
-8 AI prompt variants (generic, branded, dark-modern, editorial, infographic, instagram-carousel, pitch-deck, obsio-carousel) that instruct AI to generate HTML with `.slide` elements at 540×675 default dimensions.
+8 AI prompt variants (generic, branded, dark-modern, editorial, infographic, instagram-carousel, pitch-deck, browser-shell) that instruct AI to generate HTML with `.slide` elements at 540×675 default dimensions.
+
+### Agent Skills (`.agents/skills/`)
+- **slideshot** — MCP tool usage guide, theme catalog, workflow instructions
+- **docx** — Word document creation/editing (from anthropics/skills)
+- **pdf** — PDF creation/manipulation (from anthropics/skills)
+- **pptx** — PowerPoint creation/editing (from anthropics/skills)
+- Plus marketing/SEO skills: ai-seo, analytics-tracking, page-cro, programmatic-seo, schema-markup, seo-audit, site-architecture, remotion-best-practices
+
+### MCP Workflow (Claude Desktop / Cursor)
+The slideshot MCP follows an iterative loop:
+1. `discover` (themes + presets) — user picks theme, topic, platform
+2. `get_slide_prompt` — AI generates HTML using the theme's CSS reference
+3. `preview` (shows code + slide 1 image) — user reviews
+4. revise if needed — preview again (loop until approved)
+5. `review` (all slides as thumbnails) — user confirms full deck
+6. `render_html_to_images` — final files saved to disk
+
+Unlike Google Workspace connectors (where files appear inline in Claude),
+MCP tool outputs are saved to `~/Desktop/slideshot-output/` and paths are
+returned in the response. The preview/review steps return base64 images inline.
 
 ## Webapp Design System (Neobrutalist)
 

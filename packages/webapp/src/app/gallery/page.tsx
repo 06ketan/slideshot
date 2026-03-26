@@ -16,15 +16,15 @@ type VariantKey =
   | "pitch-deck"
   | "dark-modern"
   | "editorial"
-  | "obsio-carousel";
+  | "browser-shell";
 
 const GALLERY_ITEMS: Record<
   VariantKey,
   { name: string; style: string; palette: string[]; featured?: boolean }
 > = {
-  "obsio-carousel": {
+  "browser-shell": {
     name: "Browser Shell",
-    style: "Bebas Neue + DM Sans, yellow/navy browser chrome, hiring poster",
+    style: "Bebas Neue + DM Sans, yellow/navy browser chrome, versatile layout",
     palette: ["#FFD233", "#12122A", "#0A0A0A"],
     featured: true,
   },
@@ -91,11 +91,11 @@ export default function GalleryPage() {
   useEffect(() => {
     const prefetch = async () => {
       try {
-        const res = await fetch("/api/prompt?variant=obsio-carousel");
+        const res = await fetch("/api/prompt?variant=browser-shell");
         const data = await res.json();
         setPromptData((prev) => ({
           ...prev,
-          "obsio-carousel": data.prompt || "",
+          "browser-shell": data.prompt || "",
         }));
       } catch {}
     };

@@ -9,7 +9,8 @@ export type PromptVariant =
   | "infographic"
   | "pitch-deck"
   | "dark-modern"
-  | "editorial";
+  | "editorial"
+  | "browser-shell";
 
 export const PROMPT_VARIANTS: PromptVariant[] = [
   "generic",
@@ -19,6 +20,7 @@ export const PROMPT_VARIANTS: PromptVariant[] = [
   "pitch-deck",
   "dark-modern",
   "editorial",
+  "browser-shell",
 ];
 
 const cache = new Map<string, string>();
