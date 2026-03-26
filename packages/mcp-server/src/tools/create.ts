@@ -1,25 +1,17 @@
 import fs from "node:fs";
 import path from "node:path";
-import { PROMPT_VARIANTS, type PromptVariant } from "../prompts.js";
+import { type PromptVariant, fetchCatalog, type ThemeEntry } from "../prompts.js";
 import { defaultOutDir } from "../helpers.js";
 
-interface ThemeEntry {
-  id: PromptVariant;
-  name: string;
-  emoji: string;
-  style: string;
-  palette: string[];
-}
-
-const THEME_CATALOG: ThemeEntry[] = [
-  { id: "generic", name: "Clean Minimal", emoji: "\ud83d\udccb", style: "Inter, white cards, flexible", palette: ["#FFF", "#1a1a1a", "#888"] },
-  { id: "branded", name: "Ketan Slides", emoji: "\ud83c\udfaf", style: "Space Mono, teal/coral accents", palette: ["#F0EDE7", "#00B894", "#E84C1E", "#1A1A1A"] },
-  { id: "instagram-carousel", name: "Instagram Carousel", emoji: "\ud83d\udcf8", style: "Poppins, bold gradients, vibrant", palette: ["#6C5CE7", "#FD79A8", "#00CEC9", "#FDCB6E"] },
-  { id: "infographic", name: "Infographic", emoji: "\ud83d\udcca", style: "DM Sans, data-heavy, stat cards", palette: ["#2563EB", "#10B981", "#F59E0B", "#F8FAFC"] },
-  { id: "pitch-deck", name: "Pitch Deck", emoji: "\ud83d\ude80", style: "DM Sans, KPI cards, timelines", palette: ["#0F172A", "#3B82F6", "#8B5CF6", "#FFF"] },
-  { id: "dark-modern", name: "Dark Modern", emoji: "\ud83c\udf19", style: "Inter, neon accents, glassmorphism", palette: ["#0A0A0F", "#22D3EE", "#E879F9", "#34D399"] },
-  { id: "editorial", name: "Editorial", emoji: "\ud83d\udcf0", style: "Playfair Display, gold accents, serif", palette: ["#FAF8F5", "#C9963B", "#2C2824", "#1A1814"] },
-  { id: "browser-shell", name: "Browser Shell", emoji: "\ud83d\udda5\ufe0f", style: "Bebas Neue + DM Sans, yellow/navy chrome", palette: ["#FFD233", "#12122A", "#0A0A0A", "#FFF"] },
+const THEME_CATALOG_FALLBACK: ThemeEntry[] = [
+  { id: "generic", name: "Clean Minimal", emoji: "📋", style: "Inter, white cards, flexible", palette: ["#FFF", "#1a1a1a", "#888"] },
+  { id: "branded", name: "Ketan Slides", emoji: "🎯", style: "Space Mono, teal/coral accents", palette: ["#F0EDE7", "#00B894", "#E84C1E", "#1A1A1A"] },
+  { id: "instagram-carousel", name: "Instagram Carousel", emoji: "📸", style: "Poppins, bold gradients, vibrant", palette: ["#6C5CE7", "#FD79A8", "#00CEC9", "#FDCB6E"] },
+  { id: "infographic", name: "Infographic", emoji: "📊", style: "DM Sans, data-heavy, stat cards", palette: ["#2563EB", "#10B981", "#F59E0B", "#F8FAFC"] },
+  { id: "pitch-deck", name: "Pitch Deck", emoji: "🚀", style: "DM Sans, KPI cards, timelines", palette: ["#0F172A", "#3B82F6", "#8B5CF6", "#FFF"] },
+  { id: "dark-modern", name: "Dark Modern", emoji: "🌙", style: "Inter, neon accents, glassmorphism", palette: ["#0A0A0F", "#22D3EE", "#E879F9", "#34D399"] },
+  { id: "editorial", name: "Editorial", emoji: "📰", style: "Playfair Display, gold accents, serif", palette: ["#FAF8F5", "#C9963B", "#2C2824", "#1A1814"] },
+  { id: "browser-shell", name: "Browser Shell", emoji: "🖥️", style: "Bebas Neue + DM Sans, yellow/navy chrome", palette: ["#FFD233", "#12122A", "#0A0A0A", "#FFF"] },
 ];
 
 function ensureOutDir(): string {
@@ -40,20 +32,23 @@ function countSlides(html: string): number {
   return matches ? matches.length : 0;
 }
 
-function discoverStep() {
+async function discoverStep() {
+  let themes: ThemeEntry[];
+  try {
+    const fetched = await fetchCatalog();
+    themes = fetched && fetched.length > 0 ? fetched : THEME_CATALOG_FALLBACK;
+  } catch {
+    themes = THEME_CATALOG_FALLBACK;
+  }
+
   return {
     content: [{
       type: "text" as const,
       text: JSON.stringify({
-        themes: THEME_CATALOG,
-        requiredQuestions: [
-          { id: "theme", q: "Which theme? (show numbered list)" },
-          { id: "topic", q: "What topic/content?" },
-          { id: "orientation", q: "Portrait (PDF/social) or Landscape (PPTX)?" },
-          { id: "formats", q: "Formats: pdf, pptx, png, webp? Presets: instagram=webp, linkedin=pdf+webp, presentation=pptx" },
-          { id: "pptxMode", q: "If PPTX: native (editable) or image (pixel-perfect)?" },
-        ],
-        instruction: "STOP. MUST present themes as numbered menu and ask ALL requiredQuestions in ONE message. DO NOT call get_slide_prompt or generate HTML until user answers.",
+        themes: themes.map(t => ({ id: t.id, name: t.name, emoji: t.emoji, style: t.style })),
+        ask: ["theme (show numbered list)", "topic/content", "portrait or landscape", "formats: pdf/pptx/png/webp", "if pptx: native or image"],
+        flow: "get_slide_schema→assemble_slides→approval→render",
+        instruction: "Present themes as numbered menu. Ask ALL questions in ONE message. Wait for answers.",
       }),
     }],
   };
@@ -81,10 +76,7 @@ function previewStep(html?: string, htmlPath?: string) {
       text: JSON.stringify({
         slideCount,
         htmlPath: resolvedPath,
-        confirmationRequired: true,
-        instruction: `Show HTML as code block. Ask: "${slideCount} slides — approve or request changes?" MUST wait for user approval. DO NOT auto-advance.`,
-        onApproval: `Call render_html_to_images with htmlPath='${resolvedPath}' and user-chosen formats/orientation.`,
-        onChangesRequested: "Edit HTML, call create_slides step='preview' with updated html string.",
+        instruction: `${slideCount} slides ready. Ask user to approve or request changes. Wait for approval, then call render_html_to_images with htmlPath='${resolvedPath}'.`,
       }),
     }],
   };
@@ -112,10 +104,7 @@ function reviewStep(html?: string, htmlPath?: string) {
       text: JSON.stringify({
         slideCount,
         htmlPath: resolvedPath,
-        confirmationRequired: true,
-        instruction: `${slideCount} slides confirmed. Ask user to approve for final render. MUST wait for approval.`,
-        onApproval: `Call render_html_to_images with htmlPath='${resolvedPath}' and user-chosen formats/orientation.`,
-        onChangesRequested: "Edit HTML, call create_slides step='preview' with updated html string.",
+        instruction: `${slideCount} slides confirmed. Wait for user approval, then render.`,
       }),
     }],
   };

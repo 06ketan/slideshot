@@ -6,7 +6,7 @@ globs:
 alwaysApply: false
 ---
 
-# Slideshot MCP — Tool Usage Guide
+# Slideshot MCP v3.0 — Tool Usage Guide
 
 ## Tool Selection
 
@@ -15,34 +15,48 @@ alwaysApply: false
 | "Make slides about X" | `create_slides` (discover) | Start here for any new slide request |
 | "Quick preview" | `create_slides` (preview) | Pass HTML, saves to disk, returns htmlPath |
 | "Render my HTML" | `render_html_to_images` | Use htmlPath (preferred) or html string |
-| "Which themes?" | `create_slides` (discover) | Returns compact theme catalog |
-| "Get prompt for X theme" | `get_slide_prompt` | Returns CSS + component reference |
+| "Which themes?" | `create_slides` (discover) | Returns compact theme catalog from GitHub |
+| "Get schema for theme" | `get_slide_schema` | Returns slot types + fields for assemble_slides |
+| "Assemble slides" | `assemble_slides` | **RECOMMENDED** — structured JSON, no CSS needed |
+| "Get prompt for X theme" | `get_slide_prompt` | Raw HTML mode — returns full CSS prompt |
 | "Render fails" | `health_check` | Diagnose Puppeteer/Chromium issues |
 
-## Enforced Workflow (MUST follow)
+## Two Workflows
 
-1. `create_slides` step=discover → themes + required questions
-2. **MUST** present themes as numbered menu and ask ALL questions (theme, topic, orientation, formats). **DO NOT** skip.
-3. **Wait for user answers** before calling `get_slide_prompt`
-4. `get_slide_prompt` with user-chosen variant → CSS reference
+### RECOMMENDED: Template Engine (saves ~1,500 tokens)
+1. `create_slides` step=discover → themes + questions
+2. **MUST** present themes as numbered menu, ask ALL questions. **DO NOT** skip.
+3. Wait for user answers
+4. `get_slide_schema` with chosen theme → slot types + fields
+5. `assemble_slides` with theme + slides array (structured JSON) → assembled HTML + htmlPath
+6. **MUST wait for explicit user approval**
+7. `render_html_to_images` with htmlPath + formats → final files
+
+### ALTERNATIVE: Raw HTML (full CSS control)
+1. `create_slides` step=discover → themes + questions
+2. **MUST** present themes as numbered menu, ask ALL questions. **DO NOT** skip.
+3. Wait for user answers
+4. `get_slide_prompt` with variant → CSS reference
 5. Generate HTML with `.slide` elements
-6. `create_slides` step=preview with html → saves to disk, returns `htmlPath` (JSON-only)
-7. Show HTML as code block. **MUST wait for explicit user approval** before proceeding
+6. `create_slides` step=preview with html → htmlPath
+7. **MUST wait for explicit user approval**
 8. `render_html_to_images` with htmlPath + formats → final files
-
-Optional: `create_slides` step=review with htmlPath for extra confirmation before render.
 
 ## Critical: Token Savings Rules
 
+- **Prefer assemble_slides over get_slide_prompt** — saves ~1,500 tokens per session
 - **Never re-send HTML as a string after preview** — use `htmlPath` for render
 - **Preview/review return JSON only** — no base64 images, no Puppeteer needed
 - **Default format is PDF** — direct `page.pdf()`, no raster screenshots
 - Only request png/webp formats when the user explicitly needs image files
-- Show HTML as a code block for preview — the client renders it visually
 
 ## 8 Theme Variants
 
 generic, branded, instagram-carousel, infographic, pitch-deck, dark-modern, editorial, browser-shell
+
+## Slide Types (for assemble_slides)
+
+cover, content, stats, list, steps, comparison, quote, code, cta, timeline, team
 
 ## PPTX Modes
 
@@ -51,7 +65,7 @@ generic, branded, instagram-carousel, infographic, pitch-deck, dark-modern, edit
 
 ## Common Patterns
 
-- Always use `htmlPath` from preview step for render_html_to_images
+- Always use `htmlPath` from preview/assemble step for render_html_to_images
 - Use `slideRange: [1, 3]` for partial renders during iteration
 - Default output: `~/Desktop/slideshot-output`
-- Include Google Fonts via `<link>` tags in the HTML `<head>`
+- Prompts are fetched from GitHub with 5-min TTL cache + local fallback
