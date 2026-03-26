@@ -3,6 +3,7 @@ import path from "node:path";
 import { assembleHtml, getSlotSchema } from "../templates/assembler.js";
 import type { AssembleInput, SlideData } from "../templates/types.js";
 import { defaultOutDir } from "../helpers.js";
+import { cacheHtml, isDiscoveryDone } from "../cache.js";
 
 function ensureOutDir(): string {
   const dir = defaultOutDir();
@@ -16,6 +17,20 @@ export async function handleAssemble(args: {
   orientation?: "portrait" | "landscape";
   brandName?: string;
 }) {
+  if (!isDiscoveryDone()) {
+    return {
+      content: [{
+        type: "text" as const,
+        text: JSON.stringify({
+          ok: false,
+          error: "DISCOVERY_REQUIRED",
+          instruction: "Call create_slides with step='discover' first to present themes and gather user preferences.",
+        }),
+      }],
+      isError: true,
+    };
+  }
+
   try {
     const input: AssembleInput = {
       theme: args.theme,
@@ -29,6 +44,7 @@ export async function handleAssemble(args: {
     const dir = ensureOutDir();
     const htmlPath = path.join(dir, "slides.html");
     fs.writeFileSync(htmlPath, html, "utf-8");
+    cacheHtml(html, htmlPath);
 
     return {
       content: [{
@@ -37,7 +53,8 @@ export async function handleAssemble(args: {
           ok: true,
           slides: args.slides.length,
           htmlPath,
-          instruction: `${args.slides.length} slides assembled. Ask user to approve or request changes. On approval: render_html_to_images htmlPath='${htmlPath}'.`,
+          html,
+          instruction: `${args.slides.length} slides assembled. Ask user to approve or request changes. On approval: call render_html_to_images (no html/htmlPath needed — server has it cached). If htmlPath is inaccessible, pass the html field inline.`,
         }),
       }],
     };
@@ -53,6 +70,20 @@ export async function handleAssemble(args: {
 }
 
 export async function handleGetSchema(args: { theme: string }) {
+  if (!isDiscoveryDone()) {
+    return {
+      content: [{
+        type: "text" as const,
+        text: JSON.stringify({
+          ok: false,
+          error: "DISCOVERY_REQUIRED",
+          instruction: "Call create_slides with step='discover' first.",
+        }),
+      }],
+      isError: true,
+    };
+  }
+
   try {
     const schema = getSlotSchema(args.theme);
     return {

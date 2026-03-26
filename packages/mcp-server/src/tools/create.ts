@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { type PromptVariant, fetchCatalog, type ThemeEntry } from "../prompts.js";
 import { defaultOutDir } from "../helpers.js";
+import { cacheHtml, resetDiscovery, markDiscoveryDone } from "../cache.js";
 
 const THEME_CATALOG_FALLBACK: ThemeEntry[] = [
   { id: "generic", name: "Clean Minimal", emoji: "📋", style: "Inter, white cards, flexible", palette: ["#FFF", "#1a1a1a", "#888"] },
@@ -24,6 +25,7 @@ function saveHtml(html: string): string {
   const dir = ensureOutDir();
   const htmlPath = path.join(dir, "slides.html");
   fs.writeFileSync(htmlPath, html, "utf-8");
+  cacheHtml(html, htmlPath);
   return htmlPath;
 }
 
@@ -33,6 +35,8 @@ function countSlides(html: string): number {
 }
 
 async function discoverStep() {
+  resetDiscovery();
+
   let themes: ThemeEntry[];
   try {
     const fetched = await fetchCatalog();
@@ -41,12 +45,20 @@ async function discoverStep() {
     themes = THEME_CATALOG_FALLBACK;
   }
 
+  markDiscoveryDone();
+
   return {
     content: [{
       type: "text" as const,
       text: JSON.stringify({
         themes: themes.map(t => ({ id: t.id, name: t.name, emoji: t.emoji, style: t.style })),
-        ask: ["theme (show numbered list)", "topic/content", "portrait or landscape", "formats: pdf/pptx/png/webp", "if pptx: native or image"],
+        ask: [
+          { id: "theme", type: "select", prompt: "Which theme?", options: themes.map(t => t.id) },
+          { id: "topic", type: "freetext", prompt: "What topic/content for the slides?" },
+          { id: "orientation", type: "select", prompt: "Portrait or landscape?", options: ["portrait", "landscape"], default: "portrait" },
+          { id: "formats", type: "multiselect", prompt: "Output formats?", options: ["pdf", "pptx", "png", "webp"], default: ["pdf"] },
+          { id: "pptxMode", type: "select", prompt: "If PPTX: native (editable) or image (pixel-perfect)?", options: ["native", "image"], condition: "formats includes pptx" },
+        ],
         flow: "get_slide_schema→assemble_slides→approval→render",
         instruction: "Present themes as numbered menu. Ask ALL questions in ONE message. Wait for answers.",
       }),
@@ -96,6 +108,7 @@ function reviewStep(html?: string, htmlPath?: string) {
     throw new Error("Provide htmlPath (preferred) or html string.");
   }
 
+  cacheHtml(resolvedHtml, resolvedPath);
   const slideCount = countSlides(resolvedHtml);
 
   return {
@@ -104,7 +117,7 @@ function reviewStep(html?: string, htmlPath?: string) {
       text: JSON.stringify({
         slideCount,
         htmlPath: resolvedPath,
-        instruction: `${slideCount} slides confirmed. Wait for user approval, then render.`,
+        instruction: `${slideCount} slides confirmed. Wait for user approval, then call render_html_to_images (no html/htmlPath needed — server has it cached).`,
       }),
     }],
   };

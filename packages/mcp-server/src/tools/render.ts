@@ -3,6 +3,7 @@ import path from "node:path";
 import os from "node:os";
 import { renderSlides, type ImageFormat } from "slideshot";
 import { defaultOutDir, resolveFormats, formatSummary } from "../helpers.js";
+import { getCachedHtml } from "../cache.js";
 
 export async function handleRender(args: {
   html?: string;
@@ -20,15 +21,24 @@ export async function handleRender(args: {
   pptxMode?: "native" | "image";
 }) {
   try {
-    const { html, htmlPath, selector, width, height, scale, formats, outDir, pdfFilename, pptxFilename, slideRange, orientation, pptxMode } = args;
+    let { html, htmlPath } = args;
+    const { selector, width, height, scale, formats, outDir, pdfFilename, pptxFilename, slideRange, orientation, pptxMode } = args;
 
     let pptxOrientationWarning: string | undefined;
     if (formats?.includes("pptx") && orientation === "portrait") {
       pptxOrientationWarning = "PPTX requested with portrait orientation (540x675). Standard presentations use landscape (1920x1080). Consider orientation: 'landscape' for better PowerPoint compatibility.";
     }
 
+    let usedCache = false;
     if (!html && !htmlPath) {
-      throw new Error("Provide either `html` (string) or `htmlPath` (absolute file path).");
+      const cached = getCachedHtml();
+      if (cached) {
+        html = cached.html;
+        htmlPath = cached.htmlPath;
+        usedCache = true;
+      } else {
+        throw new Error("Provide either `html` (string) or `htmlPath` (absolute file path). No cached HTML available — call assemble_slides or create_slides preview first.");
+      }
     }
 
     let resolvedOutDir = outDir || defaultOutDir();
@@ -106,7 +116,8 @@ export async function handleRender(args: {
         files: result.files,
         formatSummary: formatSummary(result.files),
         ...(outDirFallback && { outDirFallback: true, requestedOutDir }),
-        ...(htmlPathFallback && { htmlPathFallback: true, note: "htmlPath was inaccessible; used html string via temp file" }),
+        ...(usedCache && { usedCache: true, note: "Used cached HTML from last assemble/preview call" }),
+        ...(htmlPathFallback && { htmlPathFallback: true, htmlPathNote: "htmlPath was inaccessible; used html string via temp file" }),
         ...(result.nativeFallbackUsed && {
           nativeFallbackUsed: true,
           pptxNote: "PPTX was generated using image mode (native text extraction encountered issues). Text may not be editable in PowerPoint.",
