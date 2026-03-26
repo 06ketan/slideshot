@@ -4,7 +4,7 @@ const spec = {
     title: "slideshot API",
     description:
       "Convert HTML slides to high-res PNG, WebP, PDF, and PPTX. Use as ChatGPT Action, OpenWebUI tool, or any OpenAPI client.",
-    version: "2.8.0",
+    version: "2.8.1",
     contact: {
       name: "Ketan Chavan",
       url: "https://github.com/06ketan/slideshot",

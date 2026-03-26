@@ -77,23 +77,21 @@ function discoverStep() {
         outputPresets: OUTPUT_PRESETS,
         availableFormats: ["png", "webp", "pdf", "pptx"],
         workflow: [
-          "1. discover -> user picks theme/topic/platform",
-          "2. get_slide_prompt with chosen theme -> AI generates HTML",
-          "3. preview (slide 1) -> show code + image to user",
-          "4. IF changes needed -> revise HTML -> preview again",
-          "5. review (all slides) -> user confirms entire deck",
-          "6. render_html_to_images -> final high-res files",
+          "1. discover → user answers ALL required questions",
+          "2. get_slide_prompt with user-chosen theme → AI generates HTML",
+          "3. preview (slide 1) → show code + image, WAIT for user approval",
+          "4. IF changes needed → revise HTML → preview again (loop)",
+          "5. review (all slides) → show thumbnails, WAIT for user approval",
+          "6. render_html_to_images → final high-res files",
         ],
-        askUser: [
-          "Present the theme list as a numbered menu using each theme's emoji, name, and style description.",
-          "Ask these in ONE bundled message:",
-          "1. Which theme? (pick from the list or describe your own style)",
-          "2. What content/topic for the slides? (or paste existing content)",
-          "3. Target platform: Instagram, LinkedIn, Presentation (PPTX), or Custom?",
-          "4. Ratio: Portrait (PDF, social) or Landscape (PPTX, presentations)? (default: portrait)",
-          "After the user answers, use get_slide_prompt with the chosen theme variant to get the full CSS/prompt, then generate the HTML.",
-          "IMPORTANT: Always show the generated HTML code AND call preview before rendering. Loop preview until user approves.",
-        ].join(" "),
+        requiredQuestions: [
+          { id: "theme", ask: "Which theme? Present the numbered list above and let the user pick (or describe a custom style)." },
+          { id: "topic", ask: "What content/topic for the slides? (or ask user to paste existing content)" },
+          { id: "aspectRatio", ask: "Portrait (PDF, social media) or Landscape (PPTX, presentations)?" },
+          { id: "formats", ask: "Output formats: png, webp, pdf, pptx? (user can multi-select)" },
+          { id: "pptxMode", ask: "If PPTX selected: editable text (native) or pixel-perfect screenshot (image)?" },
+        ],
+        instruction: "STOP. You MUST present the theme list as a numbered menu and ask ALL requiredQuestions above in ONE bundled message. DO NOT call get_slide_prompt or generate any HTML until the user has answered these questions. Wait for the user's response before proceeding.",
       }, null, 2),
     }],
   };
@@ -130,12 +128,11 @@ async function previewStep(html?: string) {
       slideCount: result.slideCount,
       previewSlide: 1,
       htmlIncluded: true,
-      askUser: [
-        `Show the HTML code as a code block AND the preview image above to the user.`,
-        `Ask: "Here's slide 1 of ${result.slideCount}. Review the code and preview — any changes needed?"`,
-        `If user wants changes: revise the HTML and call preview again.`,
-        `If user approves: call review with the full HTML to see all slides, or call render_html_to_images to generate final files.`,
-      ].join(" "),
+      confirmationRequired: true,
+      confirmationPrompt: `Show the HTML code as a code block AND the preview image above to the user. Ask: "Here's slide 1 of ${result.slideCount} — approve or request changes?" You MUST wait for explicit user approval before proceeding to review or render. DO NOT auto-advance.`,
+      blockedNextStep: "review or render_html_to_images",
+      onApproval: "Call create_slides with step='review' and the full HTML to show all slide thumbnails.",
+      onChangesRequested: "Revise the HTML based on user feedback and call create_slides with step='preview' again.",
     }, null, 2),
   });
 
@@ -176,12 +173,11 @@ async function reviewStep(html?: string) {
     text: JSON.stringify({
       slideCount: result.slideCount,
       totalPreviews: result.images.length,
-      askUser: [
-        `Show ALL ${result.slideCount} slide preview images above to the user.`,
-        `Ask: "Here are all ${result.slideCount} slides. Does everything look good?"`,
-        `If user wants changes: ask which slide(s) to fix, revise the HTML, and call review again.`,
-        `If user approves: call render_html_to_images with the final HTML and desired formats (portrait=PDF, landscape=PPTX).`,
-      ].join(" "),
+      confirmationRequired: true,
+      confirmationPrompt: `Show ALL ${result.slideCount} slide preview images above to the user. Ask: "All ${result.slideCount} slides look good? Render to final files?" You MUST wait for explicit user approval ('yes', 'looks good', 'render it') before calling render_html_to_images. DO NOT auto-advance.`,
+      blockedNextStep: "render_html_to_images",
+      onApproval: "Call render_html_to_images with the final HTML, user-chosen formats, and correct orientation (landscape for PPTX, portrait for PDF/social).",
+      onChangesRequested: "Ask which slide(s) to fix, revise the HTML, and call create_slides with step='review' again.",
     }, null, 2),
   });
 

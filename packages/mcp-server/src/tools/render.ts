@@ -22,6 +22,11 @@ export async function handleRender(args: {
   try {
     const { html, htmlPath, selector, width, height, scale, formats, outDir, pdfFilename, pptxFilename, slideRange, orientation, pptxMode } = args;
 
+    let pptxOrientationWarning: string | undefined;
+    if (formats?.includes("pptx") && orientation === "portrait") {
+      pptxOrientationWarning = "PPTX requested with portrait orientation (540x675). Standard presentations use landscape (1920x1080). Consider orientation: 'landscape' for better PowerPoint compatibility.";
+    }
+
     if (!html && !htmlPath) {
       throw new Error("Provide either `html` (string) or `htmlPath` (absolute file path).");
     }
@@ -109,6 +114,7 @@ export async function handleRender(args: {
         ...(result.nativeWarnings && result.nativeWarnings.length > 0 && {
           nativeWarnings: result.nativeWarnings,
         }),
+        ...(pptxOrientationWarning && { pptxOrientationWarning }),
       }, null, 2),
     });
 
