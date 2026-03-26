@@ -58,7 +58,7 @@ No test suite exists in this project.
 - `next.config.ts` configures file tracing to include the Chromium binary for the render API route
 
 ### MCP Server (`packages/mcp-server/src/`)
-- `server.ts` — MCP server factory (v2.8.0) exposing 4 tools:
+- `server.ts` — MCP server factory (v2.8.1) exposing 4 tools:
   - `create_slides` — guided workflow with theme catalog + output presets + preview + review
   - `render_html_to_images` — full render to PNG/WebP/PDF/PPTX
   - `get_slide_prompt` — AI prompt template for 8 theme variants

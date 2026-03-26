@@ -2,7 +2,7 @@
   "manifest_version": "0.3",
   "name": "slideshot",
   "display_name": "Slideshot - HTML to Slides",
-  "version": "2.8.0",
+  "version": "2.8.1",
   "description": "Render HTML slides to high-resolution PNG, WebP, PDF, and PPTX using Puppeteer. Generate carousels for LinkedIn, Instagram, and presentations with a guided AI workflow.",
   "long_description": "Slideshot converts HTML into pixel-perfect slide images and documents. Give it HTML with `.slide` divs and it renders each one as a high-resolution PNG, WebP, combined PDF, or editable/image-based PPTX — ready for LinkedIn carousels, Instagram posts, pitch decks, or presentation decks. Includes 8 built-in prompt templates (generic, branded, instagram-carousel, infographic, pitch-deck, dark-modern, editorial, browser-shell) and a guided creation workflow.",
   "author": {

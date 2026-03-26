@@ -1,7 +1,7 @@
 {
   "name": "slideshot",
   "description": "Render HTML slides to high-res PNG, WebP, PDF, and PPTX using Puppeteer",
-  "version": "2.8.0",
+  "version": "2.8.1",
   "mcpServers": {
     "slideshot": {
       "command": "npx",

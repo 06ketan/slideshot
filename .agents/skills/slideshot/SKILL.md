@@ -4,7 +4,7 @@ description: "Use this skill when the user wants to create slide carousels, Link
 license: MIT
 metadata:
   author: ketan-chavan
-  version: "2.8.0"
+  version: "2.8.1"
   homepage: https://slideshot.vercel.app
   repository: https://github.com/06ketan/slideshot
 compatibility: "Requires Node.js >= 18. Works with Claude Desktop, Cursor, and any MCP-compatible client."
