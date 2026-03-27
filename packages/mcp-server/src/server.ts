@@ -13,7 +13,7 @@ export function createServer(): McpServer {
 
   server.tool(
     "create_slides",
-    "ALWAYS call this first with step='discover'. Returns themes, presets (linkedin/instagram/presentation), and questions. Present themes as a visual menu with palette colors. Ask ALL questions in ONE message. WAIT for answers. After HTML generation, show as artifact for visual preview.",
+    "ALWAYS call this first with step='discover'. Returns themes, presets, and questions. Use ONLY native interactive prompts to ask user — do NOT render markdown tables or verbose text. WAIT for answers before generating HTML.",
     CreateInputSchema,
     { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     async (args) => handleCreate(args),
