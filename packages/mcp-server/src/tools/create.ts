@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { type PromptVariant, fetchCatalog, type ThemeEntry } from "../prompts.js";
 import { defaultOutDir } from "../helpers.js";
-import { cacheHtml, resetDiscovery, markDiscoveryDone } from "../cache.js";
+import { cacheHtml, resetDiscovery, markDiscoveryDone, isDiscoveryDone, markApproved } from "../cache.js";
 
 const THEME_CATALOG_FALLBACK: ThemeEntry[] = [
   { id: "generic", name: "Clean Minimal", emoji: "📋", style: "Inter, white cards, flexible", palette: ["#FFF", "#1a1a1a", "#888"] },
@@ -59,11 +59,28 @@ async function discoverStep() {
           { id: "formats", type: "multiselect", prompt: "Output formats?", options: ["pdf", "pptx", "png", "webp"], default: ["pdf"] },
           { id: "pptxMode", type: "select", prompt: "If PPTX: native (editable) or image (pixel-perfect)?", options: ["native", "image"], condition: "formats includes pptx" },
         ],
-        flow: "get_slide_schema→assemble_slides→approval→render",
-        instruction: "Present themes as numbered menu. Ask ALL questions in ONE message. Wait for answers.",
+        flow: "discover→get_slide_schema→assemble_slides→show HTML→user approval→review→render",
+        instruction: "MANDATORY: 1) Present all themes as a numbered menu with emoji+name+style. 2) Ask ALL questions (theme, topic, orientation, formats) in ONE message. 3) STOP and WAIT for the user to answer. Do NOT generate HTML, call assemble_slides, or proceed until the user has explicitly answered. 4) After HTML is generated, show it to the user and ask for approval before rendering.",
       }),
     }],
   };
+}
+
+function requireDiscovery() {
+  if (!isDiscoveryDone()) {
+    return {
+      content: [{
+        type: "text" as const,
+        text: JSON.stringify({
+          ok: false,
+          error: "DISCOVERY_REQUIRED",
+          instruction: "Call create_slides with step='discover' first. You MUST present themes to the user and ask for their preferences (theme, topic, orientation, formats) BEFORE generating any HTML.",
+        }),
+      }],
+      isError: true,
+    };
+  }
+  return null;
 }
 
 function previewStep(html?: string, htmlPath?: string) {
@@ -88,7 +105,7 @@ function previewStep(html?: string, htmlPath?: string) {
       text: JSON.stringify({
         slideCount,
         htmlPath: resolvedPath,
-        instruction: `${slideCount} slides ready. Ask user to approve or request changes. Wait for approval, then call render_html_to_images with htmlPath='${resolvedPath}'.`,
+        instruction: `${slideCount} slides ready. You MUST: 1) Show the HTML to the user as a code block, 2) Ask "Does this look good? Should I render the final output?", 3) WAIT for user to explicitly approve, 4) Call create_slides with step='review', 5) THEN call render_html_to_images. Do NOT render without user approval.`,
       }),
     }],
   };
@@ -125,7 +142,15 @@ function reviewStep(html?: string, htmlPath?: string) {
 
 export async function handleCreate(args: { step: string; html?: string; htmlPath?: string; aspectRatio?: string }) {
   if (args.step === "discover") return discoverStep();
+
+  const gate = requireDiscovery();
+  if (gate) return gate;
+
   if (args.step === "preview") return previewStep(args.html, args.htmlPath);
-  if (args.step === "review") return reviewStep(args.html, args.htmlPath);
+  if (args.step === "review") {
+    const result = reviewStep(args.html, args.htmlPath);
+    markApproved();
+    return result;
+  }
   throw new Error(`Unknown step "${args.step}". Use "discover", "preview", or "review".`);
 }

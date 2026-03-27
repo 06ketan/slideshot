@@ -3,7 +3,7 @@ import path from "node:path";
 import os from "node:os";
 import { renderSlides, type ImageFormat } from "slideshot";
 import { defaultOutDir, resolveFormats, formatSummary } from "../helpers.js";
-import { getCachedHtml } from "../cache.js";
+import { getCachedHtml, isDiscoveryDone, isApproved } from "../cache.js";
 
 export async function handleRender(args: {
   html?: string;
@@ -20,6 +20,34 @@ export async function handleRender(args: {
   orientation?: "portrait" | "landscape";
   pptxMode?: "native" | "image";
 }) {
+  if (!isDiscoveryDone()) {
+    return {
+      content: [{
+        type: "text" as const,
+        text: JSON.stringify({
+          ok: false,
+          error: "DISCOVERY_REQUIRED",
+          instruction: "Call create_slides with step='discover' first. You MUST present themes to the user and ask for their preferences before rendering.",
+        }),
+      }],
+      isError: true,
+    };
+  }
+
+  if (!isApproved()) {
+    return {
+      content: [{
+        type: "text" as const,
+        text: JSON.stringify({
+          ok: false,
+          error: "APPROVAL_REQUIRED",
+          instruction: "User has not approved the slides yet. You MUST: 1) Show the generated HTML to the user as a code block, 2) Explicitly ask 'Does this look good? Should I render the final output?', 3) Wait for the user to confirm, 4) Call create_slides with step='review' to confirm approval, THEN call render_html_to_images.",
+        }),
+      }],
+      isError: true,
+    };
+  }
+
   try {
     let { html, htmlPath } = args;
     const { selector, width, height, scale, formats, outDir, pdfFilename, pptxFilename, slideRange, orientation, pptxMode } = args;

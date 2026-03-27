@@ -66,10 +66,13 @@ Zod schemas for all tool inputs. The `SlideSchema` uses a flat object with optio
 - **All tool responses are JSON-stringified text content.** No structured MCP content types beyond `text` and `image`.
 - **8 themes** are hardcoded: generic, branded, instagram-carousel, infographic, pitch-deck, dark-modern, editorial, browser-shell. Adding a theme requires entries in `css.ts`, `renderers.ts`, and the `THEMES` const in `schema.ts`.
 
-### MCP Workflow (intended order)
+### MCP Workflow (enforced order)
 
 ```
-discover → get_slide_schema → assemble_slides → user approval → render_html_to_images
+discover → get_slide_schema → assemble_slides → show HTML → user approval → review → render_html_to_images
 ```
 
-The `create_slides` tool's `discover` step must be called first to present theme choices and gather user preferences. The `preview` and `review` steps are for the raw HTML path.
+**Server-enforced gates:**
+- **Discovery gate**: All tools except `health_check` return `DISCOVERY_REQUIRED` error if `create_slides discover` hasn't been called. The discover response instructs the LLM to present themes and ask ALL questions before proceeding.
+- **Approval gate**: `render_html_to_images` returns `APPROVAL_REQUIRED` error until `create_slides review` has been called. This ensures the user has explicitly approved the slides before rendering.
+- The `preview` and `review` steps are for the raw HTML path. The `review` step marks slides as approved.

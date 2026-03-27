@@ -54,7 +54,7 @@ export async function handleAssemble(args: {
           slides: args.slides.length,
           htmlPath,
           html,
-          instruction: `${args.slides.length} slides assembled. Ask user to approve or request changes. On approval: call render_html_to_images (no html/htmlPath needed — server has it cached). If htmlPath is inaccessible, pass the html field inline.`,
+          instruction: `${args.slides.length} slides assembled. You MUST now: 1) Show the HTML to the user as a code block for preview, 2) Ask "Does this look good? Should I render the final output?", 3) WAIT for user to explicitly approve, 4) Call create_slides with step='review' and htmlPath='${htmlPath}', 5) THEN call render_html_to_images. Do NOT skip the user approval step.`,
         }),
       }],
     };

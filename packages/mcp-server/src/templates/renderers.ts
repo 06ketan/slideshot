@@ -554,25 +554,37 @@ function browserWrap(brandName: string, body: string, footer: string): string {
 const browserShellRenderers: ThemeRendererMap = {
   cover: (s) => {
     if (s.type !== "cover") return "";
+    const gridSvg = `<svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="g" width="28" height="28" patternUnits="userSpaceOnUse"><path d="M28 0H0v28" fill="none" stroke="#E8E4DF" stroke-width=".5"/></pattern></defs><rect width="100%" height="100%" fill="url(#g)"/></svg>`;
+    const blobSvg = `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" style="position:absolute;bottom:-20px;right:-20px;width:180px;height:180px;opacity:.12;"><path fill="#12122A" d="M45.3,-62.5C56.9,-53.1,63.2,-37.3,67.8,-21.1C72.3,-4.8,75.1,11.9,70.1,26.1C65.1,40.3,52.4,52,38.1,59.5C23.8,67.1,7.9,70.6,-7.5,69.5C-22.9,68.4,-37.8,62.7,-49.8,53C-61.8,43.3,-70.9,29.5,-73.7,14.5C-76.5,-0.5,-73,-16.8,-65.1,-29.8C-57.2,-42.8,-44.9,-52.5,-31.7,-61C-18.5,-69.5,-4.6,-76.7,7.3,-74.4C19.2,-72.1,33.7,-71.9,45.3,-62.5Z" transform="translate(100 100)"/></svg>`;
     const body = `
-      <div class="s-top">
+      <div class="s-top" style="flex-shrink:0;">
         <div class="big-headline">${esc(s.headline)}</div>
         ${s.subtitle ? `<div class="sub-headline">${esc(s.subtitle)}</div>` : ""}
       </div>
-      ${s.facts?.length ? `<div style="padding:12px 24px;">${s.facts.map(f => `<p style="font-size:10px;color:#555;margin-bottom:4px;">◆ ${esc(f)}</p>`).join("")}</div>` : ""}`;
+      <div style="flex:1;position:relative;overflow:hidden;">
+        <div style="position:absolute;inset:0;opacity:.45;">${gridSvg}</div>
+        ${blobSvg}
+        <div style="position:relative;z-index:1;padding:18px 24px;display:flex;flex-direction:column;gap:14px;height:100%;">
+          ${s.badges?.length ? `<div style="display:flex;flex-wrap:wrap;gap:6px;">${s.badges.map(b => `<span class="stag">${esc(b)}</span>`).join("")}</div>` : ""}
+          ${s.facts?.length ? `<div style="margin-top:auto;padding:14px 16px;background:rgba(18,18,42,.06);border-radius:8px;border:1.5px solid #12122A;">${s.facts.map(f => `<p style="font-size:10.5px;color:#333;margin-bottom:5px;font-weight:600;">◆ ${esc(f)}</p>`).join("")}</div>` : ""}
+        </div>
+      </div>`;
     return browserWrap("slideshot", body, "POWERED BY SLIDESHOT");
   },
   stats: (s) => {
     if (s.type !== "stats") return "";
+    const dotSvg = `<svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style="position:absolute;bottom:0;left:0;right:0;height:80px;opacity:.08;"><defs><pattern id="dots" width="16" height="16" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.5" fill="#12122A"/></pattern></defs><rect width="100%" height="100%" fill="url(#dots)"/></svg>`;
     const body = `
       <div class="s-top" style="background:#FFD233;">
         ${s.title ? `<div class="big-headline" style="font-size:48px;">${esc(s.title)}</div>` : ""}
+        ${s.label ? `<div class="sub-headline" style="margin-top:4px;">${esc(s.label)}</div>` : ""}
       </div>
-      <div class="s-content">
-        <div class="stat-row">
+      <div class="s-content" style="position:relative;">
+        <div class="stat-row" style="flex-wrap:wrap;">
           ${s.cards.map(c => `<div class="stat-card"><div class="stat-lbl">${esc(c.label)}</div><div class="stat-val">${esc(c.value)}</div>${c.sub ? `<div class="stat-sub">${esc(c.sub)}</div>` : ""}</div>`).join("")}
         </div>
         ${s.tags?.length ? `<div class="sec-lbl">SKILLS</div><div class="skill-tags">${s.tags.map(t => `<span class="stag">${esc(t)}</span>`).join("")}</div>` : ""}
+        ${dotSvg}
       </div>`;
     return browserWrap("slideshot", body, "POWERED BY SLIDESHOT");
   },
@@ -600,14 +612,19 @@ const browserShellRenderers: ThemeRendererMap = {
   },
   cta: (s) => {
     if (s.type !== "cta") return "";
+    const ringsSvg = `<svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0;opacity:.06;"><circle cx="50%" cy="50%" r="140" fill="none" stroke="#12122A" stroke-width="1.5"/><circle cx="50%" cy="50%" r="100" fill="none" stroke="#12122A" stroke-width="1"/><circle cx="50%" cy="50%" r="60" fill="none" stroke="#12122A" stroke-width=".75"/></svg>`;
     const body = `
-      <div class="cta-body">
-        <div class="apply-eyebrow">GET STARTED</div>
-        <div class="apply-headline">${esc(s.headline)}</div>
-        <div class="apply-divider"></div>
-        ${s.description ? `<div class="apply-desc">${esc(s.description)}</div>` : ""}
-        ${s.email ? `<div class="email-box"><span class="email-at">@</span><span class="email-addr">${esc(s.email)}</span></div>` : ""}
-        ${s.note ? `<div class="apply-note">${esc(s.note)}</div>` : ""}
+      <div class="cta-body" style="position:relative;">
+        ${ringsSvg}
+        <div style="position:relative;z-index:1;">
+          <div class="apply-eyebrow">GET STARTED</div>
+          <div class="apply-headline">${esc(s.headline)}</div>
+          <div class="apply-divider"></div>
+          ${s.description ? `<div class="apply-desc">${esc(s.description)}</div>` : ""}
+          ${s.email ? `<div class="email-box"><span class="email-at">@</span><span class="email-addr">${esc(s.email)}</span></div>` : ""}
+          ${s.action ? `<div style="display:inline-block;background:#FFD233;border:2px solid #0A0A0A;border-radius:6px;padding:10px 20px;font-size:12px;font-weight:800;color:#0A0A0A;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;">${esc(s.action)}</div>` : ""}
+          ${s.note ? `<div class="apply-note">${esc(s.note)}</div>` : ""}
+        </div>
       </div>`;
     return browserWrap("slideshot", body, "POWERED BY SLIDESHOT");
   },
