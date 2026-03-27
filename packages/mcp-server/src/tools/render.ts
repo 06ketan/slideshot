@@ -41,7 +41,7 @@ export async function handleRender(args: {
         text: JSON.stringify({
           ok: false,
           error: "APPROVAL_REQUIRED",
-          instruction: "User has not approved the slides yet. You MUST: 1) Show the generated HTML to the user as a code block, 2) Explicitly ask 'Does this look good? Should I render the final output?', 3) Wait for the user to confirm, 4) Call create_slides with step='review' to confirm approval, THEN call render_html_to_images.",
+          instruction: "User has not approved the slides yet. You MUST: 1) Show the generated HTML as an interactive artifact for visual preview, 2) Explicitly ask 'Does this look good? Should I render the final output?', 3) Wait for the user to confirm, 4) Call create_slides with step='review' to confirm approval, THEN call render_html_to_images.",
         }),
       }],
       isError: true,
@@ -134,6 +134,10 @@ export async function handleRender(args: {
       | { type: "image"; data: string; mimeType: string }
     > = [];
 
+    const fileList = result.files.map((f: string) => path.basename(f));
+    const hasPdf = resolvedFormats.includes("pdf");
+    const hasPptx = resolvedFormats.includes("pptx");
+
     content.push({
       type: "text" as const,
       text: JSON.stringify({
@@ -143,6 +147,7 @@ export async function handleRender(args: {
         openFolder: `file://${absOutDir}`,
         files: result.files,
         formatSummary: formatSummary(result.files),
+        instruction: `Rendered ${result.slideCount} slides to ${fileList.join(", ")}. Tell user: files saved to ${absOutDir}.${hasPdf ? " PDF can be opened directly from the file path." : ""}${hasPptx ? " PPTX can be opened in PowerPoint or Google Slides." : ""} Provide the folder link so user can access files.`,
         ...(outDirFallback && { outDirFallback: true, requestedOutDir }),
         ...(usedCache && { usedCache: true, note: "Used cached HTML from last assemble/preview call" }),
         ...(htmlPathFallback && { htmlPathFallback: true, htmlPathNote: "htmlPath was inaccessible; used html string via temp file" }),

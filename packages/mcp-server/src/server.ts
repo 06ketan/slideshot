@@ -13,7 +13,7 @@ export function createServer(): McpServer {
 
   server.tool(
     "create_slides",
-    "ALWAYS call this first with step='discover'. Returns themes + questions. You MUST present all themes to the user and ask ALL questions (theme, topic, orientation, formats) in ONE message. WAIT for user answers before generating any HTML. Do NOT skip this step or assume defaults.",
+    "ALWAYS call this first with step='discover'. Returns themes, presets (linkedin/instagram/presentation), and questions. Present themes as a visual menu with palette colors. Ask ALL questions in ONE message. WAIT for answers. After HTML generation, show as artifact for visual preview.",
     CreateInputSchema,
     { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     async (args) => handleCreate(args),
@@ -21,7 +21,7 @@ export function createServer(): McpServer {
 
   server.tool(
     "render_html_to_images",
-    "Final render to PDF/PPTX/PNG/WebP. BLOCKED until user approves slides via create_slides review step. Workflow: discover → schema → assemble → user approval → review → render.",
+    "Final render to PDF/PPTX/PNG/WebP. BLOCKED until user approves via review step. Returns file paths. For PDF: user can open directly from Desktop. Use presets from discover for auto-configured dimensions.",
     RenderInputSchema,
     { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     async (args) => handleRender(args),
@@ -45,7 +45,7 @@ export function createServer(): McpServer {
 
   server.tool(
     "assemble_slides",
-    "RECOMMENDED path: send theme + structured slides JSON, server assembles HTML. Requires discover step first. After assembly, you MUST show HTML to user and wait for explicit approval before rendering.",
+    "RECOMMENDED: send theme + slides JSON, server builds HTML. After assembly, show HTML as artifact for visual preview. Ask user to approve before rendering. Requires discover step first.",
     AssembleInputSchema,
     { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     async (args) => handleAssemble(args),
