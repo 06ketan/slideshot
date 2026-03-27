@@ -168,6 +168,72 @@ cd html-to-slides && npm run build:mcp
 
 Use the same prompt for both and record token usage from Claude's session info.
 
+## v3.0.2 — Native Prompting + Artifact Preview
+
+### What Changed
+
+Three rounds of improvements on top of v2.9.0:
+
+1. **Enriched discover payload** — restored output presets (linkedin/instagram/presentation/social), palette colors in theme entries, brandName + assets questions, Claude-native hints
+2. **Native-only prompting** — instruction now mandates Claude use ONLY native interactive prompts (selection dialogs, freetext inputs). No markdown tables, numbered lists, or verbose text. Theme options carry `{value, label}` pairs for rich native UI display
+3. **Artifact panel preview** — instructions explicitly tell Claude to "create an artifact" with the HTML for the right-panel Code/Preview tabs, not paste HTML inline in chat
+
+### Token Impact
+
+| Component | v2.9.0 | v3.0.2 | Delta | Notes |
+|-----------|-------:|-------:|------:|-------|
+| Tool descriptions (per turn) | 207 | ~240 | +33 | Added "native prompts only" language |
+| Schema descriptions (per turn) | 232 | 232 | 0 | Unchanged |
+| `create_slides(discover)` response | 422 | ~650 | +228 | Presets, palette, label+value options, hints |
+| `assemble_slides` response | ~180 | ~195 | +15 | "Create an artifact" instruction |
+| `create_slides(preview)` response | 178 | ~190 | +12 | "Create an artifact" instruction |
+| **Total input overhead** | **~1,219** | **~1,507** | **+288** | |
+
+### Output Token Savings
+
+| Behavior | v2.9.0 | v3.0.2 | Saved |
+|----------|-------:|-------:|------:|
+| Model generates theme table + explanation | ~200 | 0 | **~200** |
+| Model generates verbose "pick your choices" text | ~50 | ~15 | ~35 |
+| **Total output savings per discover** | | | **~235** |
+
+The model previously generated a full markdown table with emoji palettes, preset descriptions, and a closing paragraph. With native-only prompting, it outputs one short sentence (~15 tokens) and lets the native UI handle everything.
+
+### Speed Impact
+
+| Step | v2.9.0 | v3.0.2 | Improvement |
+|------|--------|--------|-------------|
+| Theme presentation | Model generates ~200 tokens of markdown | Native UI renders instantly | ~3-5s faster |
+| HTML preview | Inline in chat (scrolling required) | Artifact right panel with Code/Preview tabs | Better UX |
+| User interaction | Read table → type answer | Click native selection dialog | ~2-3s faster |
+
+### Net Effect
+
+```
+Input tokens:  +288 (richer discover payload)
+Output tokens: -235 (no markdown tables/verbose text)
+Net:           +53 tokens (~0.7% increase over v2.9.0 total)
+UX:            ~5-8s faster per interaction (native prompts + artifact panel)
+```
+
+Still **93% below v2.8.1** (168,801 tokens) while providing significantly better user experience.
+
+### Cumulative Comparison
+
+```
+╔══════════════════════════════════════════════════════════════╗
+║  v2.8.1 total:   168,801 tokens                            ║
+║  v2.9.0 total:     7,329 tokens  (96% reduction)           ║
+║  v3.0.2 total:    ~7,382 tokens  (96% reduction)           ║
+║                                                              ║
+║  v3.0.2 vs v2.8.1:  161,419 tokens saved (95.6%)           ║
+║  v3.0.2 vs v2.9.0:  +53 tokens (+0.7%)                     ║
+║  v3.0.2 UX:         Native prompts + artifact preview       ║
+╚══════════════════════════════════════════════════════════════╝
+```
+
+---
+
 ## Further Optimization Opportunities
 
 1. **Fetch prompts from webapp API** — eliminates bundled prompt files, enables hot updates

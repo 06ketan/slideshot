@@ -41,7 +41,7 @@ export async function handleRender(args: {
         text: JSON.stringify({
           ok: false,
           error: "APPROVAL_REQUIRED",
-          instruction: "User has not approved the slides yet. You MUST: 1) Show the generated HTML as an interactive artifact for visual preview, 2) Explicitly ask 'Does this look good? Should I render the final output?', 3) Wait for the user to confirm, 4) Call create_slides with step='review' to confirm approval, THEN call render_html_to_images.",
+          instruction: "User has not approved the slides yet. You MUST: 1) Create an artifact with the HTML for live preview (right panel, Code/Preview tabs), 2) Explicitly ask 'Does this look good? Should I render the final output?', 3) Wait for the user to confirm, 4) Call create_slides with step='review' to confirm approval, THEN call render_html_to_images.",
         }),
       }],
       isError: true,

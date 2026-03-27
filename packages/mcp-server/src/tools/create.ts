@@ -69,7 +69,7 @@ async function discoverStep() {
         ],
         flow: "discover→get_slide_schema→assemble_slides→artifact preview→user approval→review→render",
         hints: {
-          preview: "After generating HTML, render it as an HTML artifact so the user can preview visually. Do NOT just show raw code.",
+          preview: "After assembly, create an artifact with the full HTML so user gets a live preview in the right panel with Code/Preview tabs. Do NOT paste HTML inline in chat.",
           pdfSave: "After rendering PDF, provide the file path. Claude web/desktop users can open PDFs natively.",
           codeView: "If user asks to see the code, show it in a code block artifact alongside the visual preview.",
         },
@@ -118,7 +118,7 @@ function previewStep(html?: string, htmlPath?: string) {
       text: JSON.stringify({
         slideCount,
         htmlPath: resolvedPath,
-        instruction: `${slideCount} slides ready. You MUST: 1) Show the HTML as an interactive artifact for visual preview (not just a code block), 2) Ask "Does this look good? Should I render the final output?", 3) WAIT for user to explicitly approve, 4) Call create_slides with step='review', 5) THEN call render_html_to_images. Do NOT render without user approval.`,
+        instruction: `${slideCount} slides ready. You MUST: 1) Create an artifact containing the complete HTML document for live preview (right panel, Code/Preview tabs), 2) Ask "Does this look good? Should I render the final output?", 3) WAIT for user to explicitly approve, 4) Call create_slides with step='review', 5) THEN call render_html_to_images. Do NOT render without user approval.`,
       }),
     }],
   };

@@ -54,7 +54,7 @@ export async function handleAssemble(args: {
           slides: args.slides.length,
           htmlPath,
           html,
-          instruction: `${args.slides.length} slides assembled. You MUST now: 1) Show the HTML as an interactive artifact for visual preview (not just a code block), 2) Ask "Does this look good? Should I render the final output?", 3) WAIT for user to explicitly approve, 4) Call create_slides with step='review' and htmlPath='${htmlPath}', 5) THEN call render_html_to_images. Do NOT skip the user approval step.`,
+          instruction: `${args.slides.length} slides assembled. You MUST now: 1) Create an artifact containing the complete HTML document for live preview (right panel, Code/Preview tabs), 2) Ask "Does this look good? Should I render the final output?", 3) WAIT for user to explicitly approve, 4) Call create_slides with step='review' and htmlPath='${htmlPath}', 5) THEN call render_html_to_images. Do NOT skip the user approval step.`,
         }),
       }],
     };
