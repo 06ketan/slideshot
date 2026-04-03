@@ -1,78 +1,73 @@
-# CLAUDE.md
+# CLAUDE.md — slideshot MCP server (v4.0.0)
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+## Overview
 
-## Package Overview
+MCP server exposing 4 tools for HTML-to-slides rendering. Depends on the `slideshot` CLI package for Puppeteer-based rendering. Distributed as `slideshot-mcp` on npm.
 
-`slideshot-mcp` (v3.0.1) — MCP server for rendering HTML slides to PNG/WebP/PDF/PPTX. Runs over stdio, used by Claude Desktop and Cursor. Depends on the `slideshot` CLI package for Puppeteer-based rendering.
+## Tools
 
-## Commands
-
-```bash
-npm run build    # tsc + chmod dist/index.js + copy ../../prompts → ./prompts
-npm run dev      # tsc --watch
-```
-
-Build from monorepo root: `npm run build:mcp`
-
-No test suite. Manual testing via `test-e2e.mjs` in this directory.
+| Tool | Purpose |
+|------|---------|
+| `discover_themes` | Returns themes, orientations, token modes, formats. ALWAYS call first. |
+| `create_slides` | Two modes: `default` (AI writes HTML) or `token_saver` (AI sends JSON, server assembles). Saves HTML to disk. |
+| `render_slides` | Renders saved HTML to PDF/WebP/PNG via Puppeteer. Returns file paths. |
+| `health_check` | Puppeteer/Chromium diagnostic. |
 
 ## Architecture
 
-### Entry & Server (`src/index.ts`, `src/server.ts`)
-
-`index.ts` is the stdio entry point (shebang, `StdioServerTransport`). `server.ts` creates the `McpServer` and registers 6 tools:
-
-| Tool | Handler | Purpose |
-|------|---------|---------|
-| `create_slides` | `tools/create.ts` | 3-step workflow: discover → preview → review |
-| `render_html_to_images` | `tools/render.ts` | Puppeteer render to file outputs |
-| `health_check` | `tools/health.ts` | Chromium launch diagnostic |
-| `get_slide_prompt` | `tools/prompt.ts` | Raw CSS prompt for a theme (legacy path) |
-| `assemble_slides` | `tools/assemble.ts` | Structured JSON → HTML assembly (preferred path) |
-| `get_slide_schema` | `tools/assemble.ts` | Returns per-type field reference for a theme |
-
-### Two HTML Generation Paths
-
-1. **Structured (preferred):** `get_slide_schema` → `assemble_slides` — LLM sends typed JSON slides, server assembles HTML. Saves ~1500 tokens vs raw HTML.
-2. **Raw:** `get_slide_prompt` → LLM generates full HTML itself → `create_slides preview` to save it.
-
-Both paths converge at `render_html_to_images` for final output.
-
-### Template System (`src/templates/`)
-
-- `types.ts` — 11 slide type interfaces (`CoverSlide`, `ContentSlide`, `StatsSlide`, etc.) and `AssembleInput`
-- `css.ts` — Per-theme CSS strings (inline, no external files). Each theme defines `font`, `css`, and `dimensions`
-- `renderers.ts` — Per-theme HTML renderers for each slide type. Maps `(SlideData, index, total) → HTML string`
-- `assembler.ts` — `assembleHtml()` combines theme CSS + rendered slides into a complete HTML document. `getSlotSchema()` returns the field reference
-
-### Prompt System (`src/prompts.ts`)
-
-Fetches theme prompts from GitHub (`awesome-visual-ai-prompts` repo) with 1.5s timeout, falls back to local `./prompts/*.md` files. 10-minute TTL cache.
+```
+src/
+  index.ts          ← stdio entry point
+  server.ts         ← McpServer factory, 4 tool registrations
+  schema.ts         ← Zod schemas for all tools + ORIENTATION_PRESETS
+  cache.ts          ← Module-level HTML cache + discovery flag
+  helpers.ts        ← defaultOutDir(), resolveFormats()
+  prompts.ts        ← GitHub fetch with local fallback for theme prompts
+  tools/
+    discover.ts     ← Theme catalog, orientation presets, token modes
+    create.ts       ← Two-mode slide creation (default HTML / token_saver JSON)
+    render.ts       ← Puppeteer render to PDF/WebP/PNG
+    health.ts       ← Chromium launch diagnostic
+  templates/
+    assembler.ts    ← Assembles HTML from theme CSS + slide renderers
+    css.ts          ← CSS for all 8 themes
+    renderers.ts    ← Per-theme HTML renderers for each slide type
+    types.ts        ← TypeScript types for slide data
+```
 
 ### Schema (`src/schema.ts`)
 
-Zod schemas for all tool inputs. The `SlideSchema` uses a flat object with optional fields (not a discriminated union) to save ~900 tokens in the MCP tool definition. Runtime validation happens in the assembler.
+- `DiscoverInputSchema` — empty (no params)
+- `CreateInputSchema` — `mode`, `theme`, `orientation`, `width/height`, `html` (default mode), `slides` (token_saver mode), `brandName`
+- `RenderInputSchema` — `htmlPath`, `formats`, `scale`, `slideRange`, `outDir`, `pdfFilename`
+- `ORIENTATION_PRESETS` — portrait (540x675), landscape (1920x1080), linkedin (540x675), instagram (1080x1080), a4 (595x842)
 
 ### Helpers (`src/helpers.ts`)
 
-- `defaultOutDir()` — `$SLIDESHOT_OUTPUT_DIR` → `~/Desktop/slideshot-output` → `~/Downloads/slideshot-output` → `$TMPDIR/slideshot-output`
-- `resolveFormats()` — defaults to `["pdf"]` when no formats specified
+- `defaultOutDir()` — `$SLIDESHOT_OUTPUT_DIR` > `~/Desktop/slideshot-output` > `~/Downloads/slideshot-output` > `$TMPDIR/slideshot-output`
+- `resolveFormats()` — defaults to `["pdf"]`
 
 ### Key Design Decisions
 
-- **Token optimization is a primary concern.** Preview/review return JSON-only (no base64 images). HTML is saved to disk on first preview; subsequent calls use `htmlPath`. Default format is PDF (direct `page.pdf()`, no raster screenshots).
-- **Render tool accepts both `html` string and `htmlPath`.** If `htmlPath` is inaccessible (sandboxed environments), it falls back to writing `html` to a temp file in `os.tmpdir()`.
-- **All tool responses are JSON-stringified text content.** No structured MCP content types beyond `text` and `image`.
-- **8 themes** are hardcoded: generic, branded, instagram-carousel, infographic, pitch-deck, dark-modern, editorial, browser-shell. Adding a theme requires entries in `css.ts`, `renderers.ts`, and the `THEMES` const in `schema.ts`.
+- **Two token modes**: Default gives AI full HTML control (more tokens). Token-saver has AI send structured JSON, server assembles HTML (fewer tokens, less control).
+- **No approval gates**: The AI workflow handles previewing and confirming with the user. Server doesn't enforce multi-step gates.
+- **Focus on PDF/WebP/PNG**: PPTX is still supported via the CLI but not exposed in the MCP schema to keep it simple.
+- **Render tool uses htmlPath**: HTML is persisted to disk by create_slides. render_slides reads from disk or falls back to cache.
+- **Sandbox-safe**: If htmlPath is inaccessible (sandboxed environments), falls back to writing cached HTML to tmpdir.
 
-### MCP Workflow (enforced order)
+### MCP Workflow
 
 ```
-discover → get_slide_schema → assemble_slides → show HTML → user approval → review → render_html_to_images
+discover_themes → user picks theme/orientation/token mode/formats
+  → create_slides (default: html= or token_saver: slides=)
+  → show artifact preview → user approves
+  → render_slides → files on disk
 ```
 
-**Server-enforced gates:**
-- **Discovery gate**: All tools except `health_check` return `DISCOVERY_REQUIRED` error if `create_slides discover` hasn't been called. The discover response instructs the LLM to present themes and ask ALL questions before proceeding.
-- **Approval gate**: `render_html_to_images` returns `APPROVAL_REQUIRED` error until `create_slides review` has been called. This ensures the user has explicitly approved the slides before rendering.
-- The `preview` and `review` steps are for the raw HTML path. The `review` step marks slides as approved.
+### 8 Themes
+
+generic, branded, instagram-carousel, infographic, pitch-deck, dark-modern, editorial, browser-shell
+
+### Slide Types (for token_saver mode)
+
+cover, content, stats, list, steps, comparison, quote, code, cta, timeline, team

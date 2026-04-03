@@ -57,16 +57,16 @@ No test suite exists in this project.
 - **Production rendering** uses `puppeteer-core` + `@sparticuz/chromium` for Vercel deployment; dev uses full Puppeteer
 - `next.config.ts` configures file tracing to include the Chromium binary for the render API route
 
-### MCP Server (`packages/mcp-server/src/`)
-- `server.ts` — MCP server factory (v2.9.1) exposing 4 tools:
-  - `create_slides` — guided workflow: discover (themes) → preview (saves HTML to disk, returns htmlPath) → review (confirms all slides)
-  - `render_html_to_images` — full render to PNG/WebP/PDF/PPTX (default: PDF only). Accepts `htmlPath` from preview step
-  - `get_slide_prompt` — AI prompt template for 8 theme variants
+### MCP Server (`packages/mcp-server/src/`) — v4.0.0
+- `server.ts` — MCP server factory exposing 4 tools:
+  - `discover_themes` — returns themes, orientation presets, token modes, format options
+  - `create_slides` — two modes: `default` (AI writes full HTML) or `token_saver` (AI sends JSON, server assembles HTML)
+  - `render_slides` — renders HTML to PDF/WebP/PNG via Puppeteer
   - `health_check` — Puppeteer/Chromium diagnostics
-- `schema.ts` — Zod validation schemas for tool inputs
-- 8 MCP prompts registered: `{variant}-slides` for each theme
+- `schema.ts` — Zod validation schemas + `ORIENTATION_PRESETS` (portrait, landscape, linkedin, instagram, a4, custom)
+- `templates/` — theme CSS, slide renderers, assembler for token_saver mode
 - Delegates rendering to the CLI package
-- **Token optimization**: preview/review return JSON-only (no base64 images). HTML is saved to disk on first preview; subsequent calls use `htmlPath` to avoid re-sending HTML strings. Default render format is PDF (direct `page.pdf()`, no raster screenshots)
+- **Two token modes**: Default gives AI full HTML control (more creative, more tokens). Token-saver has AI send structured JSON only (fewer tokens, server assembles HTML from built-in templates).
 
 ### Prompt Templates (`prompts/`)
 8 AI prompt variants (generic, branded, dark-modern, editorial, infographic, instagram-carousel, pitch-deck, browser-shell) that instruct AI to generate HTML with `.slide` elements at 540×675 default dimensions.
@@ -79,17 +79,16 @@ No test suite exists in this project.
 - Plus marketing/SEO skills: ai-seo, analytics-tracking, page-cro, programmatic-seo, schema-markup, seo-audit, site-architecture, remotion-best-practices
 
 ### MCP Workflow (Claude Desktop / Cursor)
-The slideshot MCP follows a token-optimized iterative loop:
-1. `discover` → compact theme list + questions (no SVGs, no presets)
-2. `get_slide_prompt` with chosen variant → compressed CSS + component reference
-3. AI generates HTML
-4. `preview` with `html` → MCP saves to `slides.html`, returns `{ htmlPath, slideCount }`. Show HTML as code block for user to preview
-5. User approves or requests changes → edit HTML → preview again
-6. `review` with `htmlPath` → confirms all slides. Show HTML as code block
-7. User approves
-8. `render_html_to_images` with `htmlPath` + chosen formats → final files
+1. `discover_themes` → themes, orientations, token modes, formats + questions to ask user
+2. User picks theme, topic, orientation, token mode, formats, slide count
+3. `create_slides` — two paths:
+   - **Default mode**: first call (no html) returns CSS prompt; AI generates HTML; second call (with html) saves to disk
+   - **Token-saver mode**: AI sends structured JSON slides array; server assembles HTML from templates
+4. Show HTML as artifact for user preview
+5. User approves or requests changes → call create_slides again to iterate
+6. `render_slides` with `htmlPath` + chosen formats → final files on disk
 
-Key: HTML is persisted to disk on preview. All subsequent calls use `htmlPath` — never re-send the HTML string. Preview/review return JSON-only (no base64 images). Default render format is `pdf` (direct Chromium print, no raster screenshots).
+Key: HTML is persisted to disk by create_slides. render_slides reads from disk (or falls back to cache). Default format is PDF.
 
 ## Webapp Design System (Neobrutalist)
 

@@ -1,10 +1,10 @@
 ---
 name: slideshot
-description: "Use this skill when the user wants to create slide carousels, LinkedIn carousels, Instagram posts, pitch decks, infographics, or presentations — or convert HTML to high-res PNG, WebP, PDF, or PPTX images. Triggers: 'slides', 'carousel', 'deck', 'presentation', 'render HTML to images', 'LinkedIn post', 'Instagram carousel', 'pitch deck', 'make a slide deck', or any .slide HTML content."
+description: "Use this skill when the user wants to create slide carousels, LinkedIn carousels, Instagram posts, pitch decks, infographics, or presentations — or convert HTML to high-res PNG, WebP, or PDF images. Triggers: 'slides', 'carousel', 'deck', 'presentation', 'render HTML to images', 'LinkedIn post', 'Instagram carousel', 'pitch deck', 'make a slide deck', or any .slide HTML content."
 license: MIT
 metadata:
   author: ketan-chavan
-  version: "2.8.1"
+  version: "4.0.0"
   homepage: https://slideshot.vercel.app
   repository: https://github.com/06ketan/slideshot
 compatibility: "Requires Node.js >= 18. Works with Claude Desktop, Cursor, and any MCP-compatible client."
@@ -18,12 +18,11 @@ Slideshot converts HTML with `.slide` elements into pixel-perfect slide images a
 
 | Task | Tool | When to use |
 |------|------|-------------|
-| Start from a topic | `create_slides` (step=discover) | User wants slides but hasn't written HTML yet |
-| Preview first slide | `create_slides` (step=preview) | Quick check — shows code + image, loop until approved |
-| Review all slides | `create_slides` (step=review) | See all slide thumbnails before final render |
-| Get theme CSS/prompt | `get_slide_prompt` | Need the full HTML/CSS template for a theme |
-| Render to files | `render_html_to_images` | Have HTML, need PNG/WebP/PDF/PPTX output |
-| Diagnose failures | `health_check` | Render fails or Chromium won't launch |
+| Start any slide request | `discover_themes` | ALWAYS first. Returns themes, orientations, token modes, formats. |
+| Create slides (full HTML) | `create_slides` mode=default | AI writes complete HTML. More creative control, more tokens. |
+| Create slides (JSON data) | `create_slides` mode=token_saver | AI sends structured JSON. Server builds HTML. Fewer tokens. |
+| Render to files | `render_slides` | Have htmlPath from create_slides. Renders PDF/WebP/PNG. |
+| Diagnose failures | `health_check` | Render fails or Chromium won't launch. |
 
 ## MCP Setup
 
@@ -38,66 +37,77 @@ Slideshot converts HTML with `.slide` elements into pixel-perfect slide images a
 }
 ```
 
-Add this to Claude Desktop config or `.cursor/mcp.json`.
+Add to Claude Desktop config or `.cursor/mcp.json`.
 
-## Guided Workflow
+## Workflow
 
-1. Call `create_slides` with `step="discover"` to get themes and output presets
-2. Present the 8 themes to the user and ask: theme, topic, platform, ratio (portrait/landscape)
-3. Call `get_slide_prompt` with the chosen variant for full CSS reference
-4. Generate HTML with `.slide` elements following the prompt template
-5. Call `create_slides` with `step="preview"` — **always show the HTML code AND preview image**
-6. If user wants changes: revise HTML and call `preview` again (loop until approved)
-7. Call `create_slides` with `step="review"` to show ALL slide thumbnails
-8. On user approval, call `render_html_to_images` with full settings (portrait=PDF, landscape=PPTX)
+1. Call `discover_themes` to get themes, orientations, token modes, and format options
+2. Present options and ask user: theme, topic, orientation, token mode, format, slide count
+3. Based on token mode:
+   - **Default**: Call `create_slides` with mode=default, theme, orientation (no html) to get CSS prompt. Generate HTML. Call again with html= to save.
+   - **Token Saver**: Call `create_slides` with mode=token_saver, theme, orientation, slides=[structured JSON]
+4. Show HTML as artifact for preview
+5. If user wants changes: revise and call create_slides again (loop until approved)
+6. Call `render_slides` with htmlPath and chosen formats
+
+## Token Modes
+
+| Mode | Tokens | Control | How it works |
+|------|--------|---------|-------------|
+| `default` | More | Full | AI writes complete HTML+CSS. Maximum flexibility. |
+| `token_saver` | Fewer | Limited | AI sends JSON data. Server uses built-in theme templates. |
 
 ## Themes (8 variants)
 
 | Variant | Name | Style |
 |---------|------|-------|
 | `generic` | Clean Minimal | Inter font, white cards, flexible layout |
-| `branded` | Ketan Slides | Space Mono monospace, teal/coral accents, corner decorations |
-| `instagram-carousel` | Instagram Carousel | Bold gradients, Poppins, vibrant swipe-friendly |
-| `infographic` | Infographic | Data-heavy, DM Sans, progress bars, stat cards |
-| `pitch-deck` | Pitch Deck | Professional, DM Sans, KPI cards, timelines |
-| `dark-modern` | Dark Modern | Neon accents, glassmorphism, Inter, code blocks |
-| `editorial` | Editorial | Magazine serif, Playfair Display, gold accents |
-| `browser-shell` | Browser Shell | Browser window chrome, Bebas Neue + DM Sans, yellow/navy |
+| `branded` | Ketan Slides | Space Mono monospace, teal/coral accents |
+| `instagram-carousel` | Instagram Carousel | Bold gradients, Poppins, vibrant |
+| `infographic` | Infographic | Data-heavy, DM Sans, stat cards |
+| `pitch-deck` | Pitch Deck | Professional, DM Sans, KPI cards |
+| `dark-modern` | Dark Modern | Neon accents, glassmorphism, Inter |
+| `editorial` | Editorial | Magazine serif, Playfair Display, gold |
+| `browser-shell` | Browser Shell | Browser window chrome, Bebas Neue + DM Sans |
 
-## Output Presets
+## Orientation Presets
 
-| Preset | Formats | Dimensions | Scale | Use case |
-|--------|---------|------------|-------|----------|
-| Instagram | webp | 1080x1350 | 1x | Instagram post/carousel |
-| LinkedIn | pdf, webp | 540x675 | 4x | LinkedIn carousel (2160x2700) |
-| Presentation | pptx | 1920x1080 | 2x | PowerPoint deck (landscape) |
-| Custom | png, webp, pdf | 540x675 | 4x | All formats, default dims |
+| Preset | Dimensions | Use case |
+|--------|-----------|----------|
+| portrait | 540x675 | Default social/LinkedIn |
+| landscape | 1920x1080 | Presentations (16:9) |
+| linkedin | 540x675 | LinkedIn carousel PDF |
+| instagram | 1080x1080 | Square posts/carousel |
+| a4 | 595x842 | Document/print format |
+| custom | user-specified | Any size |
 
-## PPTX Modes
+## Output Formats
 
-- **native** (default): Extracts text into editable PowerPoint text boxes with font mapping (Bebas Neue→Impact, DM Sans→Calibri, Playfair Display→Georgia, Poppins→Arial, Space Mono→Courier New). Also captures images and SVGs as embedded pictures. Falls back to image mode with a warning if extraction fails.
-- **image**: Screenshot-based slides — pixel-perfect but not editable. Use when exact web rendering is required.
+| Format | Best for |
+|--------|----------|
+| PDF | LinkedIn carousels, sharing, printing |
+| WebP | Lightweight web/social images |
+| PNG | High-quality images, universal compatibility |
 
-## HTML Structure
+## Slide Types (token_saver mode)
 
-Slideshot expects HTML with `.slide` elements at fixed dimensions:
+cover, content, stats, list, steps, comparison, quote, code, cta, timeline, team
+
+## HTML Structure (default mode)
 
 ```html
 <div class="slide" style="width: 540px; height: 675px;">
   <h1>Slide Title</h1>
   <p>Content here</p>
 </div>
-<div class="slide" style="width: 540px; height: 675px;">
-  <h1>Slide 2</h1>
-</div>
 ```
 
-Use Google Fonts via `<link>` tags. Each `.slide` becomes one output image/page.
+Use Google Fonts via `<link>` tags. Each `.slide` becomes one output page/image.
 
 ## CLI Alternative
 
 ```bash
-npx slideshot ./slides.html --formats png,webp,pdf,pptx --scale 4 --out ./output
+npx slideshot ./slides.html --formats png,webp,pdf --scale 4 --out ./output
 ```
 
 ## Web App

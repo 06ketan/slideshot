@@ -2,37 +2,22 @@ import { z } from "zod";
 
 const THEMES = ["generic", "branded", "instagram-carousel", "infographic", "pitch-deck", "dark-modern", "editorial", "browser-shell"] as const;
 
-export const RenderInputSchema = {
-  html: z.string().optional().describe("HTML string (prefer htmlPath)"),
-  htmlPath: z.string().optional().describe("Path to saved HTML file (preferred)"),
-  selector: z.string().optional().describe("Slide selector (default: .slide)"),
-  width: z.number().optional().describe("Width px (default: 540)"),
-  height: z.number().optional().describe("Height px (default: 675)"),
-  scale: z.number().optional().describe("Scale 1-6 (default: 4)"),
-  formats: z.array(z.enum(["png", "webp", "pdf", "pptx"])).optional().describe("Output formats (default: [pdf])"),
-  outDir: z.string().optional().describe("Output dir"),
-  pdfFilename: z.string().optional().describe("PDF filename"),
-  pptxFilename: z.string().optional().describe("PPTX filename"),
-  slideRange: z.tuple([z.number(), z.number()]).optional().describe("Render slides N-M, 1-indexed"),
-  orientation: z.enum(["portrait", "landscape"]).optional().describe("portrait=540x675 landscape=1920x1080"),
-  pptxMode: z.enum(["native", "image"]).optional().describe("native=editable image=pixel-perfect"),
+const ORIENTATIONS = ["portrait", "landscape", "linkedin", "instagram", "a4", "custom"] as const;
+
+export const ORIENTATION_PRESETS: Record<string, { width: number; height: number }> = {
+  portrait:  { width: 540,  height: 675  },
+  landscape: { width: 1920, height: 1080 },
+  linkedin:  { width: 540,  height: 675  },
+  instagram: { width: 1080, height: 1080 },
+  a4:        { width: 595,  height: 842  },
 };
 
-export const PromptInputSchema = {
-  variant: z.enum(THEMES).describe("Theme variant from discover step"),
-};
+// ── Tool 1: discover_themes ──
 
-export const CreateInputSchema = {
-  step: z.enum(["discover", "preview", "review"]).describe(
-    "discover=themes+questions preview=save HTML review=re-confirm",
-  ),
-  html: z.string().optional().describe("HTML string for preview"),
-  htmlPath: z.string().optional().describe("HTML file path"),
-  aspectRatio: z.enum(["portrait", "landscape"]).optional(),
-};
+export const DiscoverInputSchema = {};
 
-// Flat slide object — avoids 11-variant discriminatedUnion (saves ~900 tokens in tool definition).
-// Fields are validated at runtime by the assembler; the type enum guides the LLM.
+// ── Tool 2: create_slides ──
+
 const SlideSchema = z.object({
   type: z.enum(["cover", "content", "stats", "list", "steps", "comparison", "quote", "code", "cta", "timeline", "team"])
     .describe("Slide type"),
@@ -75,15 +60,26 @@ const SlideSchema = z.object({
   rightLabel: z.string().optional(),
   left: z.array(z.object({ label: z.string(), description: z.string().optional() })).optional(),
   right: z.array(z.object({ label: z.string(), description: z.string().optional() })).optional(),
-}).describe("Slide data — fields depend on type. Call get_slide_schema for per-type field reference.");
+}).describe("Slide data — fields depend on type");
 
-export const AssembleInputSchema = {
-  theme: z.enum(THEMES).describe("Theme from discover"),
-  slides: z.array(SlideSchema).min(1).describe("Slides array"),
-  orientation: z.enum(["portrait", "landscape"]).optional(),
-  brandName: z.string().optional(),
+export const CreateInputSchema = {
+  mode: z.enum(["default", "token_saver"]).describe("default = AI writes full HTML (more tokens, full control). token_saver = AI sends JSON, server assembles HTML (fewer tokens)."),
+  theme: z.enum(THEMES).describe("Theme from discover_themes"),
+  orientation: z.enum(ORIENTATIONS).optional().describe("Preset or custom. Default: portrait"),
+  width: z.number().optional().describe("Custom width px (only with orientation=custom)"),
+  height: z.number().optional().describe("Custom height px (only with orientation=custom)"),
+  html: z.string().optional().describe("Full HTML document (mode=default only)"),
+  slides: z.array(SlideSchema).optional().describe("Structured slide data (mode=token_saver only)"),
+  brandName: z.string().optional().describe("Brand name for branded themes"),
 };
 
-export const SchemaInputSchema = {
-  theme: z.enum(THEMES).describe("Theme to get field reference for"),
+// ── Tool 3: render_slides ──
+
+export const RenderInputSchema = {
+  htmlPath: z.string().optional().describe("Path to saved HTML file (from create_slides). Falls back to cached HTML."),
+  formats: z.array(z.enum(["pdf", "webp", "png"])).optional().describe("Output formats (default: [pdf])"),
+  scale: z.number().optional().describe("Device scale 1-6 (default: 4)"),
+  slideRange: z.tuple([z.number(), z.number()]).optional().describe("Render slides N-M, 1-indexed"),
+  outDir: z.string().optional().describe("Output directory override"),
+  pdfFilename: z.string().optional().describe("Custom PDF filename"),
 };
