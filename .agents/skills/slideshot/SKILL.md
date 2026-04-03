@@ -4,7 +4,7 @@ description: "Use this skill when the user wants to create slide carousels, Link
 license: MIT
 metadata:
   author: ketan-chavan
-  version: "4.0.0"
+  version: "4.0.1"
   homepage: https://slideshot.vercel.app
   repository: https://github.com/06ketan/slideshot
 compatibility: "Requires Node.js >= 18. Works with Claude Desktop, Cursor, and any MCP-compatible client."
@@ -18,10 +18,10 @@ Slideshot converts HTML with `.slide` elements into pixel-perfect slide images a
 
 | Task | Tool | When to use |
 |------|------|-------------|
-| Start any slide request | `discover_themes` | ALWAYS first. Returns themes, orientations, token modes, formats. |
+| Start any slide request | `discover_themes` | **MANDATORY first.** All other tools REJECT until this is called. |
 | Create slides (full HTML) | `create_slides` mode=default | AI writes complete HTML. More creative control, more tokens. |
 | Create slides (JSON data) | `create_slides` mode=token_saver | AI sends structured JSON. Server builds HTML. Fewer tokens. |
-| Render to files | `render_slides` | Have htmlPath from create_slides. Renders PDF/WebP/PNG. |
+| Render to files | `render_slides` | ONLY after user confirms preview. Requires discover + create first. |
 | Diagnose failures | `health_check` | Render fails or Chromium won't launch. |
 
 ## MCP Setup
@@ -39,16 +39,18 @@ Slideshot converts HTML with `.slide` elements into pixel-perfect slide images a
 
 Add to Claude Desktop config or `.cursor/mcp.json`.
 
-## Workflow
+## Workflow (with mandatory STOP points)
 
 1. Call `discover_themes` to get themes, orientations, token modes, and format options
-2. Present options and ask user: theme, topic, orientation, token mode, format, slide count
+2. **⛔ STOP** — Present ALL options and ask user: theme, topic, orientation, token mode, format, slide count. DO NOT auto-select. WAIT for explicit answers.
 3. Based on token mode:
    - **Default**: Call `create_slides` with mode=default, theme, orientation (no html) to get CSS prompt. Generate HTML. Call again with html= to save.
    - **Token Saver**: Call `create_slides` with mode=token_saver, theme, orientation, slides=[structured JSON]
-4. Show HTML as artifact for preview
-5. If user wants changes: revise and call create_slides again (loop until approved)
-6. Call `render_slides` with htmlPath and chosen formats
+4. **⛔ STOP** — Show HTML as artifact for live preview. Ask user: "Does this look good? Should I render?" WAIT for confirmation. DO NOT call render_slides in the same turn.
+5. If user wants changes: revise and call create_slides again (loop steps 3-4 until approved)
+6. User confirms → Call `render_slides` with htmlPath and chosen formats
+
+**Server-enforced gates**: `render_slides` will REJECT the call if `discover_themes` or `create_slides` hasn't been called first.
 
 ## Token Modes
 

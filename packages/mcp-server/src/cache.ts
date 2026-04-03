@@ -1,6 +1,7 @@
 let lastHtml: string | null = null;
 let lastHtmlPath: string | null = null;
 let discoveryDone = false;
+let createCalled = false;
 
 export function cacheHtml(html: string, htmlPath: string): void {
   lastHtml = html;
@@ -27,4 +28,13 @@ export function isDiscoveryDone(): boolean {
 
 export function resetDiscovery(): void {
   discoveryDone = false;
+  createCalled = false;
+}
+
+export function markCreateDone(): void {
+  createCalled = true;
+}
+
+export function isCreateDone(): boolean {
+  return createCalled;
 }

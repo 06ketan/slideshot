@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { defaultOutDir } from "../helpers.js";
-import { cacheHtml, isDiscoveryDone } from "../cache.js";
+import { cacheHtml, isDiscoveryDone, markCreateDone } from "../cache.js";
 import { assembleHtml } from "../templates/assembler.js";
 import type { SlideData, AssembleInput } from "../templates/types.js";
 import { loadPrompt, type PromptVariant } from "../prompts.js";
@@ -18,11 +18,14 @@ function saveHtml(html: string): string {
   const htmlPath = path.join(dir, "slides.html");
   fs.writeFileSync(htmlPath, html, "utf-8");
   cacheHtml(html, htmlPath);
+  markCreateDone();
   return htmlPath;
 }
 
 function countSlides(html: string): number {
-  const matches = html.match(/class\s*=\s*["'][^"']*\bslide\b/g);
+  // Match class="slide" or class="slide ..." but NOT class="slide-label" etc.
+  // Looks for the word "slide" at the START of the class value or preceded by a space.
+  const matches = html.match(/class\s*=\s*["'](?:slide(?:\s|["'])|[^"']*\sslide(?:\s|["']))/g);
   return matches ? matches.length : 0;
 }
 
@@ -41,7 +44,7 @@ function discoveryGate() {
         text: JSON.stringify({
           ok: false,
           error: "DISCOVERY_REQUIRED",
-          instruction: "Call discover_themes first. Present themes, orientation, token mode, and format options to the user and wait for their choices.",
+          instruction: "You MUST call discover_themes first. Present themes, orientation, token mode, and format options to the user. WAIT for their choices. DO NOT auto-select.",
         }),
       }],
       isError: true,
@@ -49,6 +52,14 @@ function discoveryGate() {
   }
   return null;
 }
+
+const PREVIEW_STOP_INSTRUCTION = `STOP — DO NOT call render_slides yet.
+You MUST now:
+1. Create an artifact containing the complete HTML document so the user gets a live preview (Code/Preview tabs).
+2. Ask the user: "Does this look good? Should I render the final output, or do you want changes?"
+3. WAIT for the user's explicit response.
+4. ONLY after the user says yes/confirmed/looks good, call render_slides.
+DO NOT call render_slides in this same turn. The user MUST see the preview first.`;
 
 async function handleDefault(args: {
   theme: string;
@@ -85,7 +96,7 @@ async function handleDefault(args: {
         ok: true,
         slideCount,
         htmlPath,
-        instruction: `${slideCount} slides saved. Show the HTML as an artifact for the user to preview. Ask if they want changes or are ready to render. When ready, call render_slides with htmlPath='${htmlPath}'.`,
+        instruction: `${slideCount} slides saved to ${htmlPath}.\n\n${PREVIEW_STOP_INSTRUCTION}`,
       }),
     }],
   };
@@ -125,7 +136,7 @@ function handleTokenSaver(args: {
         slideCount,
         htmlPath,
         html,
-        instruction: `${slideCount} slides assembled from JSON. Show the HTML as an artifact for user to preview. Ask if they want changes or are ready to render. When ready, call render_slides with htmlPath='${htmlPath}'.`,
+        instruction: `${slideCount} slides assembled and saved to ${htmlPath}.\n\n${PREVIEW_STOP_INSTRUCTION}`,
       }),
     }],
   };

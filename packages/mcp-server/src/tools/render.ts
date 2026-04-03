@@ -3,7 +3,7 @@ import path from "node:path";
 import os from "node:os";
 import { renderSlides, type ImageFormat } from "slideshot";
 import { defaultOutDir, resolveFormats, formatSummary } from "../helpers.js";
-import { getCachedHtml, isDiscoveryDone } from "../cache.js";
+import { getCachedHtml, isDiscoveryDone, isCreateDone } from "../cache.js";
 
 export async function handleRender(args: {
   htmlPath?: string;
@@ -20,7 +20,21 @@ export async function handleRender(args: {
         text: JSON.stringify({
           ok: false,
           error: "DISCOVERY_REQUIRED",
-          instruction: "Call discover_themes first, then create_slides, then render_slides.",
+          instruction: "You MUST call discover_themes first, then create_slides, then render_slides. DO NOT skip steps.",
+        }),
+      }],
+      isError: true,
+    };
+  }
+
+  if (!isCreateDone()) {
+    return {
+      content: [{
+        type: "text" as const,
+        text: JSON.stringify({
+          ok: false,
+          error: "CREATE_REQUIRED",
+          instruction: "You MUST call create_slides first to generate and save the HTML. Then show the user a preview artifact. Only call render_slides after the user explicitly confirms the preview looks good.",
         }),
       }],
       isError: true,

@@ -1,48 +1,54 @@
 ---
-description: Slideshot MCP server v4.0 — tool usage guide for optimal workflow
+description: Slideshot MCP server v4.0.1 — tool usage guide with enforced workflow
 globs:
   - packages/mcp-server/**
   - prompts/**
 alwaysApply: false
 ---
 
-# Slideshot MCP v4.0 — Tool Usage Guide
+# Slideshot MCP v4.0.1 — Tool Usage Guide
 
 ## 4 Tools
 
 | Tool | When to use |
 |------|-------------|
-| `discover_themes` | ALWAYS first. Returns themes, orientations, token modes, formats. |
+| `discover_themes` | **MANDATORY first.** All other tools REJECT until this is called. |
 | `create_slides` | Create slides. mode=default (full HTML) or mode=token_saver (JSON data). |
-| `render_slides` | Render saved HTML to PDF/WebP/PNG. Uses htmlPath from create_slides. |
+| `render_slides` | Render saved HTML to PDF/WebP/PNG. Requires both discover + create first. |
 | `health_check` | Diagnose Puppeteer/Chromium issues. |
 
-## Workflow
+## Workflow (with STOP points)
 
 ```
-1. discover_themes → present options, ask user
+1. discover_themes → present ALL options to user
+   ── ⛔ STOP: DO NOT auto-select. Ask user for theme, topic, orientation, token mode, format, slide count.
+   ── WAIT for explicit user answers before proceeding.
+
 2. create_slides(mode, theme, orientation, html/slides) → htmlPath
-3. Show HTML as artifact for preview
-4. User approves → render_slides(htmlPath, formats) → files on disk
+   ── ⛔ STOP: Show HTML as artifact for live preview.
+   ── Ask user: "Does this look good? Should I render?"
+   ── WAIT for user confirmation. DO NOT call render_slides in this turn.
+
+3. User confirms → render_slides(htmlPath, formats) → files on disk
 ```
 
 ## Two Token Modes
 
 ### Default (Recommended — full creative control)
 1. `discover_themes` → themes + questions
-2. Ask user: theme, topic, orientation, format, token mode, slide count
+2. ⛔ STOP: Ask user — theme, topic, orientation, format, token mode, slide count. WAIT.
 3. `create_slides` with mode=default, theme, orientation (no html yet) → returns CSS prompt
 4. Generate full HTML using the prompt
-5. `create_slides` with mode=default, theme, html=<generated HTML> → htmlPath
-6. Show artifact, get approval
-7. `render_slides` with htmlPath → files
+5. `create_slides` with mode=default, theme, html=\<generated HTML\> → htmlPath
+6. ⛔ STOP: Show artifact for preview. Ask user. WAIT.
+7. User confirms → `render_slides` with htmlPath → files
 
 ### Token Saver (fewer tokens)
 1. `discover_themes` → themes + questions
-2. Ask user: theme, topic, orientation, format, token mode, slide count
+2. ⛔ STOP: Ask user — theme, topic, orientation, format, token mode, slide count. WAIT.
 3. `create_slides` with mode=token_saver, theme, slides=[{type:"cover",...}, ...] → htmlPath + html
-4. Show artifact, get approval
-5. `render_slides` with htmlPath → files
+4. ⛔ STOP: Show artifact for preview. Ask user. WAIT.
+5. User confirms → `render_slides` with htmlPath → files
 
 ## Orientation Presets
 
@@ -65,8 +71,10 @@ cover, content, stats, list, steps, comparison, quote, code, cta, timeline, team
 
 ## Key Rules
 
+- **Server-enforced gates**: render_slides rejects if discover or create haven't been called
 - Always use `htmlPath` from create_slides for render_slides
 - Default output format is PDF
 - Default orientation is portrait (540x675)
 - Default scale is 4x
 - Output goes to ~/Desktop/slideshot-output (or fallback locations)
+- **NEVER skip the preview step** — always show HTML as artifact before rendering

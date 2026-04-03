@@ -77,7 +77,13 @@ export async function handleDiscover() {
           { id: "slideCount", type: "freetext", prompt: "How many slides? (e.g. 1, 5, 8)", default: "6" },
           { id: "brandName", type: "freetext", prompt: "Brand name? (optional)", optional: true },
         ],
-        instruction: "Present themes and ask the user: theme, topic, orientation, token mode, format, and number of slides. Use native interactive prompts when available. WAIT for answers before proceeding to create_slides.",
+        instruction: `MANDATORY — follow these steps exactly:
+1. Present the themes list to the user (use a numbered menu or native select).
+2. Ask the user to pick: theme, topic, orientation/ratio, token mode, output format(s), and slide count.
+3. STOP HERE. DO NOT proceed to create_slides until the user has answered ALL questions.
+4. DO NOT auto-select any option on behalf of the user.
+5. DO NOT skip questions — even if the user's request implies a preference, confirm it explicitly.
+6. Only after you have explicit user answers for theme + topic + orientation + token mode + format, call create_slides.`,
       }),
     }],
   };

@@ -5,14 +5,14 @@ import { handleCreate } from "./tools/create.js";
 import { handleRender } from "./tools/render.js";
 import { handleHealthCheck } from "./tools/health.js";
 
-export const VERSION = "4.0.0";
+export const VERSION = "4.0.1";
 
 export function createServer(): McpServer {
   const server = new McpServer({ name: "slideshot", version: VERSION });
 
   server.tool(
     "discover_themes",
-    "ALWAYS call first. Returns themes, orientation presets (LinkedIn/Instagram/portrait/landscape/A4), token usage modes (default vs token-saver), and output format options. Ask the user to pick before proceeding.",
+    `MANDATORY first step — all other tools REJECT until this is called. Returns themes, orientation presets, token-usage modes, and output formats. You MUST present ALL options to the user and WAIT for their answers (theme, orientation, token mode, format, slide count). DO NOT auto-select. DO NOT skip to create_slides.`,
     DiscoverInputSchema,
     { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     async () => handleDiscover(),
@@ -20,7 +20,7 @@ export function createServer(): McpServer {
 
   server.tool(
     "create_slides",
-    "Create slides in two modes: mode=default (AI writes full HTML, more creative control, more tokens) or mode=token_saver (AI sends structured JSON, server builds HTML, fewer tokens). Returns htmlPath for rendering. Can be called repeatedly to iterate.",
+    `Create slides. Two modes: mode=default (AI writes full HTML) or mode=token_saver (AI sends JSON, server assembles HTML). REQUIRES discover_themes first. After this tool returns, you MUST create an artifact with the full HTML so the user gets a live preview. Then STOP and ask: "Does this look good? Should I render the final output?" DO NOT call render_slides until the user explicitly confirms.`,
     CreateInputSchema,
     { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     async (args) => handleCreate(args),
@@ -28,7 +28,7 @@ export function createServer(): McpServer {
 
   server.tool(
     "render_slides",
-    "Render saved HTML to PDF, WebP, and/or PNG files. Uses htmlPath from create_slides (or cached HTML). Returns file paths on disk.",
+    `Final render to PDF/WebP/PNG. REQUIRES both discover_themes AND create_slides to have been called first. ONLY call AFTER the user has seen the HTML preview artifact and explicitly said to proceed. DO NOT call in the same turn as create_slides. Returns file paths on disk.`,
     RenderInputSchema,
     { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     async (args) => handleRender(args),
@@ -36,7 +36,7 @@ export function createServer(): McpServer {
 
   server.tool(
     "health_check",
-    "Verify Puppeteer/Chromium can launch.",
+    "Verify Puppeteer/Chromium can launch. Use when render fails.",
     {},
     { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     async () => handleHealthCheck(VERSION),
