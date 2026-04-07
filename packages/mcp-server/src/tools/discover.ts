@@ -48,12 +48,12 @@ export async function handleDiscover() {
         tokenModes: {
           default: {
             label: "Default (Recommended)",
-            description: "AI writes complete HTML with CSS. Maximum creative control. Uses more tokens.",
+            description: "AI writes complete HTML with CSS. Best quality, full creative control over layout and styling.",
             workflow: "AI generates full HTML -> create_slides(mode=default, html=...) -> render_slides",
           },
           token_saver: {
-            label: "Token Saver",
-            description: "AI sends structured JSON data only. Server assembles HTML from built-in theme templates. Fewer tokens, less creative control.",
+            label: "Token Efficient",
+            description: "AI sends structured JSON only. Server uses basic built-in templates. Limited styling and layout control.",
             workflow: "AI generates slide JSON -> create_slides(mode=token_saver, slides=[...]) -> render_slides",
           },
         },
@@ -71,9 +71,9 @@ export async function handleDiscover() {
             { value: "instagram", label: "Instagram 1:1 (square)" },
             { value: "a4", label: "A4 portrait (document)" },
           ], default: "portrait" },
-          { id: "tokenMode", type: "select", prompt: "Token usage?", options: [
-            { value: "default", label: "Default — full HTML (recommended, more creative control)" },
-            { value: "token_saver", label: "Token Saver — structured JSON (fewer tokens)" },
+          { id: "tokenMode", type: "select", prompt: "Slide generation mode?", options: [
+            { value: "default", label: "Default (Recommended) — full HTML, best quality, full creative control" },
+            { value: "token_saver", label: "Token Efficient — structured JSON, basic templates, limited styling" },
           ], default: "default" },
           { id: "formats", type: "multiselect", prompt: "Output format?", options: [
             { value: "pdf", label: "PDF" },
@@ -81,18 +81,22 @@ export async function handleDiscover() {
             { value: "webp", label: "WebP" },
           ], default: ["pdf"] },
           { id: "brandName", type: "freetext", prompt: "Brand name? (optional)", optional: true },
+          { id: "outlineConfirm", type: "select", prompt: "Does this outline look good?", options: [
+            { value: "continue", label: "Looks good, continue" },
+            { value: "edit", label: "I want to make changes" },
+          ], useAfterOutline: true },
         ],
         instruction: `MANDATORY — follow these steps exactly. DO NOT deviate.
 
-STEP 1: Use the structured "ask" selectors above to prompt the user. DO NOT render themes as a separate markdown list — ONLY use the native selector prompts. No duplicate display.
+STEP 1: Use the structured "ask" selectors above to prompt the user. Present ALL selectors including token mode. DO NOT render themes as a separate markdown list — ONLY use the native selector prompts. No duplicate display.
 
-STEP 2: Collect from the user: theme, topic, orientation, token mode, output format(s). DO NOT ask how many slides — you decide the slide count based on the topic depth and context.
+STEP 2: Collect from the user: theme, topic, orientation, token mode, output format(s). Recommend mode=default for best quality. DO NOT ask how many slides — you decide the slide count based on the topic depth and context.
 
-STEP 3: After the user answers, generate a DATA OUTLINE — a bullet-point list of proposed slides (e.g. "Slide 1: Cover — title, Slide 2: Key Stats — ..., Slide 3: ..."). Show this outline to the user and ask: "Does this outline look good, or do you want changes?"
+STEP 3: After the user answers, generate a DATA OUTLINE — a bullet-point list of proposed slides (e.g. "Slide 1: Cover — title, Slide 2: Key Stats — ..., Slide 3: ..."). Then present the "outlineConfirm" selector so the user can quickly approve or request changes.
 
-STEP 4: STOP. WAIT for the user to confirm or request changes. Loop step 3-4 until confirmed.
+STEP 4: STOP. WAIT for the user to pick "continue" or type changes. If "edit" or user types changes, revise the outline and re-present the outlineConfirm selector. Loop until approved.
 
-STEP 5: ONLY after user confirms the outline, proceed to call create_slides with the chosen mode, theme, orientation, and content.
+STEP 5: ONLY after user confirms, proceed to call create_slides with the chosen mode, theme, orientation, and content.
 
 DO NOT auto-select any option. DO NOT skip any step. DO NOT call create_slides before the outline is confirmed.`,
       }),

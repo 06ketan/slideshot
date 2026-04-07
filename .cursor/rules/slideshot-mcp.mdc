@@ -3,7 +3,7 @@ description: Slideshot MCP server v4.1.0 — tool usage guide with enforced work
 globs:
   - packages/mcp-server/**
   - prompts/**
-alwaysApply: false
+alwaysApply: true
 ---
 
 # Slideshot MCP v4.1.0 — Tool Usage Guide
@@ -12,49 +12,62 @@ alwaysApply: false
 
 | Tool | When to use |
 |------|-------------|
-| `discover_themes` | **MANDATORY first.** All other tools REJECT until this is called. |
-| `create_slides` | Create slides. mode=default (full HTML) or mode=token_saver (JSON data). |
-| `render_slides` | Render saved HTML to PDF/WebP/PNG. Requires both discover + create first. |
+| `discover_themes` | **MANDATORY first** for slide creation workflow. |
+| `create_slides` | Create slides. Use **mode=default** unless user explicitly chose token_saver. |
+| `render_slides` | Render HTML to PDF/WebP/PNG. Can be called directly with an existing htmlPath (bypasses gates). |
 | `health_check` | Diagnose Puppeteer/Chromium issues. |
 
-## Workflow (with STOP points)
+## Two Workflows
+
+### A. Full slide-creation workflow (no existing HTML)
 
 ```
-1. discover_themes → use ONLY native selector prompts (DO NOT render themes as markdown list)
-   ── Ask user: theme, topic, orientation, token mode, format.
-   ── DO NOT ask how many slides — AI decides based on topic.
-   ── WAIT for user answers.
+1. discover_themes → present ALL native selector prompts to the user
+   ── theme, topic, orientation, token mode (recommend Default), format
+   ── DO NOT render themes as markdown list — use selectors only
+   ── DO NOT ask how many slides — AI decides based on topic
+   ── WAIT for user answers
 
 2. Show DATA OUTLINE — bullet list of proposed slides (no tool call)
-   ── ⛔ STOP: Ask user: "Does this outline look good, or do you want changes?"
-   ── WAIT for confirmation. Loop until approved.
+   ── Present the outlineConfirm selector: "Looks good, continue" / "I want to make changes"
+   ── WAIT for user to pick or type response. Loop until approved.
 
 3. create_slides(mode, theme, orientation, html/slides) → htmlPath
-   ── ⛔ STOP: Show saved HTML as code preview artifact using htmlPath.
-   ── Ask user: "Does this look good? Should I render?"
-   ── WAIT for user confirmation. DO NOT call render_slides in this turn.
+   ── Use mode=default unless user explicitly chose token_saver
+   ── STOP: Show htmlPath as code preview artifact
+   ── Ask user to confirm. DO NOT call render_slides in this turn.
 
 4. User confirms → render_slides(htmlPath, formats) → files on disk
 ```
 
+### B. Direct render (user has existing HTML file)
+
+```
+1. render_slides(htmlPath=<path to existing file>, formats) → files on disk
+   ── No discover_themes or create_slides needed
+   ── Gates are bypassed when htmlPath points to an existing file
+```
+
 ## Two Token Modes
 
-### Default (Recommended — full creative control)
+### Default (Recommended — best quality)
+Use **mode=default** for full creative control over layout, styling, and design.
 1. `discover_themes` → native prompts only
-2. ⛔ STOP: Ask user — theme, topic, orientation, format, token mode. WAIT.
-3. Show data outline. ⛔ STOP. WAIT for confirmation.
+2. STOP: Ask user — theme, topic, orientation, format, token mode. WAIT.
+3. Show data outline. Present outlineConfirm selector. WAIT for confirmation.
 4. `create_slides` with mode=default, theme, orientation (no html yet) → returns CSS prompt
 5. Generate full HTML using the prompt
 6. `create_slides` with mode=default, theme, html=\<generated HTML\> → htmlPath
-7. ⛔ STOP: Show code preview artifact. Ask user. WAIT.
+7. STOP: Show code preview artifact. Ask user. WAIT.
 8. User confirms → `render_slides` with htmlPath → files
 
-### Token Saver (fewer tokens)
+### Token Efficient (basic templates, limited styling)
+Only use if user explicitly chose this mode.
 1. `discover_themes` → native prompts only
-2. ⛔ STOP: Ask user — theme, topic, orientation, format, token mode. WAIT.
-3. Show data outline. ⛔ STOP. WAIT for confirmation.
-4. `create_slides` with mode=token_saver, theme, slides=[{type:"cover",...}, ...] → htmlPath + html
-5. ⛔ STOP: Show code preview artifact. Ask user. WAIT.
+2. STOP: Ask user — theme, topic, orientation, format, token mode. WAIT.
+3. Show data outline. Present outlineConfirm selector. WAIT for confirmation.
+4. `create_slides` with mode=token_saver, theme, slides=[{type:"cover",...}, ...] → htmlPath
+5. STOP: Show code preview artifact. Ask user. WAIT.
 6. User confirms → `render_slides` with htmlPath → files
 
 ## Orientation Presets
@@ -72,19 +85,22 @@ alwaysApply: false
 
 generic, branded, instagram-carousel, infographic, pitch-deck, dark-modern, editorial, browser-shell
 
-## Slide Types (token_saver mode)
+## Slide Types (token_saver mode only)
 
 cover, content, stats, list, steps, comparison, quote, code, cta, timeline, team
 
 ## Key Rules
 
-- **Server-enforced gates**: render_slides rejects if discover or create haven't been called
+- **Use mode=default** unless user explicitly chose token_saver
+- **render_slides bypasses gates** when htmlPath points to an existing file on disk
 - **AI decides slide count** — do NOT ask the user how many slides
 - **No duplicate display** — use native selectors only, do NOT render themes as markdown list
 - **Data outline before HTML** — show bullet-point outline and get user approval before generating
+- **Present outlineConfirm selector** after the outline for quick approval
 - Always use `htmlPath` from create_slides for render_slides
 - Default output format is PDF
 - Default orientation is portrait (540x675)
 - Default scale is 4x
 - Output goes to ~/Desktop/slideshot-output (or fallback locations)
 - **NEVER skip the preview step** — always show HTML as code preview artifact before rendering
+- **NEVER call render_slides in the same turn as create_slides**

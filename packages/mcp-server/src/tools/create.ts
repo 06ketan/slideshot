@@ -53,13 +53,7 @@ function discoveryGate() {
   return null;
 }
 
-const PREVIEW_STOP_INSTRUCTION = `STOP — DO NOT call render_slides yet.
-You MUST now:
-1. Show the saved HTML file as a code preview artifact using the htmlPath below. The user needs to see a live preview of the slides.
-2. Ask the user: "Does this look good? Should I render the final output, or do you want changes?"
-3. WAIT for the user's explicit response.
-4. ONLY after the user says yes/confirmed/looks good, call render_slides with the htmlPath.
-DO NOT call render_slides in this same turn. The user MUST see and approve the preview first.`;
+const PREVIEW_STOP_INSTRUCTION = `STOP. Show htmlPath as a code preview artifact to the user. Ask: "Does this look good? Should I render the final PDF?" WAIT for user response. Do NOT call render_slides in this turn.`;
 
 async function handleDefault(args: {
   theme: string;

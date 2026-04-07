@@ -20,7 +20,7 @@ export function createServer(): McpServer {
 
   server.tool(
     "create_slides",
-    `Create slides. Two modes: mode=default (AI writes full HTML) or mode=token_saver (AI sends JSON, server assembles HTML). REQUIRES discover_themes first AND user must have confirmed the data outline. After this tool saves the HTML, you MUST show it as a code preview artifact so the user can see a live preview. Then STOP and ask: "Does this look good? Should I render the final output?" DO NOT call render_slides until the user explicitly confirms.`,
+    `Create slides. IMPORTANT: Use mode=default unless the user explicitly chose token_saver. mode=default = AI writes full HTML (best quality). mode=token_saver = AI sends JSON, server uses basic templates. REQUIRES discover_themes first AND user must have confirmed the data outline. After this tool saves the HTML, you MUST show the htmlPath as a code preview artifact. Then STOP and ask the user to confirm. DO NOT call render_slides until the user explicitly confirms.`,
     CreateInputSchema,
     { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     async (args) => handleCreate(args),
@@ -28,7 +28,7 @@ export function createServer(): McpServer {
 
   server.tool(
     "render_slides",
-    `Final render to PDF/WebP/PNG. When the user provides an existing HTML file path, pass it as htmlPath and call this tool directly — no discover_themes or create_slides needed. For the full slide-creation workflow, REQUIRES both discover_themes AND create_slides first, and ONLY call AFTER user confirms the preview. Returns file paths on disk.`,
+    `Final render to PDF/WebP/PNG. NEVER call render_slides in the same turn as create_slides. When the user provides an existing HTML file path, pass it as htmlPath and call this tool directly — no discover_themes or create_slides needed. For the full slide-creation workflow, REQUIRES both discover_themes AND create_slides first, and ONLY call AFTER user confirms the preview. Returns file paths on disk.`,
     RenderInputSchema,
     { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     async (args) => handleRender(args),
