@@ -3,8 +3,8 @@ import type { SlideData } from "./types.js";
 type SlideRenderer = (slide: SlideData, index: number, total: number) => string;
 type ThemeRendererMap = Record<string, SlideRenderer>;
 
-function esc(s: string): string {
-  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+function esc(s: string | undefined | null): string {
+  return (s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 }
 
 // ── Generic ──
@@ -23,7 +23,7 @@ const genericRenderers: ThemeRendererMap = {
     return `<div class="slide">
   ${s.label ? `<div class="label">${esc(s.label)}</div>` : ""}
   <h2>${esc(s.title)}</h2>
-  ${s.paragraphs.map(p => `<p>${esc(p)}</p>`).join("\n  ")}
+  ${(s.paragraphs ?? []).map(p => `<p>${esc(p)}</p>`).join("\n  ")}
 </div>`;
   },
   stats: (s) => {
@@ -32,7 +32,7 @@ const genericRenderers: ThemeRendererMap = {
   ${s.label ? `<div class="label">${esc(s.label)}</div>` : ""}
   ${s.title ? `<h2>${esc(s.title)}</h2>` : ""}
   <div class="stat-grid">
-    ${s.cards.map(c => `<div class="stat-card"><div class="num">${esc(c.value)}</div><div class="slbl">${esc(c.label)}</div>${c.sub ? `<div class="slbl">${esc(c.sub)}</div>` : ""}</div>`).join("\n    ")}
+    ${(s.cards ?? []).map(c => `<div class="stat-card"><div class="num">${esc(c.value)}</div><div class="slbl">${esc(c.label)}</div>${c.sub ? `<div class="slbl">${esc(c.sub)}</div>` : ""}</div>`).join("\n    ")}
   </div>
   ${s.tags?.length ? `<div class="tag-row">${s.tags.map(t => `<span class="badge">${esc(t)}</span>`).join("")}</div>` : ""}
 </div>`;
@@ -43,7 +43,7 @@ const genericRenderers: ThemeRendererMap = {
   ${s.label ? `<div class="label">${esc(s.label)}</div>` : ""}
   <h2>${esc(s.title)}</h2>
   <ul class="item-list">
-    ${s.items.map((it, i) => `<li><span class="item-num">${String(i + 1).padStart(2, "0")}</span><div><span class="item-title">${esc(it.title)}</span>${it.description ? `<span class="item-desc">${esc(it.description)}</span>` : ""}${it.tag ? ` <span class="badge">${esc(it.tag)}</span>` : ""}</div></li>`).join("\n    ")}
+    ${(s.items ?? []).map((it, i) => `<li><span class="item-num">${String(i + 1).padStart(2, "0")}</span><div><span class="item-title">${esc(it.title)}</span>${it.description ? `<span class="item-desc">${esc(it.description)}</span>` : ""}${it.tag ? ` <span class="badge">${esc(it.tag)}</span>` : ""}</div></li>`).join("\n    ")}
   </ul>
 </div>`;
   },
@@ -53,7 +53,7 @@ const genericRenderers: ThemeRendererMap = {
   ${s.label ? `<div class="label">${esc(s.label)}</div>` : ""}
   <h2>${esc(s.title)}</h2>
   <ul class="item-list">
-    ${s.items.map(it => `<li><span class="item-num">${it.num}</span><div><span class="item-title">${esc(it.title)}</span><span class="item-desc">${esc(it.description)}</span></div></li>`).join("\n    ")}
+    ${(s.items ?? []).map(it => `<li><span class="item-num">${it.num}</span><div><span class="item-title">${esc(it.title)}</span><span class="item-desc">${esc(it.description)}</span></div></li>`).join("\n    ")}
   </ul>
 </div>`;
   },
@@ -64,11 +64,11 @@ const genericRenderers: ThemeRendererMap = {
   <div class="compare-grid">
     <div class="compare-col compare-left">
       <div class="compare-label">${esc(s.leftLabel)}</div>
-      ${s.left.map(it => `<div class="compare-item"><div class="ci-label">${esc(it.label)}</div>${it.description ? `<div class="ci-desc">${esc(it.description)}</div>` : ""}</div>`).join("\n      ")}
+      ${(s.left ?? []).map(it => `<div class="compare-item"><div class="ci-label">${esc(it.label)}</div>${it.description ? `<div class="ci-desc">${esc(it.description)}</div>` : ""}</div>`).join("\n      ")}
     </div>
     <div class="compare-col compare-right">
       <div class="compare-label">${esc(s.rightLabel)}</div>
-      ${s.right.map(it => `<div class="compare-item"><div class="ci-label">${esc(it.label)}</div>${it.description ? `<div class="ci-desc">${esc(it.description)}</div>` : ""}</div>`).join("\n      ")}
+      ${(s.right ?? []).map(it => `<div class="compare-item"><div class="ci-label">${esc(it.label)}</div>${it.description ? `<div class="ci-desc">${esc(it.description)}</div>` : ""}</div>`).join("\n      ")}
     </div>
   </div>
 </div>`;
@@ -105,7 +105,7 @@ const genericRenderers: ThemeRendererMap = {
     return `<div class="slide">
   <h2>${esc(s.title)}</h2>
   <div class="timeline">
-    ${s.items.map(it => `<div class="tl-item"><div class="tl-year">${esc(it.year)}</div><div class="tl-desc">${esc(it.description)}</div></div>`).join("\n    ")}
+    ${(s.items ?? []).map(it => `<div class="tl-item"><div class="tl-year">${esc(it.year)}</div><div class="tl-desc">${esc(it.description)}</div></div>`).join("\n    ")}
   </div>
 </div>`;
   },
@@ -114,7 +114,7 @@ const genericRenderers: ThemeRendererMap = {
     return `<div class="slide">
   <h2>${esc(s.title)}</h2>
   <div class="team-grid">
-    ${s.members.map(m => `<div class="team-card"><div class="avatar">${m.emoji || "👤"}</div><div class="tname">${esc(m.name)}</div><div class="trole">${esc(m.role)}</div></div>`).join("\n    ")}
+    ${(s.members ?? []).map(m => `<div class="team-card"><div class="avatar">${m.emoji || "👤"}</div><div class="tname">${esc(m.name)}</div><div class="trole">${esc(m.role)}</div></div>`).join("\n    ")}
   </div>
 </div>`;
   },
@@ -140,7 +140,7 @@ const instagramRenderers: ThemeRendererMap = {
     const g = GRADIENTS[idx % GRADIENTS.length];
     return `<div class="slide ${g}">
   <h2>${esc(s.title)}</h2>
-  ${s.paragraphs.map(p => `<p>${esc(p)}</p>`).join("\n  ")}
+  ${(s.paragraphs ?? []).map(p => `<p>${esc(p)}</p>`).join("\n  ")}
   <div class="swipe-dots">${Array.from({ length: 6 }, (_, i) => `<div class="sdot${i === idx ? " active" : ""}"></div>`).join("")}</div>
 </div>`;
   },
@@ -149,7 +149,7 @@ const instagramRenderers: ThemeRendererMap = {
     const g = GRADIENTS[idx % GRADIENTS.length];
     return `<div class="slide ${g}">
   ${s.title ? `<h2>${esc(s.title)}</h2>` : ""}
-  ${s.cards.map(c => `<div class="card"><div class="stat-big">${esc(c.value)}</div><div class="stat-label">${esc(c.label)}</div></div>`).join("\n  ")}
+  ${(s.cards ?? []).map(c => `<div class="card"><div class="stat-big">${esc(c.value)}</div><div class="stat-label">${esc(c.label)}</div></div>`).join("\n  ")}
   <div class="swipe-dots">${Array.from({ length: 6 }, (_, i) => `<div class="sdot${i === idx ? " active" : ""}"></div>`).join("")}</div>
 </div>`;
   },
@@ -158,7 +158,7 @@ const instagramRenderers: ThemeRendererMap = {
     const g = GRADIENTS[idx % GRADIENTS.length];
     return `<div class="slide ${g}">
   <h2>${esc(s.title)}</h2>
-  ${s.items.map(it => `<div class="card"><strong>${esc(it.title)}</strong>${it.description ? `<p style="margin:4px 0 0;font-size:14px;color:#555;">${esc(it.description)}</p>` : ""}</div>`).join("\n  ")}
+  ${(s.items ?? []).map(it => `<div class="card"><strong>${esc(it.title)}</strong>${it.description ? `<p style="margin:4px 0 0;font-size:14px;color:#555;">${esc(it.description)}</p>` : ""}</div>`).join("\n  ")}
   <div class="swipe-dots">${Array.from({ length: 6 }, (_, i) => `<div class="sdot${i === idx ? " active" : ""}"></div>`).join("")}</div>
 </div>`;
   },
@@ -167,7 +167,7 @@ const instagramRenderers: ThemeRendererMap = {
     const g = GRADIENTS[idx % GRADIENTS.length];
     return `<div class="slide ${g}">
   <h2>${esc(s.title)}</h2>
-  ${s.items.map(it => `<div class="card"><strong>${it.num}. ${esc(it.title)}</strong><p style="margin:4px 0 0;font-size:14px;color:#555;">${esc(it.description)}</p></div>`).join("\n  ")}
+  ${(s.items ?? []).map(it => `<div class="card"><strong>${it.num}. ${esc(it.title)}</strong><p style="margin:4px 0 0;font-size:14px;color:#555;">${esc(it.description)}</p></div>`).join("\n  ")}
   <div class="swipe-dots">${Array.from({ length: 6 }, (_, i) => `<div class="sdot${i === idx ? " active" : ""}"></div>`).join("")}</div>
 </div>`;
   },
@@ -211,7 +211,7 @@ const infographicRenderers: ThemeRendererMap = {
   ${s.label ? `<div class="section-header">${esc(s.label)}</div>` : ""}
   ${s.title ? `<h2>${esc(s.title)}</h2>` : ""}
   <div class="stat-row">
-    ${s.cards.map(c => `<div class="stat-card"><div class="num">${esc(c.value)}</div><div class="label">${esc(c.label)}</div>${c.sub ? `<div class="sub">${esc(c.sub)}</div>` : ""}</div>`).join("\n    ")}
+    ${(s.cards ?? []).map(c => `<div class="stat-card"><div class="num">${esc(c.value)}</div><div class="label">${esc(c.label)}</div>${c.sub ? `<div class="sub">${esc(c.sub)}</div>` : ""}</div>`).join("\n    ")}
   </div>
 </div>`;
   },
@@ -222,7 +222,7 @@ const infographicRenderers: ThemeRendererMap = {
   ${s.label ? `<div class="section-header">${esc(s.label)}</div>` : ""}
   <h2>${esc(s.title)}</h2>
   <ul class="numbered-list">
-    ${s.items.map(it => `<li><div><strong>${esc(it.title)}</strong>${it.description ? `<br><span style="font-size:11px;color:#64748B;">${esc(it.description)}</span>` : ""}</div></li>`).join("\n    ")}
+    ${(s.items ?? []).map(it => `<li><div><strong>${esc(it.title)}</strong>${it.description ? `<br><span style="font-size:11px;color:#64748B;">${esc(it.description)}</span>` : ""}</div></li>`).join("\n    ")}
   </ul>
 </div>`;
   },
@@ -232,7 +232,7 @@ const infographicRenderers: ThemeRendererMap = {
   <span class="slide-num">${idx + 1}/${total}</span>
   <h2>${esc(s.title)}</h2>
   <div class="flow-row">
-    ${s.items.map((it, i) => `${i > 0 ? '<span class="flow-arrow">→</span>' : ""}<div class="flow-step">${esc(it.title)}</div>`).join("\n    ")}
+    ${(s.items ?? []).map((it, i) => `${i > 0 ? '<span class="flow-arrow">→</span>' : ""}<div class="flow-step">${esc(it.title)}</div>`).join("\n    ")}
   </div>
 </div>`;
   },
@@ -242,7 +242,7 @@ const infographicRenderers: ThemeRendererMap = {
   <span class="slide-num">${idx + 1}/${total}</span>
   ${s.label ? `<div class="section-header">${esc(s.label)}</div>` : ""}
   <h2>${esc(s.title)}</h2>
-  ${s.paragraphs.map(p => `<p>${esc(p)}</p>`).join("\n  ")}
+  ${(s.paragraphs ?? []).map(p => `<p>${esc(p)}</p>`).join("\n  ")}
 </div>`;
   },
   cta: (s, idx, total) => {
@@ -276,7 +276,7 @@ const pitchDeckRenderers: ThemeRendererMap = {
   <span class="slide-number">${idx + 1}/${total}</span>
   ${s.label ? `<div class="section-label">${esc(s.label)}</div>` : ""}
   <h2>${esc(s.title)}</h2>
-  ${s.paragraphs.map(p => `<p>${esc(p)}</p>`).join("\n  ")}
+  ${(s.paragraphs ?? []).map(p => `<p>${esc(p)}</p>`).join("\n  ")}
 </div>`;
   },
   stats: (s, idx, total) => {
@@ -287,7 +287,7 @@ const pitchDeckRenderers: ThemeRendererMap = {
   ${s.label ? `<div class="section-label">${esc(s.label)}</div>` : ""}
   ${s.title ? `<h2>${esc(s.title)}</h2>` : ""}
   <div class="kpi-grid">
-    ${s.cards.map(c => `<div class="kpi"><div class="num">${esc(c.value)}</div><div class="label">${esc(c.label)}</div>${c.trend ? `<div class="trend">${esc(c.trend)}</div>` : ""}</div>`).join("\n    ")}
+    ${(s.cards ?? []).map(c => `<div class="kpi"><div class="num">${esc(c.value)}</div><div class="label">${esc(c.label)}</div>${c.trend ? `<div class="trend">${esc(c.trend)}</div>` : ""}</div>`).join("\n    ")}
   </div>
 </div>`;
   },
@@ -299,7 +299,7 @@ const pitchDeckRenderers: ThemeRendererMap = {
   ${s.label ? `<div class="section-label">${esc(s.label)}</div>` : ""}
   <h2>${esc(s.title)}</h2>
   <div class="feature-list">
-    ${s.items.map(it => `<div class="feature"><span class="check">✓</span><div><span class="ftxt">${esc(it.title)}</span>${it.description ? `<span class="fsub">${esc(it.description)}</span>` : ""}</div></div>`).join("\n    ")}
+    ${(s.items ?? []).map(it => `<div class="feature"><span class="check">✓</span><div><span class="ftxt">${esc(it.title)}</span>${it.description ? `<span class="fsub">${esc(it.description)}</span>` : ""}</div></div>`).join("\n    ")}
   </div>
 </div>`;
   },
@@ -311,7 +311,7 @@ const pitchDeckRenderers: ThemeRendererMap = {
   <div class="section-label">TIMELINE</div>
   <h2>${esc(s.title)}</h2>
   <div class="timeline">
-    ${s.items.map(it => `<div class="tl-item"><div class="year">${esc(it.year)}</div><div class="desc">${esc(it.description)}</div></div>`).join("\n    ")}
+    ${(s.items ?? []).map(it => `<div class="tl-item"><div class="year">${esc(it.year)}</div><div class="desc">${esc(it.description)}</div></div>`).join("\n    ")}
   </div>
 </div>`;
   },
@@ -323,7 +323,7 @@ const pitchDeckRenderers: ThemeRendererMap = {
   <div class="section-label">TEAM</div>
   <h2>${esc(s.title)}</h2>
   <div class="team-grid">
-    ${s.members.map(m => `<div class="team-card"><div class="avatar">${m.emoji || "👤"}</div><div class="name">${esc(m.name)}</div><div class="role">${esc(m.role)}</div></div>`).join("\n    ")}
+    ${(s.members ?? []).map(m => `<div class="team-card"><div class="avatar">${m.emoji || "👤"}</div><div class="name">${esc(m.name)}</div><div class="role">${esc(m.role)}</div></div>`).join("\n    ")}
   </div>
 </div>`;
   },
@@ -357,7 +357,7 @@ const darkModernRenderers: ThemeRendererMap = {
     return `<div class="slide grid-bg">
   <h2>${esc(s.title)}</h2>
   <div class="accent-line"></div>
-  ${s.paragraphs.map(p => `<p>${esc(p)}</p>`).join("\n  ")}
+  ${(s.paragraphs ?? []).map(p => `<p>${esc(p)}</p>`).join("\n  ")}
 </div>`;
   },
   stats: (s) => {
@@ -365,7 +365,7 @@ const darkModernRenderers: ThemeRendererMap = {
     return `<div class="slide grid-bg">
   ${s.title ? `<h2>${esc(s.title)}</h2>` : ""}
   <div class="metric-row">
-    ${s.cards.map(c => `<div class="metric glow-cyan"><div class="val">${esc(c.value)}</div><div class="mlabel">${esc(c.label)}</div></div>`).join("\n    ")}
+    ${(s.cards ?? []).map(c => `<div class="metric glow-cyan"><div class="val">${esc(c.value)}</div><div class="mlabel">${esc(c.label)}</div></div>`).join("\n    ")}
   </div>
   ${s.tags?.length ? `<div style="margin-top:12px;">${s.tags.map(t => `<span class="chip chip-magenta">${esc(t)}</span>`).join("")}</div>` : ""}
 </div>`;
@@ -375,7 +375,7 @@ const darkModernRenderers: ThemeRendererMap = {
     return `<div class="slide grid-bg">
   <h2>${esc(s.title)}</h2>
   <div class="step-grid">
-    ${s.items.map(it => `<div class="step glow-cyan"><div class="snum">${String(it.num).padStart(2, "0")}</div><div class="stitle">${esc(it.title)}</div><div class="sdesc">${esc(it.description)}</div></div>`).join("\n    ")}
+    ${(s.items ?? []).map(it => `<div class="step glow-cyan"><div class="snum">${String(it.num).padStart(2, "0")}</div><div class="stitle">${esc(it.title)}</div><div class="sdesc">${esc(it.description)}</div></div>`).join("\n    ")}
   </div>
 </div>`;
   },
@@ -416,7 +416,7 @@ const editorialRenderers: ThemeRendererMap = {
     return `<div class="slide">
   ${s.label ? `<div class="ed-label">${esc(s.label)}</div>` : ""}
   <h2>${esc(s.title)}</h2>
-  <div class="ed-body">${s.paragraphs.map(p => `<p>${esc(p)}</p>`).join("")}</div>
+  <div class="ed-body">${(s.paragraphs ?? []).map(p => `<p>${esc(p)}</p>`).join("")}</div>
 </div>`;
   },
   quote: (s) => {
@@ -433,7 +433,7 @@ const editorialRenderers: ThemeRendererMap = {
   ${s.label ? `<div class="ed-label">${esc(s.label)}</div>` : ""}
   ${s.title ? `<h2>${esc(s.title)}</h2>` : ""}
   <div class="ed-cols">
-    ${s.cards.map(c => `<div><div style="font-family:'Playfair Display',serif;font-size:36px;font-weight:900;color:#C9963B;">${esc(c.value)}</div><div style="font-size:12px;font-weight:600;margin-top:4px;">${esc(c.label)}</div>${c.sub ? `<div style="font-size:10px;color:#8C857C;margin-top:2px;">${esc(c.sub)}</div>` : ""}</div>`).join("\n    ")}
+    ${(s.cards ?? []).map(c => `<div><div style="font-family:'Playfair Display',serif;font-size:36px;font-weight:900;color:#C9963B;">${esc(c.value)}</div><div style="font-size:12px;font-weight:600;margin-top:4px;">${esc(c.label)}</div>${c.sub ? `<div style="font-size:10px;color:#8C857C;margin-top:2px;">${esc(c.sub)}</div>` : ""}</div>`).join("\n    ")}
   </div>
 </div>`;
   },
@@ -442,7 +442,7 @@ const editorialRenderers: ThemeRendererMap = {
     return `<div class="slide">
   ${s.label ? `<div class="ed-label">${esc(s.label)}</div>` : ""}
   <h2>${esc(s.title)}</h2>
-  ${s.items.map(it => `<div style="padding:10px 0;border-bottom:1px solid rgba(201,150,59,.2);"><strong>${esc(it.title)}</strong>${it.description ? `<p style="font-size:12px;color:#8C857C;margin-top:2px;">${esc(it.description)}</p>` : ""}</div>`).join("\n  ")}
+  ${(s.items ?? []).map(it => `<div style="padding:10px 0;border-bottom:1px solid rgba(201,150,59,.2);"><strong>${esc(it.title)}</strong>${it.description ? `<p style="font-size:12px;color:#8C857C;margin-top:2px;">${esc(it.description)}</p>` : ""}</div>`).join("\n  ")}
 </div>`;
   },
   cta: (s) => {
@@ -484,7 +484,7 @@ const brandedRenderers: ThemeRendererMap = {
   ${s.label ? `<div class="lbl">${esc(s.label)}</div>` : ""}
   ${s.title ? `<div class="h2">${esc(s.title)}</div>` : ""}
   <div class="scols">
-    ${s.cards.map(c => `<div class="sc"><div class="sn">${esc(c.value)}</div><div class="sb"></div><div class="sk">${esc(c.label)}</div>${c.sub ? `<div class="sd">${esc(c.sub)}</div>` : ""}</div>`).join("\n    ")}
+    ${(s.cards ?? []).map(c => `<div class="sc"><div class="sn">${esc(c.value)}</div><div class="sb"></div><div class="sk">${esc(c.label)}</div>${c.sub ? `<div class="sd">${esc(c.sub)}</div>` : ""}</div>`).join("\n    ")}
   </div>
   ${s.tags?.length ? `<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px;">${s.tags.map(t => `<span style="font-size:7.5px;color:#00B894;border:.5px solid #00B894;border-radius:4px;padding:3px 7px;">${esc(t)}</span>`).join("")}</div>` : ""}
   <div class="ft"><div class="ft-l"><span class="ft-pl">SLIDESHOT</span></div><span class="ft-sw">${idx + 1}/${total}</span></div>
@@ -500,7 +500,7 @@ const brandedRenderers: ThemeRendererMap = {
   ${s.label ? `<div class="lbl">${esc(s.label)}</div>` : ""}
   <div class="h2">${esc(s.title)}</div>
   <ul class="ul">
-    ${s.items.map((it, i) => `<div class="ur"><span class="un">${String(i + 1).padStart(2, "0")}</span><div><span class="um">${esc(it.title)}</span>${it.description ? `<span class="us">${esc(it.description)}</span>` : ""}${it.tag ? ` <span class="utg">${esc(it.tag)}</span>` : ""}</div></div>`).join("\n    ")}
+    ${(s.items ?? []).map((it, i) => `<div class="ur"><span class="un">${String(i + 1).padStart(2, "0")}</span><div><span class="um">${esc(it.title)}</span>${it.description ? `<span class="us">${esc(it.description)}</span>` : ""}${it.tag ? ` <span class="utg">${esc(it.tag)}</span>` : ""}</div></div>`).join("\n    ")}
   </ul>
   <div class="ft"><div class="ft-l"><span class="ft-pl">SLIDESHOT</span></div><span class="ft-sw">${idx + 1}/${total}</span></div>
 </div>`;
@@ -514,8 +514,8 @@ const brandedRenderers: ThemeRendererMap = {
   <div class="dots">${dots}</div>
   ${s.title ? `<div class="h2">${esc(s.title)}</div>` : ""}
   <div class="cg">
-    <div class="cc cbad"><div class="ct">${esc(s.leftLabel)}</div>${s.left.map(it => `<div class="ci"><span class="cil">${esc(it.label)}</span>${it.description ? `<span class="cid">${esc(it.description)}</span>` : ""}</div>`).join("")}</div>
-    <div class="cc cgood"><div class="ct">${esc(s.rightLabel)}</div>${s.right.map(it => `<div class="ci"><span class="cil">${esc(it.label)}</span>${it.description ? `<span class="cid">${esc(it.description)}</span>` : ""}</div>`).join("")}</div>
+    <div class="cc cbad"><div class="ct">${esc(s.leftLabel)}</div>${(s.left ?? []).map(it => `<div class="ci"><span class="cil">${esc(it.label)}</span>${it.description ? `<span class="cid">${esc(it.description)}</span>` : ""}</div>`).join("")}</div>
+    <div class="cc cgood"><div class="ct">${esc(s.rightLabel)}</div>${(s.right ?? []).map(it => `<div class="ci"><span class="cil">${esc(it.label)}</span>${it.description ? `<span class="cid">${esc(it.description)}</span>` : ""}</div>`).join("")}</div>
   </div>
   <div class="ft"><div class="ft-l"><span class="ft-pl">SLIDESHOT</span></div><span class="ft-sw">${idx + 1}/${total}</span></div>
 </div>`;
@@ -581,7 +581,7 @@ const browserShellRenderers: ThemeRendererMap = {
       </div>
       <div class="s-content" style="position:relative;">
         <div class="stat-row" style="flex-wrap:wrap;">
-          ${s.cards.map(c => `<div class="stat-card"><div class="stat-lbl">${esc(c.label)}</div><div class="stat-val">${esc(c.value)}</div>${c.sub ? `<div class="stat-sub">${esc(c.sub)}</div>` : ""}</div>`).join("")}
+          ${(s.cards ?? []).map(c => `<div class="stat-card"><div class="stat-lbl">${esc(c.label)}</div><div class="stat-val">${esc(c.value)}</div>${c.sub ? `<div class="stat-sub">${esc(c.sub)}</div>` : ""}</div>`).join("")}
         </div>
         ${s.tags?.length ? `<div class="sec-lbl">SKILLS</div><div class="skill-tags">${s.tags.map(t => `<span class="stag">${esc(t)}</span>`).join("")}</div>` : ""}
         ${dotSvg}
@@ -595,7 +595,7 @@ const browserShellRenderers: ThemeRendererMap = {
         <div class="big-headline" style="font-size:56px;">${esc(s.title)}</div>
       </div>
       <ol class="resp-list">
-        ${s.items.map(it => `<li class="resp-item"><div class="resp-num">${it.num}</div><div><div class="resp-title">${esc(it.title)}</div><div class="resp-desc">${esc(it.description)}</div></div></li>`).join("")}
+        ${(s.items ?? []).map(it => `<li class="resp-item"><div class="resp-num">${it.num}</div><div><div class="resp-title">${esc(it.title)}</div><div class="resp-desc">${esc(it.description)}</div></div></li>`).join("")}
       </ol>`;
     return browserWrap("slideshot", body, "POWERED BY SLIDESHOT");
   },
@@ -606,7 +606,7 @@ const browserShellRenderers: ThemeRendererMap = {
         <div class="big-headline" style="font-size:48px;">${esc(s.title)}</div>
       </div>
       <ol class="resp-list">
-        ${s.items.map((it, i) => `<li class="resp-item"><div class="resp-num">${i + 1}</div><div><div class="resp-title">${esc(it.title)}</div>${it.description ? `<div class="resp-desc">${esc(it.description)}</div>` : ""}</div></li>`).join("")}
+        ${(s.items ?? []).map((it, i) => `<li class="resp-item"><div class="resp-num">${i + 1}</div><div><div class="resp-title">${esc(it.title)}</div>${it.description ? `<div class="resp-desc">${esc(it.description)}</div>` : ""}</div></li>`).join("")}
       </ol>`;
     return browserWrap("slideshot", body, "POWERED BY SLIDESHOT");
   },

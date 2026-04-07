@@ -1,12 +1,12 @@
 ---
-description: Slideshot MCP server v4.0.1 — tool usage guide with enforced workflow
+description: Slideshot MCP server v4.1.0 — tool usage guide with enforced workflow
 globs:
   - packages/mcp-server/**
   - prompts/**
 alwaysApply: false
 ---
 
-# Slideshot MCP v4.0.1 — Tool Usage Guide
+# Slideshot MCP v4.1.0 — Tool Usage Guide
 
 ## 4 Tools
 
@@ -20,35 +20,42 @@ alwaysApply: false
 ## Workflow (with STOP points)
 
 ```
-1. discover_themes → present ALL options to user
-   ── ⛔ STOP: DO NOT auto-select. Ask user for theme, topic, orientation, token mode, format, slide count.
-   ── WAIT for explicit user answers before proceeding.
+1. discover_themes → use ONLY native selector prompts (DO NOT render themes as markdown list)
+   ── Ask user: theme, topic, orientation, token mode, format.
+   ── DO NOT ask how many slides — AI decides based on topic.
+   ── WAIT for user answers.
 
-2. create_slides(mode, theme, orientation, html/slides) → htmlPath
-   ── ⛔ STOP: Show HTML as artifact for live preview.
+2. Show DATA OUTLINE — bullet list of proposed slides (no tool call)
+   ── ⛔ STOP: Ask user: "Does this outline look good, or do you want changes?"
+   ── WAIT for confirmation. Loop until approved.
+
+3. create_slides(mode, theme, orientation, html/slides) → htmlPath
+   ── ⛔ STOP: Show saved HTML as code preview artifact using htmlPath.
    ── Ask user: "Does this look good? Should I render?"
    ── WAIT for user confirmation. DO NOT call render_slides in this turn.
 
-3. User confirms → render_slides(htmlPath, formats) → files on disk
+4. User confirms → render_slides(htmlPath, formats) → files on disk
 ```
 
 ## Two Token Modes
 
 ### Default (Recommended — full creative control)
-1. `discover_themes` → themes + questions
-2. ⛔ STOP: Ask user — theme, topic, orientation, format, token mode, slide count. WAIT.
-3. `create_slides` with mode=default, theme, orientation (no html yet) → returns CSS prompt
-4. Generate full HTML using the prompt
-5. `create_slides` with mode=default, theme, html=\<generated HTML\> → htmlPath
-6. ⛔ STOP: Show artifact for preview. Ask user. WAIT.
-7. User confirms → `render_slides` with htmlPath → files
+1. `discover_themes` → native prompts only
+2. ⛔ STOP: Ask user — theme, topic, orientation, format, token mode. WAIT.
+3. Show data outline. ⛔ STOP. WAIT for confirmation.
+4. `create_slides` with mode=default, theme, orientation (no html yet) → returns CSS prompt
+5. Generate full HTML using the prompt
+6. `create_slides` with mode=default, theme, html=\<generated HTML\> → htmlPath
+7. ⛔ STOP: Show code preview artifact. Ask user. WAIT.
+8. User confirms → `render_slides` with htmlPath → files
 
 ### Token Saver (fewer tokens)
-1. `discover_themes` → themes + questions
-2. ⛔ STOP: Ask user — theme, topic, orientation, format, token mode, slide count. WAIT.
-3. `create_slides` with mode=token_saver, theme, slides=[{type:"cover",...}, ...] → htmlPath + html
-4. ⛔ STOP: Show artifact for preview. Ask user. WAIT.
-5. User confirms → `render_slides` with htmlPath → files
+1. `discover_themes` → native prompts only
+2. ⛔ STOP: Ask user — theme, topic, orientation, format, token mode. WAIT.
+3. Show data outline. ⛔ STOP. WAIT for confirmation.
+4. `create_slides` with mode=token_saver, theme, slides=[{type:"cover",...}, ...] → htmlPath + html
+5. ⛔ STOP: Show code preview artifact. Ask user. WAIT.
+6. User confirms → `render_slides` with htmlPath → files
 
 ## Orientation Presets
 
@@ -72,9 +79,12 @@ cover, content, stats, list, steps, comparison, quote, code, cta, timeline, team
 ## Key Rules
 
 - **Server-enforced gates**: render_slides rejects if discover or create haven't been called
+- **AI decides slide count** — do NOT ask the user how many slides
+- **No duplicate display** — use native selectors only, do NOT render themes as markdown list
+- **Data outline before HTML** — show bullet-point outline and get user approval before generating
 - Always use `htmlPath` from create_slides for render_slides
 - Default output format is PDF
 - Default orientation is portrait (540x675)
 - Default scale is 4x
 - Output goes to ~/Desktop/slideshot-output (or fallback locations)
-- **NEVER skip the preview step** — always show HTML as artifact before rendering
+- **NEVER skip the preview step** — always show HTML as code preview artifact before rendering

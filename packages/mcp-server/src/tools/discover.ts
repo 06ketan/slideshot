@@ -19,7 +19,13 @@ export async function handleDiscover() {
   let themes: ThemeEntry[];
   try {
     const fetched = await fetchCatalog();
-    themes = fetched && fetched.length > 0 ? fetched : THEME_CATALOG_FALLBACK;
+    if (fetched && fetched.length > 0) {
+      const fetchedIds = new Set(fetched.map(t => t.id));
+      const missing = THEME_CATALOG_FALLBACK.filter(t => !fetchedIds.has(t.id));
+      themes = [...fetched, ...missing];
+    } else {
+      themes = THEME_CATALOG_FALLBACK;
+    }
   } catch {
     themes = THEME_CATALOG_FALLBACK;
   }
@@ -74,16 +80,21 @@ export async function handleDiscover() {
             { value: "png", label: "PNG" },
             { value: "webp", label: "WebP" },
           ], default: ["pdf"] },
-          { id: "slideCount", type: "freetext", prompt: "How many slides? (e.g. 1, 5, 8)", default: "6" },
           { id: "brandName", type: "freetext", prompt: "Brand name? (optional)", optional: true },
         ],
-        instruction: `MANDATORY — follow these steps exactly:
-1. Present the themes list to the user (use a numbered menu or native select).
-2. Ask the user to pick: theme, topic, orientation/ratio, token mode, output format(s), and slide count.
-3. STOP HERE. DO NOT proceed to create_slides until the user has answered ALL questions.
-4. DO NOT auto-select any option on behalf of the user.
-5. DO NOT skip questions — even if the user's request implies a preference, confirm it explicitly.
-6. Only after you have explicit user answers for theme + topic + orientation + token mode + format, call create_slides.`,
+        instruction: `MANDATORY — follow these steps exactly. DO NOT deviate.
+
+STEP 1: Use the structured "ask" selectors above to prompt the user. DO NOT render themes as a separate markdown list — ONLY use the native selector prompts. No duplicate display.
+
+STEP 2: Collect from the user: theme, topic, orientation, token mode, output format(s). DO NOT ask how many slides — you decide the slide count based on the topic depth and context.
+
+STEP 3: After the user answers, generate a DATA OUTLINE — a bullet-point list of proposed slides (e.g. "Slide 1: Cover — title, Slide 2: Key Stats — ..., Slide 3: ..."). Show this outline to the user and ask: "Does this outline look good, or do you want changes?"
+
+STEP 4: STOP. WAIT for the user to confirm or request changes. Loop step 3-4 until confirmed.
+
+STEP 5: ONLY after user confirms the outline, proceed to call create_slides with the chosen mode, theme, orientation, and content.
+
+DO NOT auto-select any option. DO NOT skip any step. DO NOT call create_slides before the outline is confirmed.`,
       }),
     }],
   };

@@ -13,32 +13,36 @@ export async function handleRender(args: {
   outDir?: string;
   pdfFilename?: string;
 }) {
-  if (!isDiscoveryDone()) {
-    return {
-      content: [{
-        type: "text" as const,
-        text: JSON.stringify({
-          ok: false,
-          error: "DISCOVERY_REQUIRED",
-          instruction: "You MUST call discover_themes first, then create_slides, then render_slides. DO NOT skip steps.",
-        }),
-      }],
-      isError: true,
-    };
-  }
+  const hasExistingFile = args.htmlPath && fs.existsSync(args.htmlPath);
 
-  if (!isCreateDone()) {
-    return {
-      content: [{
-        type: "text" as const,
-        text: JSON.stringify({
-          ok: false,
-          error: "CREATE_REQUIRED",
-          instruction: "You MUST call create_slides first to generate and save the HTML. Then show the user a preview artifact. Only call render_slides after the user explicitly confirms the preview looks good.",
-        }),
-      }],
-      isError: true,
-    };
+  if (!hasExistingFile) {
+    if (!isDiscoveryDone()) {
+      return {
+        content: [{
+          type: "text" as const,
+          text: JSON.stringify({
+            ok: false,
+            error: "DISCOVERY_REQUIRED",
+            instruction: "You MUST call discover_themes first, then create_slides, then render_slides. DO NOT skip steps.",
+          }),
+        }],
+        isError: true,
+      };
+    }
+
+    if (!isCreateDone()) {
+      return {
+        content: [{
+          type: "text" as const,
+          text: JSON.stringify({
+            ok: false,
+            error: "CREATE_REQUIRED",
+            instruction: "You MUST call create_slides first to generate and save the HTML. Then show the user a preview artifact. Only call render_slides after the user explicitly confirms the preview looks good.",
+          }),
+        }],
+        isError: true,
+      };
+    }
   }
 
   try {

@@ -4,7 +4,7 @@ description: "Use this skill when the user wants to create slide carousels, Link
 license: MIT
 metadata:
   author: ketan-chavan
-  version: "4.0.1"
+  version: "4.1.0"
   homepage: https://slideshot.vercel.app
   repository: https://github.com/06ketan/slideshot
 compatibility: "Requires Node.js >= 18. Works with Claude Desktop, Cursor, and any MCP-compatible client."
@@ -42,13 +42,14 @@ Add to Claude Desktop config or `.cursor/mcp.json`.
 ## Workflow (with mandatory STOP points)
 
 1. Call `discover_themes` to get themes, orientations, token modes, and format options
-2. **⛔ STOP** — Present ALL options and ask user: theme, topic, orientation, token mode, format, slide count. DO NOT auto-select. WAIT for explicit answers.
-3. Based on token mode:
+2. **⛔ STOP** — Use ONLY native selector prompts (DO NOT render themes as a separate markdown list). Ask user: theme, topic, orientation, token mode, format. DO NOT ask how many slides — AI decides based on topic depth. WAIT for explicit answers.
+3. Show a **data outline** — bullet-point list of proposed slides (e.g. "Slide 1: Cover — ..., Slide 2: Key Stats — ..."). **⛔ STOP** — Ask user: "Does this outline look good, or do you want changes?" WAIT. Loop until confirmed.
+4. Based on token mode:
    - **Default**: Call `create_slides` with mode=default, theme, orientation (no html) to get CSS prompt. Generate HTML. Call again with html= to save.
    - **Token Saver**: Call `create_slides` with mode=token_saver, theme, orientation, slides=[structured JSON]
-4. **⛔ STOP** — Show HTML as artifact for live preview. Ask user: "Does this look good? Should I render?" WAIT for confirmation. DO NOT call render_slides in the same turn.
-5. If user wants changes: revise and call create_slides again (loop steps 3-4 until approved)
-6. User confirms → Call `render_slides` with htmlPath and chosen formats
+5. **⛔ STOP** — Show saved HTML as code preview artifact using htmlPath. Ask user: "Does this look good? Should I render?" WAIT for confirmation. DO NOT call render_slides in the same turn.
+6. If user wants changes: revise and call create_slides again (loop steps 4-5 until approved)
+7. User confirms → Call `render_slides` with htmlPath and chosen formats
 
 **Server-enforced gates**: `render_slides` will REJECT the call if `discover_themes` or `create_slides` hasn't been called first.
 

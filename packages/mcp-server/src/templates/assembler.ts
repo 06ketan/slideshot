@@ -2,6 +2,20 @@ import { getThemeCSS } from "./css.js";
 import { renderSlide, getSupportedSlideTypes } from "./renderers.js";
 import type { AssembleInput, SlideData } from "./types.js";
 
+function normalizeSlide(raw: Record<string, unknown>): SlideData {
+  const s = { ...raw } as Record<string, unknown>;
+  const type = s.type as string;
+
+  if ((type === "cover" || type === "cta") && !s.headline && s.title) {
+    s.headline = s.title;
+  }
+  if ((type === "content" || type === "list" || type === "steps" || type === "code" || type === "timeline" || type === "team") && !s.title && s.headline) {
+    s.title = s.headline;
+  }
+
+  return s as unknown as SlideData;
+}
+
 export interface SlotSchema {
   theme: string;
   supportedSlideTypes: string[];
@@ -45,8 +59,9 @@ export function assembleHtml(input: AssembleInput): string {
     ? `.slide{width:${width}px !important;height:${height}px !important;}`
     : "";
 
-  const slidesHtml = input.slides
-    .map((slide: SlideData, i: number) => renderSlide(input.theme, slide, i, input.slides.length))
+  const normalized = input.slides.map(s => normalizeSlide(s as unknown as Record<string, unknown>));
+  const slidesHtml = normalized
+    .map((slide: SlideData, i: number) => renderSlide(input.theme, slide, i, normalized.length))
     .join("\n  ");
 
   return `<!DOCTYPE html>

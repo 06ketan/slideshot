@@ -55,11 +55,11 @@ function discoveryGate() {
 
 const PREVIEW_STOP_INSTRUCTION = `STOP — DO NOT call render_slides yet.
 You MUST now:
-1. Create an artifact containing the complete HTML document so the user gets a live preview (Code/Preview tabs).
+1. Show the saved HTML file as a code preview artifact using the htmlPath below. The user needs to see a live preview of the slides.
 2. Ask the user: "Does this look good? Should I render the final output, or do you want changes?"
 3. WAIT for the user's explicit response.
-4. ONLY after the user says yes/confirmed/looks good, call render_slides.
-DO NOT call render_slides in this same turn. The user MUST see the preview first.`;
+4. ONLY after the user says yes/confirmed/looks good, call render_slides with the htmlPath.
+DO NOT call render_slides in this same turn. The user MUST see and approve the preview first.`;
 
 async function handleDefault(args: {
   theme: string;
@@ -135,8 +135,7 @@ function handleTokenSaver(args: {
         ok: true,
         slideCount,
         htmlPath,
-        html,
-        instruction: `${slideCount} slides assembled and saved to ${htmlPath}.\n\n${PREVIEW_STOP_INSTRUCTION}`,
+        instruction: `${slideCount} slides saved to ${htmlPath}.\n\n${PREVIEW_STOP_INSTRUCTION}`,
       }),
     }],
   };
