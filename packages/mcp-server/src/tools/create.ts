@@ -1,192 +1,167 @@
-import { renderToBuffers } from "slideshot";
-import { PROMPT_VARIANTS, type PromptVariant } from "../prompts.js";
+import { isDiscoveryDone } from "../cache.js";
+import { saveHtml } from "../save.js";
+import { assembleHtml } from "../templates/assembler.js";
+import type { SlideData, AssembleInput } from "../templates/types.js";
+import { loadPrompt, type PromptVariant } from "../prompts.js";
+import { ORIENTATION_PRESETS } from "../schema.js";
+import { savePrefs } from "../preferences.js";
 
-interface ThemeEntry {
-  id: PromptVariant;
-  name: string;
-  emoji: string;
-  icon: string;
-  style: string;
-  palette: string[];
+function countSlides(html: string): number {
+  // Match class="slide" or class="slide ..." but NOT class="slide-label" etc.
+  // Looks for the word "slide" at the START of the class value or preceded by a space.
+  const matches = html.match(/class\s*=\s*["'](?:slide(?:\s|["'])|[^"']*\sslide(?:\s|["']))/g);
+  return matches ? matches.length : 0;
 }
 
-const THEME_CATALOG: ThemeEntry[] = [
-  {
-    id: "generic", name: "Clean Minimal", emoji: "\ud83d\udccb",
-    icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none"><rect x="3" y="3" width="18" height="18" rx="2" stroke="#888" stroke-width="1.5"/><rect x="6" y="7" width="12" height="2" rx="1" fill="#1a1a1a"/><rect x="6" y="11" width="8" height="2" rx="1" fill="#ccc"/><rect x="6" y="15" width="10" height="2" rx="1" fill="#ccc"/></svg>`,
-    style: "Simple Inter font, white cards, flexible layout",
-    palette: ["#FFFFFF", "#1a1a1a", "#888888"],
-  },
-  {
-    id: "branded", name: "Ketan Slides", emoji: "\ud83c\udfaf",
-    icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none"><rect x="2" y="2" width="20" height="20" rx="1" fill="#F0EDE7"/><path d="M18 3v4h4" stroke="#00B894" stroke-width="1.5" fill="none"/><path d="M6 21v-4H2" stroke="#E84C1E" stroke-width="1.5" fill="none"/><rect x="5" y="8" width="14" height="2.5" rx="1" fill="#1A1A1A"/><rect x="5" y="12" width="8" height="1.5" rx=".75" fill="#00B894"/></svg>`,
-    style: "Monospace Space Mono, teal/coral accents, corner decorations",
-    palette: ["#F0EDE7", "#00B894", "#E84C1E", "#1A1A1A"],
-  },
-  {
-    id: "instagram-carousel", name: "Instagram Carousel", emoji: "\ud83d\udcf8",
-    icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none"><defs><linearGradient id="ig" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#6C5CE7"/><stop offset="50%" stop-color="#FD79A8"/><stop offset="100%" stop-color="#FDCB6E"/></linearGradient></defs><rect x="2" y="2" width="20" height="20" rx="5" fill="url(#ig)"/><circle cx="12" cy="12" r="5" stroke="#fff" stroke-width="1.5" fill="none"/><circle cx="17.5" cy="6.5" r="1.5" fill="#fff"/></svg>`,
-    style: "Bold gradients, Poppins, vibrant swipe-friendly",
-    palette: ["#6C5CE7", "#FD79A8", "#00CEC9", "#FDCB6E"],
-  },
-  {
-    id: "infographic", name: "Infographic", emoji: "\ud83d\udcca",
-    icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none"><rect x="3" y="14" width="4" height="7" rx="1" fill="#F59E0B"/><rect x="10" y="9" width="4" height="12" rx="1" fill="#10B981"/><rect x="17" y="4" width="4" height="17" rx="1" fill="#2563EB"/></svg>`,
-    style: "Data-heavy, DM Sans, progress bars, stat cards",
-    palette: ["#2563EB", "#10B981", "#F59E0B", "#F8FAFC"],
-  },
-  {
-    id: "pitch-deck", name: "Pitch Deck", emoji: "\ud83d\ude80",
-    icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none"><rect x="2" y="3" width="20" height="18" rx="2" fill="#0F172A"/><rect x="5" y="7" width="10" height="2" rx="1" fill="#fff"/><rect x="5" y="11" width="6" height="1.5" rx=".75" fill="#3B82F6"/><rect x="5" y="14" width="14" height="1" rx=".5" fill="#8B5CF6" opacity=".6"/><rect x="5" y="17" width="14" height="1" rx=".5" fill="#8B5CF6" opacity=".3"/></svg>`,
-    style: "Professional, DM Sans, KPI cards, timelines",
-    palette: ["#0F172A", "#3B82F6", "#8B5CF6", "#FFFFFF"],
-  },
-  {
-    id: "dark-modern", name: "Dark Modern", emoji: "\ud83c\udf19",
-    icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none"><rect x="2" y="2" width="20" height="20" rx="3" fill="#0A0A0F"/><circle cx="12" cy="10" r="3" fill="#22D3EE" opacity=".8"/><rect x="6" y="16" width="12" height="1.5" rx=".75" fill="#E879F9" opacity=".5"/><rect x="8" y="19" width="8" height="1" rx=".5" fill="#34D399" opacity=".4"/></svg>`,
-    style: "Neon accents, glassmorphism, Inter, code blocks",
-    palette: ["#0A0A0F", "#22D3EE", "#E879F9", "#34D399"],
-  },
-  {
-    id: "editorial", name: "Editorial", emoji: "\ud83d\udcf0",
-    icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none"><rect x="2" y="2" width="20" height="20" rx="1" fill="#FAF8F5"/><rect x="4" y="4" width="16" height="3" rx=".5" fill="#2C2824"/><text x="12" y="16" text-anchor="middle" font-family="serif" font-size="10" font-weight="700" fill="#C9963B">A</text><rect x="4" y="19" width="16" height=".8" fill="#C9963B" opacity=".5"/></svg>`,
-    style: "Magazine serif, Playfair Display, gold accents",
-    palette: ["#FAF8F5", "#C9963B", "#2C2824", "#1A1814"],
-  },
-  {
-    id: "browser-shell", name: "Browser Shell", emoji: "\ud83d\udda5\ufe0f",
-    icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none"><rect x="2" y="3" width="20" height="17" rx="2" fill="#12122A"/><rect x="2" y="3" width="20" height="4" rx="2" fill="#FFD233"/><circle cx="6" cy="5" r="1" fill="#FF6059"/><circle cx="9" cy="5" r="1" fill="#FFBD2E"/><circle cx="12" cy="5" r="1" fill="#27C93F"/><rect x="5" y="10" width="14" height="2" rx="1" fill="#fff"/><rect x="5" y="14" width="8" height="1.5" rx=".75" fill="#FFD233"/></svg>`,
-    style: "Bebas Neue + DM Sans, yellow/navy browser chrome, versatile layout",
-    palette: ["#FFD233", "#12122A", "#0A0A0A", "#FFFFFF"],
-  },
-];
+function resolveOrientation(orientation?: string, customWidth?: number, customHeight?: number): { width: number; height: number } {
+  if (orientation === "custom" && customWidth && customHeight) {
+    return { width: customWidth, height: customHeight };
+  }
+  return ORIENTATION_PRESETS[orientation || "portrait"] || ORIENTATION_PRESETS.portrait;
+}
 
-const OUTPUT_PRESETS: Record<string, { formats: string[]; width: number; height: number; scale: number; orientation: string; description: string }> = {
-  instagram: { formats: ["webp"], width: 1080, height: 1350, scale: 1, orientation: "portrait", description: "Instagram post/carousel (1080x1350)" },
-  linkedin: { formats: ["pdf", "webp"], width: 540, height: 675, scale: 4, orientation: "portrait", description: "LinkedIn carousel (2160x2700 @4x)" },
-  presentation: { formats: ["pptx"], width: 1920, height: 1080, scale: 2, orientation: "landscape", description: "PowerPoint deck (1920x1080 landscape)" },
-  custom: { formats: ["png", "webp", "pdf"], width: 540, height: 675, scale: 4, orientation: "portrait", description: "Custom — all formats, default dims" },
-};
+function discoveryGate() {
+  if (!isDiscoveryDone()) {
+    return {
+      content: [{
+        type: "text" as const,
+        text: JSON.stringify({
+          ok: false,
+          error: "DISCOVERY_REQUIRED",
+          instruction: "You MUST call discover_themes first. Present themes, orientation, token mode, and format options to the user. WAIT for their choices. DO NOT auto-select.",
+        }),
+      }],
+      isError: true,
+    };
+  }
+  return null;
+}
 
-function discoverStep() {
+const PREVIEW_STOP_INSTRUCTION = `STOP. Show htmlPath as a code preview artifact to the user. Ask: "Does this look good? Should I render the final PDF?" WAIT for user response. Do NOT call render_slides in this turn.`;
+
+async function handleDefault(args: {
+  theme: string;
+  html?: string;
+  orientation?: string;
+  width?: number;
+  height?: number;
+}) {
+  if (!args.html) {
+    const promptText = await loadPrompt(args.theme as PromptVariant);
+    const dims = resolveOrientation(args.orientation, args.width, args.height);
+    return {
+      content: [{
+        type: "text" as const,
+        text: JSON.stringify({
+          ok: true,
+          action: "generate_html",
+          theme: args.theme,
+          dimensions: dims,
+          prompt: promptText,
+          instruction: `Use the prompt above to generate a full HTML document with .slide elements at ${dims.width}x${dims.height}px. Then call create_slides again with mode=default and html=<your HTML>.`,
+        }),
+      }],
+    };
+  }
+
+  const htmlPath = saveHtml(args.html);
+  const slideCount = countSlides(args.html);
+
   return {
     content: [{
       type: "text" as const,
       text: JSON.stringify({
-        themes: THEME_CATALOG,
-        outputPresets: OUTPUT_PRESETS,
-        availableFormats: ["png", "webp", "pdf", "pptx"],
-        workflow: [
-          "1. discover → user answers ALL required questions",
-          "2. get_slide_prompt with user-chosen theme → AI generates HTML",
-          "3. preview (slide 1) → show code + image, WAIT for user approval",
-          "4. IF changes needed → revise HTML → preview again (loop)",
-          "5. review (all slides) → show thumbnails, WAIT for user approval",
-          "6. render_html_to_images → final high-res files",
-        ],
-        requiredQuestions: [
-          { id: "theme", ask: "Which theme? Present the numbered list above and let the user pick (or describe a custom style)." },
-          { id: "topic", ask: "What content/topic for the slides? (or ask user to paste existing content)" },
-          { id: "aspectRatio", ask: "Portrait (PDF, social media) or Landscape (PPTX, presentations)?" },
-          { id: "formats", ask: "Output formats: png, webp, pdf, pptx? (user can multi-select)" },
-          { id: "pptxMode", ask: "If PPTX selected: editable text (native) or pixel-perfect screenshot (image)?" },
-        ],
-        instruction: "STOP. You MUST present the theme list as a numbered menu and ask ALL requiredQuestions above in ONE bundled message. DO NOT call get_slide_prompt or generate any HTML until the user has answered these questions. Wait for the user's response before proceeding.",
-      }, null, 2),
+        ok: true,
+        slideCount,
+        htmlPath,
+        instruction: `${slideCount} slides saved to ${htmlPath}.\n\n${PREVIEW_STOP_INSTRUCTION}`,
+      }),
     }],
   };
 }
 
-async function previewStep(html?: string) {
-  if (!html) {
-    throw new Error("html is required for preview step");
+function handleTokenSaver(args: {
+  theme: string;
+  slides?: Record<string, unknown>[];
+  orientation?: string;
+  width?: number;
+  height?: number;
+  brandName?: string;
+}) {
+  if (!args.slides || args.slides.length === 0) {
+    throw new Error("mode=token_saver requires a non-empty `slides` array with structured slide data.");
   }
 
-  const result = await renderToBuffers({
-    html,
-    scale: 1,
-    formats: ["webp"],
-    slideRange: [1, 1],
-  });
+  const dims = resolveOrientation(args.orientation, args.width, args.height);
+  const isLandscape = dims.width > dims.height;
 
-  const content: Array<
-    | { type: "text"; text: string }
-    | { type: "image"; data: string; mimeType: string }
-  > = [];
+  const input: AssembleInput = {
+    theme: args.theme,
+    slides: args.slides as unknown as SlideData[],
+    orientation: isLandscape ? "landscape" : "portrait",
+    brandName: args.brandName,
+  };
 
-  if (result.images.length > 0) {
-    content.push({
-      type: "image" as const,
-      data: result.images[0].buffer.toString("base64"),
-      mimeType: "image/webp",
-    });
-  }
+  const html = assembleHtml(input);
+  const htmlPath = saveHtml(html);
+  const slideCount = args.slides.length;
 
-  content.push({
-    type: "text" as const,
-    text: JSON.stringify({
-      slideCount: result.slideCount,
-      previewSlide: 1,
-      htmlIncluded: true,
-      confirmationRequired: true,
-      confirmationPrompt: `Show the HTML code as a code block AND the preview image above to the user. Ask: "Here's slide 1 of ${result.slideCount} — approve or request changes?" You MUST wait for explicit user approval before proceeding to review or render. DO NOT auto-advance.`,
-      blockedNextStep: "review or render_html_to_images",
-      onApproval: "Call create_slides with step='review' and the full HTML to show all slide thumbnails.",
-      onChangesRequested: "Revise the HTML based on user feedback and call create_slides with step='preview' again.",
-    }, null, 2),
-  });
-
-  content.push({
-    type: "text" as const,
-    text: `\n---HTML CODE---\n${html}\n---END HTML---`,
-  });
-
-  return { content };
+  return {
+    content: [{
+      type: "text" as const,
+      text: JSON.stringify({
+        ok: true,
+        slideCount,
+        htmlPath,
+        instruction: `${slideCount} slides saved to ${htmlPath}.\n\n${PREVIEW_STOP_INSTRUCTION}`,
+      }),
+    }],
+  };
 }
 
-async function reviewStep(html?: string) {
-  if (!html) {
-    throw new Error("html is required for review step");
+export async function handleCreate(args: {
+  mode: string;
+  theme: string;
+  orientation?: string;
+  width?: number;
+  height?: number;
+  html?: string;
+  slides?: Record<string, unknown>[];
+  brandName?: string;
+}) {
+  const gate = discoveryGate();
+  if (gate) return gate;
+
+  try {
+    const result = args.mode === "token_saver"
+      ? handleTokenSaver(args)
+      : await handleDefault(args);
+
+    // Persist user choices for next session (postmortem roadmap #5).
+    // Only save when we actually produced HTML — skip the "generate_html"
+    // intermediate response that has no slides yet.
+    try {
+      const parsed = JSON.parse(result.content[0].text);
+      if (parsed?.htmlPath) {
+        savePrefs({
+          lastTheme: args.theme,
+          lastOrientation: args.orientation || "portrait",
+          lastTokenMode: args.mode === "token_saver" ? "token_saver" : "default",
+          ...(args.brandName ? { brandName: args.brandName } : {}),
+        });
+      }
+    } catch {
+      // pref-write failures must never break the create flow
+    }
+
+    return result;
+  } catch (err: any) {
+    return {
+      content: [{
+        type: "text" as const,
+        text: JSON.stringify({ ok: false, error: err.message }),
+      }],
+      isError: true,
+    };
   }
-
-  const result = await renderToBuffers({
-    html,
-    scale: 1,
-    formats: ["webp"],
-  });
-
-  const content: Array<
-    | { type: "text"; text: string }
-    | { type: "image"; data: string; mimeType: string }
-  > = [];
-
-  for (const img of result.images) {
-    content.push({
-      type: "image" as const,
-      data: img.buffer.toString("base64"),
-      mimeType: "image/webp",
-    });
-  }
-
-  content.push({
-    type: "text" as const,
-    text: JSON.stringify({
-      slideCount: result.slideCount,
-      totalPreviews: result.images.length,
-      confirmationRequired: true,
-      confirmationPrompt: `Show ALL ${result.slideCount} slide preview images above to the user. Ask: "All ${result.slideCount} slides look good? Render to final files?" You MUST wait for explicit user approval ('yes', 'looks good', 'render it') before calling render_html_to_images. DO NOT auto-advance.`,
-      blockedNextStep: "render_html_to_images",
-      onApproval: "Call render_html_to_images with the final HTML, user-chosen formats, and correct orientation (landscape for PPTX, portrait for PDF/social).",
-      onChangesRequested: "Ask which slide(s) to fix, revise the HTML, and call create_slides with step='review' again.",
-    }, null, 2),
-  });
-
-  return { content };
-}
-
-export async function handleCreate(args: { step: string; html?: string; aspectRatio?: string }) {
-  if (args.step === "discover") return discoverStep();
-  if (args.step === "preview") return previewStep(args.html);
-  if (args.step === "review") return reviewStep(args.html);
-  throw new Error(`Unknown step "${args.step}". Use "discover", "preview", or "review".`);
 }

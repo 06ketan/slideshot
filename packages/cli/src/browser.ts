@@ -8,6 +8,11 @@ const LAUNCH_ARGS = [
   "--disable-software-rasterizer",
   "--single-process",
   "--no-zygote",
+  // Force consistent font rasterization between page.pdf() and element.screenshot().
+  // Without this, the PDF backend uses a different subpixel hinting strategy than
+  // the screenshot backend, which produces visibly different glyphs at the same DPI
+  // (postmortem SS-003).
+  "--font-render-hinting=none",
 ];
 
 export async function launchBrowser(): Promise<Browser> {

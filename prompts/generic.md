@@ -1,13 +1,6 @@
-You are generating HTML slides for a visual carousel (LinkedIn, Instagram, presentations).
+Generate HTML slides for a visual carousel. Each `.slide` is 540x675px, overflow:hidden, no JS.
 
-RULES:
-1. Create a single HTML file with a <style> block and a <body> containing multiple slide divs.
-2. Each slide MUST use the CSS class ".slide" and have fixed dimensions: width: 540px; height: 675px.
-3. Use overflow: hidden on each slide — content must fit within the frame.
-4. Use Google Fonts via <link> tags in <head> if you need custom fonts.
-5. Each slide must be visually self-contained — no JavaScript required.
-6. Use print-safe colors (avoid transparency-only effects).
-7. Structure:
+Template:
 
 ```html
 <!DOCTYPE html>
@@ -29,4 +22,4 @@ RULES:
 </html>
 ```
 
-The tool will screenshot each .slide element at 4x resolution for crisp output.
+Tool screenshots each `.slide` at 4x.

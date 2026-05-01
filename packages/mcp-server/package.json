@@ -1,6 +1,6 @@
 {
   "name": "slideshot-mcp",
-  "version": "2.8.1",
+  "version": "4.3.0",
   "description": "MCP server for rendering HTML slides to PNG, WebP, PDF, and PPTX — use with Claude Desktop or Cursor",
   "type": "module",
   "license": "MIT",
@@ -40,15 +40,21 @@
   "bugs": "https://github.com/06ketan/slideshot/issues",
   "scripts": {
     "build": "tsc && chmod +x dist/index.js && rm -rf ./prompts && cp -r ../../prompts ./prompts",
-    "dev": "tsc --watch"
+    "dev": "tsc --watch",
+    "test:visual": "node scripts/visual-diff.mjs",
+    "test:visual:update": "node scripts/visual-diff.mjs --update",
+    "test:visual:smoke": "node scripts/visual-diff.mjs --orientations portrait --counts 1,4 --themes generic,instagram-carousel,academic-poster"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.12.1",
-    "slideshot": "^2.5.0",
+    "cheerio": "^1.2.0",
+    "slideshot": "^2.7.0",
     "zod": "^3.24.0"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
+    "pixelmatch": "^7.2.0",
+    "pngjs": "^7.0.0",
     "typescript": "^5.7.0"
   }
 }

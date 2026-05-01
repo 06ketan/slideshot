@@ -1,38 +1,8 @@
-You are generating HTML slides for a professional pitch deck — clean, modern, presentation-grade.
+Generate professional pitch deck slides. 540x675px, DM Sans, white bg, blue (#3B82F6) / violet (#8B5CF6) accents.
 
-DESIGN RULES:
-1. Font: 'DM Sans' (headings 500/700) via Google Fonts.
-2. Slide: .slide { width: 540px; height: 675px; background: #FFFFFF; }
-3. Minimal design — lots of whitespace, subtle shadows.
-4. Subtle gradient accent bar at top of hero slides.
-5. Professional tone: no emojis, clean data presentation.
-6. Consistent slide numbering bottom-right.
+Slides: 1.Title/Hook 2.Problem 3.Solution 4.How it works 5.KPIs 6.Traction/Timeline 7.Team 8.CTA
 
-COLOR PALETTE:
-- Primary: #0F172A (slate-900)
-- Accent: #3B82F6 (blue-500)
-- Accent2: #8B5CF6 (violet-500)
-- Success: #22C55E
-- Muted: #94A3B8 (slate-400)
-- Border: #E2E8F0
-- BG: #FFFFFF
-- Alt BG: #F1F5F9
-
-COMPONENT CLASSES:
-- .accent-bar — top gradient bar (blue→violet)
-- .kpi-grid — 2-col grid of KPI cards
-- .kpi — single KPI: number + label + trend
-- .timeline — vertical timeline with dots
-- .tl-item — timeline entry
-- .team-grid — 2x2 grid for team members
-- .team-card — avatar placeholder + name + role
-- .feature-list — clean feature rows with check icons
-- .feature — single feature row
-- .logo-grid — grid for partner/client logos
-- .section-label — muted uppercase label
-- .slide-number — bottom-right page number
-
-CSS (include in <style>):
+CSS:
 ```
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:#1a1a1a;padding:48px;display:flex;flex-direction:column;gap:40px;align-items:flex-start;}
@@ -50,15 +20,4 @@ body{background:#1a1a1a;padding:48px;display:flex;flex-direction:column;gap:40px
 .slide-number{position:absolute;bottom:16px;right:24px;font-size:11px;font-weight:500;color:#CBD5E1;}
 ```
 
-Include in <head>:
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
-
-RECOMMENDED DECK FLOW:
-1. Title/Hook slide
-2. Problem slide
-3. Solution slide
-4. How it works (3-4 steps)
-5. Key metrics/KPIs
-6. Traction/Timeline
-7. Team
-8. CTA
+Font: `<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">`

@@ -1,40 +1,6 @@
-You are generating HTML slides in a magazine/editorial style — elegant, serif-driven, sophisticated.
+Generate magazine/editorial slides — elegant serif, sophisticated. 540x675px, Playfair Display + Source Sans 3, warm white (#FAF8F5), gold accent (#C9963B). Dark variant: .ed-dark.
 
-DESIGN RULES:
-1. Fonts: 'Playfair Display' (headings 700/900) + 'Source Sans 3' (body 400/600) via Google Fonts.
-2. Slide: .slide { width: 540px; height: 675px; background: #FAF8F5; }
-3. Large serif headlines, generous line-height.
-4. Earth-tone palette with a gold accent.
-5. Editorial grid: asymmetric layouts welcome.
-6. Thin hairline borders and dividers.
-7. Pull quotes with oversized quotation marks.
-8. Image placeholder blocks (solid color rectangles).
-
-COLOR PALETTE:
-- BG: #FAF8F5 (warm white)
-- Dark BG: #1A1814 (warm black)
-- Text: #2C2824
-- Muted: #8C857C
-- Accent: #C9963B (warm gold)
-- Accent2: #6B4F36 (warm brown)
-- Border: #DDD8D0
-- Placeholder: #E8E3DC
-
-COMPONENT CLASSES:
-- .ed-hero — full-bleed hero with large headline
-- .ed-label — uppercase section label with gold accent
-- .ed-quote — pull quote with large quotation marks
-- .ed-body — body text block
-- .ed-img — image placeholder rectangle
-- .ed-caption — small caption text below images
-- .ed-cols — 2-column editorial grid
-- .ed-col — single column
-- .ed-divider — thin gold hairline
-- .ed-footer — bottom-aligned attribution
-- .ed-number — large decorative number
-- .ed-dark — dark variant slide
-
-CSS (include in <style>):
+CSS:
 ```
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:#1a1a1a;padding:48px;display:flex;flex-direction:column;gap:40px;align-items:flex-start;}
@@ -56,5 +22,4 @@ body{background:#1a1a1a;padding:48px;display:flex;flex-direction:column;gap:40px
 .ed-tag{display:inline-block;padding:4px 10px;border:1px solid #DDD8D0;border-radius:2px;font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:#8C857C;margin:3px 3px 3px 0;}.ed-dark .ed-tag{border-color:#3C3832;color:#6C665E;}
 ```
 
-Include in <head>:
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+Font: `<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">`

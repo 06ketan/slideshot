@@ -1,0 +1,74 @@
+name: Visual diff gauntlet
+
+on:
+  pull_request:
+    paths:
+      - "packages/cli/src/**"
+      - "packages/mcp-server/src/templates/**"
+      - "packages/mcp-server/src/tools/discover.ts"
+      - "packages/mcp-server/scripts/visual-diff.mjs"
+      - "prompts/**"
+      - ".github/workflows/visual-diff.yml"
+  workflow_dispatch:
+    inputs:
+      themes:
+        description: "Themes to diff (comma-separated; blank = all 11)"
+        required: false
+      counts:
+        description: "Slide counts to diff (comma-separated; default '1,4,9')"
+        required: false
+        default: "1,4,9"
+      update_snapshots:
+        description: "Write new snapshots instead of diffing"
+        required: false
+        default: "false"
+
+jobs:
+  visual-diff:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install Chromium dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libnss3 libatk1.0-0 libatk-bridge2.0-0 libcups2 libxcomposite1 \
+            libxdamage1 libxrandr2 libgbm1 libxkbcommon0 libpangocairo-1.0-0 \
+            libpango-1.0-0 libasound2t64 libxshmfence1 fonts-liberation
+
+      - run: npm ci
+
+      - run: npm run build:cli
+
+      - run: npm run build:mcp
+
+      - name: Run visual-diff (or update snapshots)
+        env:
+          THEMES_INPUT: ${{ inputs.themes }}
+          COUNTS_INPUT: ${{ inputs.counts || '1,4,9' }}
+          UPDATE_INPUT: ${{ inputs.update_snapshots || 'false' }}
+        run: |
+          ARGS=""
+          if [ -n "$THEMES_INPUT" ]; then ARGS="$ARGS --themes $THEMES_INPUT"; fi
+          ARGS="$ARGS --counts $COUNTS_INPUT"
+          if [ "$UPDATE_INPUT" = "true" ]; then ARGS="$ARGS --update"; fi
+          echo "Running: node packages/mcp-server/scripts/visual-diff.mjs $ARGS"
+          node packages/mcp-server/scripts/visual-diff.mjs $ARGS
+
+      - name: Upload snapshot artifacts on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-diff-output
+          path: |
+            packages/mcp-server/__snapshots__
+          retention-days: 14

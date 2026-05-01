@@ -4,6 +4,7 @@ import path from "node:path";
 const VARIANTS = [
   "generic", "branded", "instagram-carousel", "infographic",
   "pitch-deck", "dark-modern", "editorial", "browser-shell",
+  "academic-poster", "clinical-medical", "sketch-handdrawn",
 ] as const;
 
 type Variant = (typeof VARIANTS)[number];

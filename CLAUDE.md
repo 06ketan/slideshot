@@ -57,15 +57,16 @@ No test suite exists in this project.
 - **Production rendering** uses `puppeteer-core` + `@sparticuz/chromium` for Vercel deployment; dev uses full Puppeteer
 - `next.config.ts` configures file tracing to include the Chromium binary for the render API route
 
-### MCP Server (`packages/mcp-server/src/`)
-- `server.ts` — MCP server factory (v2.8.1) exposing 4 tools:
-  - `create_slides` — guided workflow with theme catalog + output presets + preview + review
-  - `render_html_to_images` — full render to PNG/WebP/PDF/PPTX
-  - `get_slide_prompt` — AI prompt template for 8 theme variants
+### MCP Server (`packages/mcp-server/src/`) — v4.2.0
+- `server.ts` — MCP server factory exposing 4 tools:
+  - `discover_themes` — returns themes, orientation presets, token modes, format options (including PPTX)
+  - `create_slides` — two modes: `default` (AI writes full HTML) or `token_saver` (AI sends JSON, server assembles HTML)
+  - `render_slides` — renders HTML to PDF/WebP/PNG/PPTX via Puppeteer. Accepts html string or htmlPath, plus selector, width, height, scale, webpQuality, orientation, pptxMode, pptxFilename, slideRange.
   - `health_check` — Puppeteer/Chromium diagnostics
-- `schema.ts` — Zod validation schemas for tool inputs
-- 8 MCP prompts registered: `{variant}-slides` for each theme
+- `schema.ts` — Zod validation schemas + `ORIENTATION_PRESETS` (portrait, landscape, linkedin, instagram, a4, custom)
+- `templates/` — theme CSS, slide renderers, assembler for token_saver mode
 - Delegates rendering to the CLI package
+- **Two token modes**: Default gives AI full HTML control (more creative, more tokens). Token-saver has AI send structured JSON only (fewer tokens, server assembles HTML from built-in templates).
 
 ### Prompt Templates (`prompts/`)
 8 AI prompt variants (generic, branded, dark-modern, editorial, infographic, instagram-carousel, pitch-deck, browser-shell) that instruct AI to generate HTML with `.slide` elements at 540×675 default dimensions.
@@ -78,17 +79,16 @@ No test suite exists in this project.
 - Plus marketing/SEO skills: ai-seo, analytics-tracking, page-cro, programmatic-seo, schema-markup, seo-audit, site-architecture, remotion-best-practices
 
 ### MCP Workflow (Claude Desktop / Cursor)
-The slideshot MCP follows an iterative loop:
-1. `discover` (themes + presets) — user picks theme, topic, platform
-2. `get_slide_prompt` — AI generates HTML using the theme's CSS reference
-3. `preview` (shows code + slide 1 image) — user reviews
-4. revise if needed — preview again (loop until approved)
-5. `review` (all slides as thumbnails) — user confirms full deck
-6. `render_html_to_images` — final files saved to disk
+1. `discover_themes` → themes, orientations, token modes, formats + questions to ask user
+2. User picks theme, topic, orientation, token mode, formats, slide count
+3. `create_slides` — two paths:
+   - **Default mode**: first call (no html) returns CSS prompt; AI generates HTML; second call (with html) saves to disk
+   - **Token-saver mode**: AI sends structured JSON slides array; server assembles HTML from templates
+4. Show HTML as artifact for user preview
+5. User approves or requests changes → call create_slides again to iterate
+6. `render_slides` with `htmlPath` + chosen formats → final files on disk
 
-Unlike Google Workspace connectors (where files appear inline in Claude),
-MCP tool outputs are saved to `~/Desktop/slideshot-output/` and paths are
-returned in the response. The preview/review steps return base64 images inline.
+Key: HTML is persisted to disk by create_slides. render_slides reads from disk (or falls back to cache). Default format is PDF.
 
 ## Webapp Design System (Neobrutalist)
 
