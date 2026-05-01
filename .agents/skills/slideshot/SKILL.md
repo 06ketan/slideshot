@@ -4,7 +4,7 @@ description: "Use this skill when the user wants to create slide carousels, Link
 license: MIT
 metadata:
   author: ketan-chavan
-  version: "4.1.0"
+  version: "4.3.0"
   homepage: https://slideshot.vercel.app
   repository: https://github.com/06ketan/slideshot
 compatibility: "Requires Node.js >= 18. Works with Claude Desktop, Cursor, and any MCP-compatible client."
@@ -18,9 +18,11 @@ Slideshot converts HTML with `.slide` elements into pixel-perfect slide images a
 
 | Task | Tool | When to use |
 |------|------|-------------|
-| Start any slide request | `discover_themes` | **MANDATORY first.** All other tools REJECT until this is called. |
+| Start any slide request | `discover_themes` | **MANDATORY first.** Resets the discovery gate. Returns themes, orientation/format/token-mode catalog, and persisted user preferences. |
+| List themes mid-conversation | `list_themes` | Idempotent — does NOT advance the workflow. Use when the user asks "what other themes are there?" |
 | Create slides (full HTML) | `create_slides` mode=default | AI writes complete HTML. More creative control, more tokens. |
-| Create slides (JSON data) | `create_slides` mode=token_saver | AI sends structured JSON. Server builds HTML. Fewer tokens. |
+| Create slides (JSON data) | `create_slides` mode=token_saver | AI sends structured JSON `slides[]`. Server uses built-in templates. Fewer tokens, lighter styling. |
+| Iterate on saved deck | `edit_slides` | Token-efficient partial edits — `replace_slide`, `patch_css`, `swap_token`, `patch_class`. Use INSTEAD of regenerating the whole deck for small changes. |
 | Render to files | `render_slides` | ONLY after user confirms preview. Requires discover + create first. |
 | Diagnose failures | `health_check` | Render fails or Chromium won't launch. |
 
@@ -57,8 +59,56 @@ Add to Claude Desktop config or `.cursor/mcp.json`.
 
 | Mode | Tokens | Control | How it works |
 |------|--------|---------|-------------|
-| `default` | More | Full | AI writes complete HTML+CSS. Maximum flexibility. |
-| `token_saver` | Fewer | Limited | AI sends JSON data. Server uses built-in theme templates. |
+| `default` | ~6,000-9,000 per deck | Full | AI writes complete HTML+CSS. Maximum flexibility. Use this unless the user explicitly chose token_saver. |
+| `token_saver` | ~1,500-3,000 per deck | Limited | AI sends a structured `slides[]` JSON array. Server assembles HTML from per-theme templates that cover all 11 slide types (cover, content, stats, list, steps, comparison, quote, code, cta, timeline, team). Lighter styling and less creative control. |
+
+### Picking a mode
+
+- **Default** when the user wants a polished, distinctive deck or has specific design notes.
+- **Token saver** when the user is iterating on content / wants speed / explicitly asks for it.
+- For small follow-up tweaks on either mode, prefer `edit_slides` over re-running `create_slides`.
+
+### token_saver JSON shape (high level)
+
+```json
+{
+  "mode": "token_saver",
+  "theme": "branded",
+  "orientation": "linkedin",
+  "slides": [
+    { "type": "cover", "headline": "Title", "subtitle": "Subtitle" },
+    { "type": "stats", "title": "Highlights", "cards": [{ "value": "10x", "label": "faster" }] },
+    { "type": "cta", "headline": "Follow", "action": "@ketan-chavan" }
+  ]
+}
+```
+
+Each slide type has its own required fields — see `discover_themes` output for the full schema.
+
+## edit_slides — partial edits
+
+| Operation | Required args | What it does |
+|-----------|---------------|--------------|
+| `replace_slide` | `slideIndex`, `payload`=`<div class="slide">...</div>` HTML string | Swaps one slide block, leaves the rest byte-identical. |
+| `patch_css` | `payload`=CSS rules string | Appends rules to the document's last `<style>` block. |
+| `swap_token` | `payload`=`{ "--var": "value" }` | Replaces a CSS variable's declared value (root-level token swap). |
+| `patch_class` | `slideIndex`, `payload`=`{ add?: "x", remove?: "y" }` | Toggles a class on a specific slide. |
+
+Always show the returned `htmlPath` as a code-preview artifact and STOP — wait for user confirmation before calling `render_slides`.
+
+## Quick-start presets
+
+`discover_themes` returns three presets via `presets[]` and a `usePreset` selector:
+
+- `linkedin-default` → branded theme, 4:5, PDF
+- `instagram-square` → terminal-editorial theme, 1:1, PNG+WebP
+- `pitch-deck-landscape` → pitch-deck theme, 16:9, PDF+PPTX
+
+If the user picks one, skip the per-question selectors and go straight to topic + outline confirm.
+
+## Persistent preferences
+
+`~/.slideshot/preferences.json` stores `lastTheme`, `lastOrientation`, `lastFormats`, `brandName`, `lastTokenMode`. Each successful `create_slides` and `render_slides` call updates them. The next session's `discover_themes` surfaces them as `default` on the matching selectors.
 
 ## Themes (8 variants)
 
@@ -66,7 +116,7 @@ Add to Claude Desktop config or `.cursor/mcp.json`.
 |---------|------|-------|
 | `generic` | Clean Minimal | Inter font, white cards, flexible layout |
 | `branded` | Ketan Slides | Space Mono monospace, teal/coral accents |
-| `instagram-carousel` | Instagram Carousel | Bold gradients, Poppins, vibrant |
+| `instagram-carousel` | Terminal Editorial | Inter 900 + JetBrains Mono, cream + rust, terminal cards |
 | `infographic` | Infographic | Data-heavy, DM Sans, stat cards |
 | `pitch-deck` | Pitch Deck | Professional, DM Sans, KPI cards |
 | `dark-modern` | Dark Modern | Neon accents, glassmorphism, Inter |

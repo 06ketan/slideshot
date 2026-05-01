@@ -546,233 +546,214 @@ export const SAMPLE_HTML: Record<string, string> = {
 
 
   // ─────────────────────────────────────────────────────
-  // INSTAGRAM CAROUSEL — "Bold Social" — Fitness Tips
-  // Colors: #FF6B35, #1A1A1A, #FFF8F0, #FFE0CC
-  // Font: Poppins
+  // INSTAGRAM CAROUSEL — "Terminal Editorial" — AI Engineering Breakdown
+  // Colors: #F5F0EA bg, #2A2018 ink, #C4562A rust accent, #C4A882 grid
+  // Font: Inter (900) + JetBrains Mono
   // ─────────────────────────────────────────────────────
   "instagram-carousel": `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     /*
     ===================================================
-    BOLD SOCIAL — FITNESS TIPS CAROUSEL
+    TERMINAL EDITORIAL — AI ENGINEERING BREAKDOWN
     ===================================================
     Colors:
-      Orange:      #FF6B35   — Primary accent, badges
-      Black:       #1A1A1A   — Headlines, strong text
-      Warm White:  #FFF8F0   — Slide background
-      Peach:       #FFE0CC   — Card backgrounds
-      Body Copy:   #666666   — Paragraphs
-      Muted:       #999999   — Captions
+      Cream:    #F5F0EA   — Slide background
+      Tan:      #C4A882   — Circuit-board grid overlay
+      Ink:      #2A2018   — Headlines, terminal bg
+      Rust:     #C4562A   — Section labels, accents, CTA borders
+      Body:     #2A2018 + Mono uppercase
+      Muted:    #888
 
     Typography:
-      Primary:  Poppins (Google Fonts)
-      Weights:  400, 600, 700, 800
+      Display:  Inter 900 (giant headlines, -2px tracking)
+      System:   JetBrains Mono 500-700 (everything else, tracked uppercase)
 
-    Layout:
-      Slide padding: 48px
-      Bold oversized numbers
-      Rounded badge pills
+    Anatomy:
+      top-bar (handle / page count)
+      section-label (rust, 5px tracking)
+      giant headline (sz-lg / sz-md / sz-sm)
+      body text (mono uppercase)
+      asterisk label
+      terminal card (with traffic dots)
+      content blocks: stat-line / mem-row / ops-row / tbar / stack-layer
+      watermark at bottom
     ===================================================
     */
     ${SLIDE_BASE}
 
-    .slide {
-      position: relative;
-      width: 540px;
-      height: 675px;
-      background: #FFF8F0;
-      padding: 48px;
-      overflow: hidden;
-      font-family: 'Poppins', sans-serif;
-      flex-shrink: 0;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
+    .slide{position:relative;width:540px;height:675px;overflow:hidden;font-family:'Inter',sans-serif;flex-shrink:0;background:#F5F0EA;padding:0;}
+    .slide::before{content:'';position:absolute;inset:0;z-index:0;opacity:.12;pointer-events:none;background:linear-gradient(90deg,#C4A882 1px,transparent 1px),linear-gradient(0deg,#C4A882 1px,transparent 1px);background-size:60px 60px;}
+    .slide::after{content:'';position:absolute;z-index:0;pointer-events:none;top:30px;right:40px;width:180px;height:120px;opacity:.08;border:1px solid #C4A882;border-top:none;border-left:none;}
+    .slide-inner{position:relative;z-index:1;width:100%;height:100%;display:flex;flex-direction:column;padding:28px 36px 20px;}
 
-    .badge {
-      display: inline-block;
-      background: #FF6B35;
-      color: #FFFFFF;
-      font-size: 11px;
-      font-weight: 700;
-      padding: 6px 16px;
-      border-radius: 20px;
-      margin-bottom: 24px;
-      width: fit-content;
-    }
+    .top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-shrink:0;}
+    .handle{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;letter-spacing:2px;color:#2A2018;text-transform:uppercase;opacity:.5;}
+    .page-ct{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;letter-spacing:1px;color:#2A2018;opacity:.4;}
 
-    .h1 {
-      font-size: 52px;
-      font-weight: 800;
-      color: #1A1A1A;
-      line-height: 1.05;
-      margin-bottom: 16px;
-    }
-    .h1 span { color: #FF6B35; }
+    .section-label{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;letter-spacing:5px;color:#C4562A;text-transform:uppercase;margin-bottom:8px;flex-shrink:0;}
 
-    .h2 {
-      font-size: 36px;
-      font-weight: 800;
-      color: #1A1A1A;
-      line-height: 1.1;
-      margin-bottom: 20px;
-    }
+    .giant{font-family:'Inter',sans-serif;font-weight:900;font-size:62px;line-height:.92;letter-spacing:-2px;color:#2A2018;margin-bottom:16px;flex-shrink:0;}
+    .giant .accent{color:#C4562A;}
+    .giant.sz-lg{font-size:72px;}.giant.sz-md{font-size:56px;}.giant.sz-sm{font-size:48px;}
 
-    .desc {
-      font-size: 14px;
-      color: #666666;
-      line-height: 1.7;
-      margin-bottom: 24px;
-    }
+    .body-text{font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:500;line-height:1.55;color:#2A2018;text-transform:uppercase;letter-spacing:.5px;margin-bottom:16px;flex-shrink:0;}
 
-    .tip-card {
-      background: #FFFFFF;
-      border: 2px solid #1A1A1A;
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 14px;
-    }
+    .label-row{display:flex;align-items:center;gap:6px;margin-bottom:8px;flex-shrink:0;}
+    .label-asterisk{font-size:16px;color:#C4562A;font-weight:700;line-height:1;}
+    .label-text{font-family:'Inter',sans-serif;font-size:12px;font-weight:600;color:#C4562A;font-style:italic;}
 
-    .tip-num {
-      font-size: 11px;
-      font-weight: 700;
-      color: #FF6B35;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 6px;
-    }
+    .terminal{background:#2A2018;border-radius:12px;overflow:hidden;flex-shrink:0;position:relative;}
+    .terminal-bar{display:flex;align-items:center;gap:6px;padding:10px 14px 0;}
+    .tdot{width:10px;height:10px;border-radius:50%;}
+    .tdot-r{background:#FF6059;}.tdot-y{background:#FEBC2E;}.tdot-g{background:#28CA42;}
+    .terminal-body{padding:12px 18px 16px;font-family:'JetBrains Mono',monospace;font-size:13px;color:#D4C4B0;line-height:1.65;}
+    .terminal-body .cmd{font-weight:700;color:#F0E8DD;}
+    .terminal-body .prompt{color:#C4562A;font-weight:700;}
+    .terminal-body .arrow{color:#888;margin-right:4px;}
+    .terminal-body .check{color:#28CA42;font-weight:700;}
+    .terminal-body .dim{opacity:.6;}
 
-    .tip-title {
-      font-size: 16px;
-      font-weight: 700;
-      color: #1A1A1A;
-      margin-bottom: 4px;
-    }
+    .watermark{text-align:center;margin-top:auto;padding-top:10px;flex-shrink:0;}
+    .watermark-text{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:600;letter-spacing:3px;color:#2A2018;opacity:.2;text-transform:uppercase;}
+    .bottom-bar{display:flex;justify-content:space-between;align-items:center;margin-top:8px;flex-shrink:0;}
 
-    .tip-desc {
-      font-size: 12px;
-      color: #666666;
-      line-height: 1.5;
-    }
+    .stat-line{display:flex;align-items:baseline;gap:10px;padding:6px 0;border-bottom:1px solid rgba(42,32,24,.08);}
+    .stat-line:last-child{border-bottom:none;}
+    .stat-num{font-family:'Inter',sans-serif;font-weight:900;font-size:28px;color:#C4562A;flex-shrink:0;min-width:70px;}
+    .stat-desc{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:500;color:#2A2018;text-transform:uppercase;letter-spacing:.3px;line-height:1.4;}
 
-    .stat-row {
-      display: flex;
-      gap: 12px;
-      margin-bottom: 16px;
-    }
+    .mem-row{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:6px;margin-bottom:4px;}
+    .mem-icon{font-size:16px;flex-shrink:0;}
+    .mem-name{font-size:10px;font-weight:800;margin-bottom:1px;}
+    .mem-desc{font-size:7.5px;line-height:1.35;opacity:.8;}
+    .mem-tag{margin-left:auto;font-size:7px;font-weight:700;padding:2px 6px;border-radius:3px;flex-shrink:0;letter-spacing:.5px;}
 
-    .stat-card {
-      flex: 1;
-      background: #FFE0CC;
-      border-radius: 12px;
-      padding: 20px;
-      text-align: center;
-    }
+    .ops-row{display:flex;gap:8px;margin-bottom:8px;}
+    .ops-card{flex:1;border-radius:8px;padding:10px 8px;text-align:center;border:1.5px solid;}
+    .ops-card-icon{font-size:18px;margin-bottom:3px;}
+    .ops-card-name{font-size:10px;font-weight:800;margin-bottom:2px;}
+    .ops-card-desc{font-size:7.5px;line-height:1.35;}
 
-    .stat-val {
-      font-size: 32px;
-      font-weight: 800;
-      color: #1A1A1A;
-    }
+    .stack-layer{display:flex;align-items:center;gap:10px;padding:9px 12px;border:1.5px solid #2A2018;border-bottom:none;}
+    .stack-layer:first-child{border-radius:8px 8px 0 0;}
+    .stack-layer:last-child{border-bottom:1.5px solid #2A2018;border-radius:0 0 8px 8px;}
+    .stack-num{font-family:'Inter',sans-serif;font-weight:900;font-size:22px;color:#C4562A;width:20px;flex-shrink:0;}
+    .stack-name{font-size:10px;font-weight:800;color:#2A2018;}
+    .stack-desc{font-size:7.5px;color:#888;line-height:1.3;}
+    .stack-tag{margin-left:auto;font-size:6.5px;font-weight:700;padding:2px 6px;border-radius:3px;flex-shrink:0;letter-spacing:.5px;text-transform:uppercase;}
 
-    .stat-lbl {
-      font-size: 10px;
-      color: #666666;
-      margin-top: 4px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .num-bg {
-      position: absolute;
-      bottom: 32px;
-      right: 40px;
-      font-size: 80px;
-      font-weight: 800;
-      color: #FF6B35;
-      opacity: 0.1;
-      line-height: 1;
-    }
-
-    .cta {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: #FF6B35;
-      color: #FFFFFF;
-      font-size: 14px;
-      font-weight: 700;
-      padding: 14px 28px;
-      border-radius: 8px;
-      width: fit-content;
-    }
+    .cta-center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;}
+    .cta-giant{font-family:'Inter',sans-serif;font-weight:900;font-size:68px;line-height:.92;letter-spacing:-2px;color:#2A2018;margin-bottom:16px;}
+    .cta-giant .accent{color:#C4562A;}
+    .cta-body{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;color:#2A2018;text-transform:uppercase;letter-spacing:.5px;line-height:1.6;max-width:380px;margin-bottom:24px;text-align:center;}
+    .cta-btn{display:inline-block;border:2px solid #C4562A;border-radius:8px;padding:14px 36px;font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;letter-spacing:4px;color:#C4562A;text-transform:uppercase;margin-bottom:16px;}
+    .cta-follow{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:#2A2018;text-transform:uppercase;letter-spacing:1px;}
+    .cta-follow .accent{color:#C4562A;}
   </style>
 </head>
 <body>
 
-  <div class="slide">
-    <div class="badge">FITNESS TIPS</div>
-    <div class="h1">5 Habits<br>That<br><span>Changed</span><br>Everything</div>
-    <p class="desc">Small daily actions that compound into massive results. No gym required — just consistency.</p>
-    <div class="cta">Swipe to learn →</div>
-    <div class="num-bg">01</div>
-  </div>
+  <!-- S01: COVER -->
+  <div class="slide"><div class="slide-inner">
+    <div class="top-bar"><div class="handle">@slideshot</div><div class="page-ct">01 / 06</div></div>
+    <div class="section-label">Claude Code</div>
+    <div class="giant sz-lg">KARPATHY +<br>OBSIDIAN =<br><span class="accent">71.5X LESS<br>TOKENS</span></div>
+    <div class="body-text">Here's how to set it up in 3 steps using Andrej Karpathy's system.</div>
+    <div class="label-row"><div class="label-asterisk">*</div><div class="label-text">The numbers:</div></div>
+    <div class="terminal">
+      <div class="terminal-bar"><div class="tdot tdot-r"></div><div class="tdot tdot-y"></div><div class="tdot tdot-g"></div></div>
+      <div class="terminal-body">
+        <span class="prompt">$ </span><span class="cmd">claude --usage</span><br>
+        <span class="arrow">&rarr;</span> before: 20,000 tokens/session<br>
+        <span class="arrow">&rarr;</span> after: 280 tokens/session<br>
+        <span class="check">&check;</span> 71.5x reduction
+      </div>
+    </div>
+    <div class="watermark"><div class="watermark-text">@slideshot</div></div>
+    <div class="bottom-bar"></div>
+  </div></div>
 
-  <div class="slide">
-    <div class="badge">DAILY HABITS</div>
-    <div class="h2">Morning<br>Routine</div>
-    <div class="tip-card">
-      <div class="tip-num">Habit 01</div>
-      <div class="tip-title">10-Min Walk Before Coffee</div>
-      <div class="tip-desc">Sunlight exposure within 30 minutes of waking regulates your circadian rhythm and boosts cortisol naturally.</div>
+  <!-- S02: PROBLEM -->
+  <div class="slide"><div class="slide-inner">
+    <div class="top-bar"><div class="handle">@slideshot</div><div class="page-ct">02 / 06</div></div>
+    <div class="section-label">The Problem</div>
+    <div class="giant">CLAUDE<br><span class="accent">RE-READS<br>EVERYTHING</span></div>
+    <div class="body-text">Every new chat re-reads all your files from scratch &mdash; eating up your usage before you start.</div>
+    <div class="label-row"><div class="label-asterisk">*</div><div class="label-text">What it looks like:</div></div>
+    <div class="terminal">
+      <div class="terminal-bar"><div class="tdot tdot-r"></div><div class="tdot tdot-y"></div><div class="tdot tdot-g"></div></div>
+      <div class="terminal-body">
+        <span class="prompt">$ </span><span class="cmd">new session started</span><br>
+        <span class="arrow">&rarr;</span> reading file 1/37...<br>
+        <span class="arrow">&rarr;</span> reading file 2/37...<br>
+        <span class="arrow">&rarr;</span> <span class="dim">20,000 tokens gone. haven't asked anything yet.</span>
+      </div>
     </div>
-    <div class="tip-card">
-      <div class="tip-num">Habit 02</div>
-      <div class="tip-title">Cold Water First</div>
-      <div class="tip-desc">Hydrate before caffeine. Your body loses ~1L of water overnight through breathing alone.</div>
-    </div>
-    <div class="num-bg">02</div>
-  </div>
+    <div class="watermark"><div class="watermark-text">@slideshot</div></div>
+    <div class="bottom-bar"></div>
+  </div></div>
 
-  <div class="slide">
-    <div class="badge">THE SCIENCE</div>
-    <div class="h2">Why It<br>Works</div>
-    <div class="stat-row">
-      <div class="stat-card">
-        <div class="stat-val">73%</div>
-        <div class="stat-lbl">Better Sleep</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-val">2.4x</div>
-        <div class="stat-lbl">More Energy</div>
-      </div>
+  <!-- S03: REAL COST -->
+  <div class="slide"><div class="slide-inner">
+    <div class="top-bar"><div class="handle">@slideshot</div><div class="page-ct">03 / 06</div></div>
+    <div class="section-label">The Real Cost</div>
+    <div class="giant sz-md">200K TOKENS<br>OF <span class="accent">RAM.</span><br><span class="accent">NO DISK.</span></div>
+    <div class="body-text">"The LLM is an amnesiac reasoner in a finite window." &mdash; Karpathy</div>
+    <div style="margin-bottom:8px;">
+      <div class="stat-line"><div class="stat-num">~40%</div><div class="stat-desc">of AI coding errors are context failures, not capability failures</div></div>
+      <div class="stat-line"><div class="stat-num">O(n&sup2;)</div><div class="stat-desc">attention cost &mdash; longer context does NOT mean better</div></div>
+      <div class="stat-line"><div class="stat-num">0</div><div class="stat-desc">knowledge persists between sessions. every chat starts from zero.</div></div>
     </div>
-    <div class="stat-row">
-      <div class="stat-card">
-        <div class="stat-val">45%</div>
-        <div class="stat-lbl">Less Stress</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-val">8wk</div>
-        <div class="stat-lbl">Visible Results</div>
-      </div>
-    </div>
-    <p class="desc" style="margin-bottom:0;font-size:12px">Based on 12-month behavioral study across 4,200 participants aged 25–45.</p>
-    <div class="num-bg">03</div>
-  </div>
+    <div class="watermark"><div class="watermark-text">@slideshot</div></div>
+    <div class="bottom-bar"></div>
+  </div></div>
 
-  <div class="slide" style="text-align:center;align-items:center">
-    <div class="badge">START TODAY</div>
-    <div class="h1">Your<br><span>Turn</span></div>
-    <p class="desc">Pick one habit. Do it for 7 days.<br>Then add the next one.</p>
-    <div class="cta">Save this post ♡</div>
-    <div class="num-bg">04</div>
-  </div>
+  <!-- S04: MEMORY TYPES -->
+  <div class="slide"><div class="slide-inner">
+    <div class="top-bar"><div class="handle">@slideshot</div><div class="page-ct">04 / 06</div></div>
+    <div class="section-label">Memory Types</div>
+    <div class="giant sz-md">4 TYPES.<br><span class="accent">YOU USE<br>ONE.</span></div>
+    <div style="margin-bottom:8px;">
+      <div class="mem-row" style="background:#F0EEFF"><div class="mem-icon" style="color:#5540AA">&curren;</div><div style="flex:1"><div class="mem-name" style="color:#5540AA">In-Context (RAM)</div><div class="mem-desc" style="color:#665599">Tokens loaded now. Wiped at session end.</div></div><div class="mem-tag" style="background:#E0D8FF;color:#5540AA">VOLATILE</div></div>
+      <div class="mem-row" style="background:#E0F5EE"><div class="mem-icon" style="color:#006644">&equiv;</div><div style="flex:1"><div class="mem-name" style="color:#006644">External Storage (Disk)</div><div class="mem-desc" style="color:#336655">Files, wikis, DBs. Persistent. Must be loaded.</div></div><div class="mem-tag" style="background:#C8FFEE;color:#006644">PERSISTENT</div></div>
+      <div class="mem-row" style="background:#FFF5E0"><div class="mem-icon" style="color:#885500">&infin;</div><div style="flex:1"><div class="mem-name" style="color:#885500">In-Weights (Instinct)</div><div class="mem-desc" style="color:#665533">Baked in training. Knows patterns &mdash; not your project.</div></div><div class="mem-tag" style="background:#FFEDD8;color:#885500">GENERAL</div></div>
+      <div class="mem-row" style="background:#F5F5F5"><div class="mem-icon" style="color:#555">&raquo;</div><div style="flex:1"><div class="mem-name" style="color:#555">KV Cache (Recall)</div><div class="mem-desc" style="color:#777">Stable CLAUDE.md = prefix cache = free reuse.</div></div><div class="mem-tag" style="background:#EEE;color:#555">FREE</div></div>
+    </div>
+    <div class="watermark"><div class="watermark-text">@slideshot</div></div>
+    <div class="bottom-bar"></div>
+  </div></div>
+
+  <!-- S05: 5-LAYER STACK -->
+  <div class="slide"><div class="slide-inner">
+    <div class="top-bar"><div class="handle">@slideshot</div><div class="page-ct">05 / 06</div></div>
+    <div class="section-label">The Stack</div>
+    <div class="giant sz-md">THE COMPLETE<br><span class="accent">5-LAYER<br>STACK</span></div>
+    <div style="margin-bottom:8px;">
+      <div class="stack-layer" style="background:#FFF5E0"><div class="stack-num">5</div><div style="flex:1"><div class="stack-name">Karpathy's LLM Wiki Theory</div><div class="stack-desc">LLM = OS, context = RAM, files = disk</div></div><div class="stack-tag" style="background:#FFEDD8;color:#885500">THEORY</div></div>
+      <div class="stack-layer" style="background:#F0EEFF"><div class="stack-num">4</div><div style="flex:1"><div class="stack-name">Graphify &mdash; Knowledge Graph</div><div class="stack-desc">raw files &rarr; structured graph &middot; 71.5x fewer tokens</div></div><div class="stack-tag" style="background:#E0D8FF;color:#5540AA">COMPILE</div></div>
+      <div class="stack-layer" style="background:#E8F0F8"><div class="stack-num">3</div><div style="flex:1"><div class="stack-name">Obsidian &mdash; Visual IDE</div><div class="stack-desc">Navigate graph, annotate decisions, MCP</div></div><div class="stack-tag" style="background:#D0E8FF;color:#2255AA">VISUALIZE</div></div>
+      <div class="stack-layer" style="background:#E0F5EE"><div class="stack-num">2</div><div style="flex:1"><div class="stack-name">Acontext &mdash; Skill Memory</div><div class="stack-desc">Auto-capture learnings &rarr; load next session</div></div><div class="stack-tag" style="background:#C8FFEE;color:#006644">PERSIST</div></div>
+      <div class="stack-layer" style="background:#FFE8E8"><div class="stack-num">1</div><div style="flex:1"><div class="stack-name">Token Efficiency Rules</div><div class="stack-desc">Front-load, compress, hierarchical load</div></div><div class="stack-tag" style="background:#FFD8D8;color:#AA3333">OPTIMIZE</div></div>
+    </div>
+    <div class="watermark"><div class="watermark-text">@slideshot</div></div>
+    <div class="bottom-bar"></div>
+  </div></div>
+
+  <!-- S06: CTA -->
+  <div class="slide"><div class="slide-inner">
+    <div class="top-bar"><div class="handle">@slideshot</div><div class="page-ct">06 / 06</div></div>
+    <div class="cta-center">
+      <div class="cta-giant">IF THIS<br><span class="accent">HELPED,</span><br>SHARE IT</div>
+      <div class="cta-body">Save this carousel. Send it to someone burning tokens. Follow for more AI engineering breakdowns.</div>
+      <div class="cta-btn">FOLLOW + SHARE</div>
+      <div class="cta-follow" style="margin-top:12px;">Follow <span class="accent">@slideshot</span></div>
+    </div>
+    <div class="bottom-bar"></div>
+  </div></div>
 
 </body>
 </html>`,
@@ -2209,6 +2190,154 @@ export const SAMPLE_HTML: Record<string, string> = {
     </div>
   </div>
 
+</body>
+</html>`,
+
+  // ─────────────────────────────────────────────────────
+  // ACADEMIC POSTER — IBM Plex Serif + Mono — IEEE/ACM aesthetic
+  // ─────────────────────────────────────────────────────
+  "academic-poster": `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    ${SLIDE_BASE}
+    .slide{position:relative;width:540px;height:675px;padding:36px 40px;overflow:hidden;font-family:'IBM Plex Sans',sans-serif;flex-shrink:0;background:#FBF8F1;color:#0E1B33;border-top:6px double #0E1B33;}
+    .slide::before{content:'';position:absolute;top:0;right:0;width:120px;height:6px;background:#A22E2E;}
+    .slide h1{font-family:'IBM Plex Serif',serif;font-size:34px;font-weight:700;line-height:1.12;letter-spacing:-0.5px;margin-bottom:10px;color:#0E1B33;}
+    .slide h2{font-family:'IBM Plex Serif',serif;font-size:22px;font-weight:600;line-height:1.2;margin-bottom:10px;color:#0E1B33;}
+    .slide p{font-family:'IBM Plex Serif',serif;font-size:13px;line-height:1.6;color:#1F2C44;margin-bottom:10px;}
+    .label{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.18em;color:#A22E2E;text-transform:uppercase;margin-bottom:14px;}
+    .poster-rule{height:1px;background:#0E1B33;margin:14px 0;opacity:.25;}
+    .abstract{background:#F2EBDC;border-left:3px solid #A22E2E;padding:12px 14px;font-family:'IBM Plex Serif',serif;font-size:12px;line-height:1.6;color:#0E1B33;margin:12px 0;}
+    .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0;}
+    .stat-card{background:#fff;border:1px solid #0E1B33;padding:14px 16px;}
+    .stat-card .num{font-family:'IBM Plex Serif',serif;font-size:30px;font-weight:700;color:#0E1B33;line-height:1;}
+    .stat-card .slbl{font-family:'IBM Plex Mono',monospace;font-size:9px;color:#5C6781;margin-top:6px;letter-spacing:.1em;text-transform:uppercase;}
+    .poster-foot{position:absolute;bottom:14px;left:40px;right:40px;display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:9px;color:#5C6781;letter-spacing:.12em;text-transform:uppercase;}
+  </style>
+</head>
+<body>
+  <div class="slide">
+    <div class="label">Working Paper · 2026</div>
+    <h1>On the Diminishing Returns of Scaling Pretrained Transformers</h1>
+    <p style="font-style:italic;">A meta-analysis of 142 published runs from 2020-2025</p>
+    <div class="poster-rule"></div>
+    <div class="abstract">We examine compute-vs-loss curves across 142 runs and find a phase transition near 10²² FLOPs after which marginal gains decline by 31%.</div>
+    <div class="poster-foot"><span>SLIDESHOT POSTER SERIES</span><span>FIG. 1 / 2</span></div>
+  </div>
+  <div class="slide">
+    <div class="label">Results · Selected Metrics</div>
+    <h2>Headline Findings</h2>
+    <div class="poster-rule"></div>
+    <div class="stat-grid">
+      <div class="stat-card"><div class="num">142</div><div class="slbl">Studies Reviewed</div></div>
+      <div class="stat-card"><div class="num">31%</div><div class="slbl">Marginal Drop-off</div></div>
+      <div class="stat-card"><div class="num">10²²</div><div class="slbl">FLOPs Threshold</div></div>
+      <div class="stat-card"><div class="num">0.87</div><div class="slbl">Pearson Correlation</div></div>
+    </div>
+    <div class="poster-foot"><span>SLIDESHOT POSTER SERIES</span><span>FIG. 2 / 2</span></div>
+  </div>
+</body>
+</html>`,
+
+  // ─────────────────────────────────────────────────────
+  // CLINICAL MEDICAL — Source Sans + Serif — Medical chart aesthetic
+  // ─────────────────────────────────────────────────────
+  "clinical-medical": `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700&family=Source+Serif+4:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    ${SLIDE_BASE}
+    .slide{position:relative;width:540px;height:675px;padding:32px 36px;overflow:hidden;font-family:'Source Sans 3',sans-serif;flex-shrink:0;background:#FAFCFD;color:#0F2D3D;border-top:4px solid #0FA3A8;}
+    .slide::after{content:'';position:absolute;top:0;left:0;right:0;height:24px;background:repeating-linear-gradient(90deg,transparent 0,transparent 9px,rgba(15,163,168,.18) 9px,rgba(15,163,168,.18) 10px);}
+    .med-header{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:1px solid #D2E3E8;padding-bottom:8px;margin-bottom:14px;}
+    .med-id{font-family:'JetBrains Mono',monospace;font-size:9px;color:#5A7488;letter-spacing:.16em;text-transform:uppercase;}
+    .med-status{font-family:'JetBrains Mono',monospace;font-size:9px;color:#0FA3A8;letter-spacing:.16em;text-transform:uppercase;font-weight:600;}
+    .slide h1{font-family:'Source Serif 4',serif;font-size:32px;font-weight:700;color:#0F2D3D;line-height:1.12;margin-bottom:10px;}
+    .slide h2{font-family:'Source Serif 4',serif;font-size:22px;font-weight:600;color:#0F2D3D;line-height:1.2;margin-bottom:10px;}
+    .slide p{font-size:13px;line-height:1.6;color:#385468;margin-bottom:8px;}
+    .label{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:600;letter-spacing:.2em;color:#0FA3A8;text-transform:uppercase;margin-bottom:12px;}
+    .vital-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0;}
+    .vital-card{background:#fff;border:1px solid #D2E3E8;border-left:3px solid #0FA3A8;padding:12px 14px;}
+    .vital-card.alert{border-left-color:#D8484F;}
+    .vital-card .num{font-family:'Source Serif 4',serif;font-size:28px;font-weight:700;color:#0F2D3D;line-height:1;}
+    .vital-card.alert .num{color:#D8484F;}
+    .vital-card .slbl{font-family:'JetBrains Mono',monospace;font-size:9px;color:#5A7488;margin-top:4px;letter-spacing:.1em;text-transform:uppercase;}
+  </style>
+</head>
+<body>
+  <div class="slide">
+    <div class="med-header"><div class="med-id">Record · Page 1/2</div><div class="med-status">INTAKE FORM</div></div>
+    <div class="label">Patient Brief</div>
+    <h1>Hypertension Stage II — Differential Diagnosis</h1>
+    <p>Cross-referenced against 32 comorbidity markers and lipid panels. Recommend immediate lifestyle intervention; monitor BP daily for 14 days.</p>
+    <div class="vital-grid">
+      <div class="vital-card alert"><div class="num">156/98</div><div class="slbl">Blood Pressure</div></div>
+      <div class="vital-card"><div class="num">72</div><div class="slbl">Heart Rate · BPM</div></div>
+      <div class="vital-card"><div class="num">98.4</div><div class="slbl">Temperature · °F</div></div>
+      <div class="vital-card alert"><div class="num">214</div><div class="slbl">LDL · mg/dL</div></div>
+    </div>
+  </div>
+  <div class="slide">
+    <div class="med-header"><div class="med-id">Record · Page 2/2</div><div class="med-status">PROTOCOL</div></div>
+    <div class="label">Care Plan · 14-Day Window</div>
+    <h2>Recommended Course</h2>
+    <p>Initiate ACE inhibitor (Lisinopril 10mg) and dietary sodium restriction. Re-evaluate at day 14; escalate if systolic remains > 140 mmHg.</p>
+  </div>
+</body>
+</html>`,
+
+  // ─────────────────────────────────────────────────────
+  // SKETCH HANDDRAWN — Caveat + Architects Daughter — whiteboard feel
+  // ─────────────────────────────────────────────────────
+  "sketch-handdrawn": `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Architects+Daughter&family=Patrick+Hand&display=swap" rel="stylesheet">
+  <style>
+    ${SLIDE_BASE}
+    .slide{position:relative;width:540px;height:675px;padding:36px 40px;overflow:hidden;font-family:'Patrick Hand',cursive;flex-shrink:0;background:#FFFEF7;color:#1F1F1F;}
+    .slide::before{content:'';position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(circle at 1px 1px,rgba(0,0,0,.08) 1px,transparent 0);background-size:18px 18px;opacity:.5;}
+    .slide::after{content:'';position:absolute;inset:14px;border:2px dashed #1F1F1F;pointer-events:none;border-radius:4px;}
+    .slide-inner{position:relative;z-index:1;height:100%;display:flex;flex-direction:column;}
+    .slide h1{font-family:'Caveat',cursive;font-size:48px;font-weight:700;line-height:1;margin-bottom:14px;transform:rotate(-1deg);}
+    .slide h2{font-family:'Caveat',cursive;font-size:34px;font-weight:600;line-height:1.05;margin-bottom:10px;transform:rotate(-0.5deg);}
+    .slide p{font-family:'Architects Daughter',cursive;font-size:14px;line-height:1.65;color:#333;margin-bottom:10px;}
+    .label{font-family:'Architects Daughter',cursive;font-size:13px;color:#D9534F;letter-spacing:.05em;margin-bottom:14px;text-transform:uppercase;font-weight:600;}
+    .label::before{content:'~ ';}.label::after{content:' ~';}
+    .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0;}
+    .stat-card{background:#FFFCEE;border:2px solid #1F1F1F;padding:14px 16px;border-radius:6px;transform:rotate(-0.4deg);}
+    .stat-card:nth-child(2n){transform:rotate(0.6deg);}
+    .stat-card .num{font-family:'Caveat',cursive;font-size:38px;font-weight:700;line-height:1;}
+    .stat-card .slbl{font-family:'Architects Daughter',cursive;font-size:11px;color:#666;margin-top:4px;}
+    .badge{display:inline-block;padding:5px 12px;font-family:'Architects Daughter',cursive;font-size:11px;font-weight:600;background:#FFF6CC;color:#1F1F1F;border:2px solid #1F1F1F;border-radius:14px;margin:3px;transform:rotate(-1deg);}
+  </style>
+</head>
+<body>
+  <div class="slide"><div class="slide-inner">
+    <div class="label">Sprint Retro · Week 14</div>
+    <h1>What we shipped, what slipped</h1>
+    <p>We hit 4 of 6 commitments. Here's what we learned.</p>
+    <div class="stat-grid">
+      <div class="stat-card"><div class="num">4/6</div><div class="slbl">commits delivered</div></div>
+      <div class="stat-card"><div class="num">12d</div><div class="slbl">cycle time (-3d)</div></div>
+    </div>
+    <div style="margin-top:14px;">
+      <span class="badge">paid-tier</span>
+      <span class="badge">migrations</span>
+      <span class="badge">blocked-on-design</span>
+    </div>
+  </div></div>
+  <div class="slide"><div class="slide-inner">
+    <div class="label">Key Takeaway</div>
+    <h2>Smaller PRs ship 2x faster.</h2>
+    <p>Every PR &gt; 400 LoC took at least 2 review cycles this sprint. Cap at 200.</p>
+  </div></div>
 </body>
 </html>`,
 

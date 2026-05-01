@@ -7,63 +7,7 @@ import GalleryCard from "@/components/GalleryCard";
 import CodePreviewModal from "@/components/CodePreviewModal";
 import { SAMPLE_HTML } from "@/lib/sample-html";
 import ScrollReveal from "@/components/ScrollReveal";
-
-type VariantKey =
-  | "generic"
-  | "branded"
-  | "instagram-carousel"
-  | "infographic"
-  | "pitch-deck"
-  | "dark-modern"
-  | "editorial"
-  | "browser-shell";
-
-const GALLERY_ITEMS: Record<
-  VariantKey,
-  { name: string; style: string; palette: string[]; featured?: boolean }
-> = {
-  "browser-shell": {
-    name: "Browser Shell",
-    style: "Bebas Neue + DM Sans, yellow/navy browser chrome, versatile layout",
-    palette: ["#FFD233", "#12122A", "#0A0A0A"],
-    featured: true,
-  },
-  generic: {
-    name: "Clean Minimal",
-    style: "Inter, white backgrounds, black typography, product launch",
-    palette: ["#FFFFFF", "#1A1A1A", "#F5F5F5"],
-  },
-  branded: {
-    name: "Monospace",
-    style: "Space Mono, teal accents, corner decorations, developer portfolio",
-    palette: ["#F0EDE7", "#00B894", "#1A1A1A"],
-  },
-  "instagram-carousel": {
-    name: "Bold Social",
-    style: "Poppins, warm orange, rounded cards, fitness tips",
-    palette: ["#FF6B35", "#1A1A1A", "#FFF8F0"],
-  },
-  infographic: {
-    name: "Data Cards",
-    style: "DM Sans, green/amber, stat grids, startup annual report",
-    palette: ["#10B981", "#F59E0B", "#1A1A1A"],
-  },
-  "pitch-deck": {
-    name: "Corporate",
-    style: "Inter, dark headers, red accents, company pitch deck",
-    palette: ["#0A0A0A", "#FF4444", "#E8E8E8"],
-  },
-  "dark-modern": {
-    name: "Dark Neon",
-    style: "Inter, coral/gold glows on dark, music event promo",
-    palette: ["#0A0A0F", "#FF6B6B", "#FFC107"],
-  },
-  editorial: {
-    name: "Editorial",
-    style: "Playfair Display, gold accents, warm tones, recipe feature",
-    palette: ["#FAF8F5", "#C9963B", "#2C2824"],
-  },
-};
+import { GALLERY_ITEMS, VARIANT_ORDER, type VariantKey } from "@/lib/gallery-themes";
 
 export default function GalleryPage() {
   const [selectedVariant, setSelectedVariant] = useState<VariantKey | null>(null);
@@ -128,7 +72,7 @@ export default function GalleryPage() {
 
         <section className="max-w-7xl mx-auto px-6 py-12">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {(Object.keys(GALLERY_ITEMS) as VariantKey[]).map((key) => {
+            {VARIANT_ORDER.map((key) => {
               const item = GALLERY_ITEMS[key];
               return (
                 <GalleryCard

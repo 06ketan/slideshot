@@ -48,7 +48,7 @@ export function getSlotSchema(theme: string): SlotSchema {
 export function assembleHtml(input: AssembleInput): string {
   const themeCSS = getThemeCSS(input.theme);
   if (!themeCSS) {
-    throw new Error(`Unknown theme "${input.theme}". Available: generic, branded, instagram-carousel, infographic, pitch-deck, dark-modern, editorial, browser-shell`);
+    throw new Error(`Unknown theme "${input.theme}". Available: generic, branded, instagram-carousel, infographic, pitch-deck, dark-modern, editorial, browser-shell, academic-poster, clinical-medical, sketch-handdrawn`);
   }
 
   const { width, height } = input.orientation === "landscape"

@@ -10,11 +10,15 @@ export type PromptVariant =
   | "pitch-deck"
   | "dark-modern"
   | "editorial"
-  | "browser-shell";
+  | "browser-shell"
+  | "academic-poster"
+  | "clinical-medical"
+  | "sketch-handdrawn";
 
 export const PROMPT_VARIANTS: PromptVariant[] = [
   "generic", "branded", "instagram-carousel", "infographic",
   "pitch-deck", "dark-modern", "editorial", "browser-shell",
+  "academic-poster", "clinical-medical", "sketch-handdrawn",
 ];
 
 const GITHUB_RAW_BASE =

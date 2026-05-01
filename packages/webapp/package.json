@@ -1,6 +1,6 @@
 {
   "name": "slideshot-webapp",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -14,6 +14,7 @@
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
     "jszip": "^3.10.1",
+    "pptxgenjs": "^4.0.1",
     "lucide-react": "^0.577.0",
     "next": "16.1.6",
     "puppeteer-core": "^24.39.1",

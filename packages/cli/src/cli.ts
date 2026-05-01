@@ -4,10 +4,15 @@ import { Command } from "commander";
 import { renderSlides, type ImageFormat } from "./index.js";
 import path from "node:path";
 import fs from "node:fs";
+import { fileURLToPath } from "node:url";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const pkg = JSON.parse(fs.readFileSync(path.resolve(__dirname, "../package.json"), "utf-8"));
 
 const VARIANTS = [
   "generic", "branded", "instagram-carousel", "infographic",
   "pitch-deck", "dark-modern", "editorial", "browser-shell",
+  "academic-poster", "clinical-medical", "sketch-handdrawn",
 ] as const;
 
 function promptsDir(): string {
@@ -30,7 +35,7 @@ const program = new Command();
 program
   .name("slideshot")
   .description("Convert HTML slides to high-res PNG, WebP, PDF, and PPTX")
-  .version("2.5.0");
+  .version(pkg.version);
 
 program
   .command("prompt [variant]")

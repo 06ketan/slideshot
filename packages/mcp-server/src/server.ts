@@ -1,11 +1,18 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { DiscoverInputSchema, CreateInputSchema, RenderInputSchema } from "./schema.js";
-import { handleDiscover } from "./tools/discover.js";
+import {
+  DiscoverInputSchema,
+  CreateInputSchema,
+  RenderInputSchema,
+  ListThemesInputSchema,
+  EditInputSchema,
+} from "./schema.js";
+import { handleDiscover, handleListThemes } from "./tools/discover.js";
 import { handleCreate } from "./tools/create.js";
 import { handleRender } from "./tools/render.js";
 import { handleHealthCheck } from "./tools/health.js";
+import { handleEdit } from "./tools/edit.js";
 
-export const VERSION = "4.1.0";
+export const VERSION = "4.3.0";
 
 export function createServer(): McpServer {
   const server = new McpServer({ name: "slideshot", version: VERSION });
@@ -28,10 +35,26 @@ export function createServer(): McpServer {
 
   server.tool(
     "render_slides",
-    `Final render to PDF/WebP/PNG. NEVER call render_slides in the same turn as create_slides. When the user provides an existing HTML file path, pass it as htmlPath and call this tool directly — no discover_themes or create_slides needed. For the full slide-creation workflow, REQUIRES both discover_themes AND create_slides first, and ONLY call AFTER user confirms the preview. Returns file paths on disk.`,
+    `Final render to PDF/WebP/PNG/PPTX. Accepts html string OR htmlPath. Supports width, height, selector, scale, webpQuality, orientation, pptxMode, pptxFilename, slideRange. NEVER call render_slides in the same turn as create_slides. When the user provides an existing HTML file path, pass it as htmlPath and call this tool directly — no discover_themes or create_slides needed. For the full slide-creation workflow, REQUIRES both discover_themes AND create_slides first, and ONLY call AFTER user confirms the preview. Returns file paths on disk.`,
     RenderInputSchema,
     { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     async (args) => handleRender(args),
+  );
+
+  server.tool(
+    "list_themes",
+    `Idempotent read-only listing of all available themes (8+). Unlike discover_themes, this does NOT start a slide-creation workflow — call it any time the user asks "what themes are there?" mid-conversation. Returns the same tiered theme catalog (primary/secondary). Models MUST present every theme returned, never truncate.`,
+    ListThemesInputSchema,
+    { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
+    async () => handleListThemes(),
+  );
+
+  server.tool(
+    "edit_slides",
+    `Token-efficient partial edits on a previously-generated HTML deck. Use this INSTEAD of regenerating the whole deck for small changes — it saves 60-90% tokens vs a full rewrite. Operations: replace_slide (swap one slide block by 1-indexed slideIndex), patch_css (append CSS rules to <style>), swap_token (replace a CSS variable's value, e.g. {"--coral": "#FF0000"}), patch_class (add/remove a class on a specific slide, e.g. {"add": "dark"}). Reads from cache or htmlPath; saves the updated HTML and returns the new htmlPath. After editing, show the htmlPath as a preview artifact and STOP — do NOT call render_slides until the user confirms.`,
+    EditInputSchema,
+    { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: false },
+    async (args) => handleEdit(args),
   );
 
   server.tool(

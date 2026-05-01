@@ -1,6 +1,6 @@
 {
   "name": "slideshot",
-  "version": "2.6.0",
+  "version": "2.7.0",
   "description": "Convert HTML slides to high-res PNG, WebP, PDF, and PPTX — CLI + library",
   "type": "module",
   "license": "MIT",
@@ -47,7 +47,8 @@
   "bugs": "https://github.com/06ketan/slideshot/issues",
   "scripts": {
     "build": "tsc && chmod +x dist/cli.js && rm -rf ./prompts && cp -r ../../prompts ./prompts",
-    "dev": "tsc --watch"
+    "dev": "tsc --watch",
+    "test:pdf-pages": "node test/pdf-pages.test.mjs"
   },
   "dependencies": {
     "commander": "^13.0.0",

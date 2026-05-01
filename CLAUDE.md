@@ -57,11 +57,11 @@ No test suite exists in this project.
 - **Production rendering** uses `puppeteer-core` + `@sparticuz/chromium` for Vercel deployment; dev uses full Puppeteer
 - `next.config.ts` configures file tracing to include the Chromium binary for the render API route
 
-### MCP Server (`packages/mcp-server/src/`) — v4.0.0
+### MCP Server (`packages/mcp-server/src/`) — v4.2.0
 - `server.ts` — MCP server factory exposing 4 tools:
-  - `discover_themes` — returns themes, orientation presets, token modes, format options
+  - `discover_themes` — returns themes, orientation presets, token modes, format options (including PPTX)
   - `create_slides` — two modes: `default` (AI writes full HTML) or `token_saver` (AI sends JSON, server assembles HTML)
-  - `render_slides` — renders HTML to PDF/WebP/PNG via Puppeteer
+  - `render_slides` — renders HTML to PDF/WebP/PNG/PPTX via Puppeteer. Accepts html string or htmlPath, plus selector, width, height, scale, webpQuality, orientation, pptxMode, pptxFilename, slideRange.
   - `health_check` — Puppeteer/Chromium diagnostics
 - `schema.ts` — Zod validation schemas + `ORIENTATION_PRESETS` (portrait, landscape, linkedin, instagram, a4, custom)
 - `templates/` — theme CSS, slide renderers, assembler for token_saver mode

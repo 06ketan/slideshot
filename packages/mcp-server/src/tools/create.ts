@@ -1,26 +1,10 @@
-import fs from "node:fs";
-import path from "node:path";
-import { defaultOutDir } from "../helpers.js";
-import { cacheHtml, isDiscoveryDone, markCreateDone } from "../cache.js";
+import { isDiscoveryDone } from "../cache.js";
+import { saveHtml } from "../save.js";
 import { assembleHtml } from "../templates/assembler.js";
 import type { SlideData, AssembleInput } from "../templates/types.js";
 import { loadPrompt, type PromptVariant } from "../prompts.js";
 import { ORIENTATION_PRESETS } from "../schema.js";
-
-function ensureOutDir(): string {
-  const dir = defaultOutDir();
-  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-  return dir;
-}
-
-function saveHtml(html: string): string {
-  const dir = ensureOutDir();
-  const htmlPath = path.join(dir, "slides.html");
-  fs.writeFileSync(htmlPath, html, "utf-8");
-  cacheHtml(html, htmlPath);
-  markCreateDone();
-  return htmlPath;
-}
+import { savePrefs } from "../preferences.js";
 
 function countSlides(html: string): number {
   // Match class="slide" or class="slide ..." but NOT class="slide-label" etc.
@@ -149,10 +133,28 @@ export async function handleCreate(args: {
   if (gate) return gate;
 
   try {
-    if (args.mode === "token_saver") {
-      return handleTokenSaver(args);
+    const result = args.mode === "token_saver"
+      ? handleTokenSaver(args)
+      : await handleDefault(args);
+
+    // Persist user choices for next session (postmortem roadmap #5).
+    // Only save when we actually produced HTML — skip the "generate_html"
+    // intermediate response that has no slides yet.
+    try {
+      const parsed = JSON.parse(result.content[0].text);
+      if (parsed?.htmlPath) {
+        savePrefs({
+          lastTheme: args.theme,
+          lastOrientation: args.orientation || "portrait",
+          lastTokenMode: args.mode === "token_saver" ? "token_saver" : "default",
+          ...(args.brandName ? { brandName: args.brandName } : {}),
+        });
+      }
+    } catch {
+      // pref-write failures must never break the create flow
     }
-    return await handleDefault(args);
+
+    return result;
   } catch (err: any) {
     return {
       content: [{

@@ -4,14 +4,14 @@ const spec = {
     title: "slideshot API",
     description:
       "Convert HTML slides to high-res PNG, WebP, PDF, and PPTX. Use as ChatGPT Action, OpenWebUI tool, or any OpenAPI client.",
-    version: "2.8.1",
+    version: "2.7.0",
     contact: {
       name: "Ketan Chavan",
       url: "https://github.com/06ketan/slideshot",
     },
     license: { name: "MIT", url: "https://opensource.org/licenses/MIT" },
   },
-  servers: [{ url: "https://slideshot.vercel.app" }],
+  servers: [{ url: "https://slideshot.chavan.in" }],
   components: {
     securitySchemes: {
       ApiKeyAuth: {
@@ -27,9 +27,9 @@ const spec = {
     "/api/render": {
       post: {
         operationId: "renderSlides",
-        summary: "Render HTML slides to PNG, WebP, and/or PDF",
+        summary: "Render HTML slides to PNG, WebP, PDF, and/or PPTX",
         description:
-          "Accepts an HTML string containing .slide elements, screenshots each at high resolution, and returns a ZIP file with the rendered images and optional PDF. Requires x-api-key header for external callers.",
+          "Accepts an HTML string containing .slide elements, screenshots each at high resolution, and returns a ZIP file with the rendered images, optional PDF, and optional PPTX. Requires x-api-key header for external callers.",
         security: [{ ApiKeyAuth: [] }],
         requestBody: {
           required: true,
@@ -67,7 +67,7 @@ const spec = {
                   },
                   formats: {
                     type: "array",
-                    items: { type: "string", enum: ["png", "webp", "pdf"] },
+                    items: { type: "string", enum: ["png", "webp", "pdf", "pptx"] },
                     default: ["png", "webp", "pdf"],
                     description: "Output formats to include in ZIP",
                   },
@@ -77,6 +77,18 @@ const spec = {
                     minimum: 0,
                     maximum: 100,
                     description: "WebP compression quality",
+                  },
+                  slideRange: {
+                    type: "array",
+                    items: { type: "integer" },
+                    minItems: 2,
+                    maxItems: 2,
+                    description: "Render slides N-M only (1-indexed), e.g. [1, 3]",
+                  },
+                  pptxFilename: {
+                    type: "string",
+                    default: "carousel.pptx",
+                    description: "Custom filename for the PPTX file in the ZIP",
                   },
                 },
               },

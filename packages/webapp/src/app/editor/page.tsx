@@ -5,6 +5,15 @@ import Navbar from "@/components/Navbar";
 import { RefreshCw, Download, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Maximize } from "lucide-react";
 import { trackEvent } from "@/components/TrackEvent";
 
+const ORIENTATION_PRESETS: Record<string, { width: number; height: number; label: string }> = {
+  portrait:  { width: 540,  height: 675,  label: "Portrait (4:5)" },
+  landscape: { width: 1920, height: 1080, label: "Landscape (16:9)" },
+  linkedin:  { width: 540,  height: 675,  label: "LinkedIn (4:5)" },
+  instagram: { width: 1080, height: 1080, label: "Instagram (1:1)" },
+  a4:        { width: 595,  height: 842,  label: "A4 Portrait" },
+  custom:    { width: 540,  height: 675,  label: "Custom" },
+};
+
 const SAMPLE_HTML = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -45,16 +54,27 @@ body{background:#1A1A1A;padding:12px;font-family:'Space Mono',monospace;display:
 export default function EditorPage() {
   const [html, setHtml] = useState(SAMPLE_HTML);
   const [selector, setSelector] = useState(".slide");
+  const [orientation, setOrientation] = useState("portrait");
   const [width, setWidth] = useState(540);
   const [height, setHeight] = useState(675);
   const [scale, setScale] = useState(4);
-  const [formats, setFormats] = useState({ png: true, webp: true, pdf: true });
+  const [formats, setFormats] = useState({ png: true, webp: true, pdf: true, pptx: false });
+  const [webpQuality, setWebpQuality] = useState(95);
   const [exporting, setExporting] = useState(false);
   const [status, setStatus] = useState("");
   const [showCode, setShowCode] = useState(true);
   const [showPreview, setShowPreview] = useState(true);
   const [previewZoom, setPreviewZoom] = useState(1);
   const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  const handleOrientationChange = (key: string) => {
+    setOrientation(key);
+    if (key !== "custom") {
+      const preset = ORIENTATION_PRESETS[key];
+      setWidth(preset.width);
+      setHeight(preset.height);
+    }
+  };
 
   const autoFitOnLoad = useCallback(() => {
     const iframe = iframeRef.current;
@@ -100,7 +120,7 @@ export default function EditorPage() {
       const res = await fetch("/api/render", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ html, selector, width, height, scale, formats: selectedFormats }),
+        body: JSON.stringify({ html, selector, width, height, scale, formats: selectedFormats, webpQuality }),
       });
 
       if (!res.ok) {
@@ -190,11 +210,23 @@ export default function EditorPage() {
           />
         </label>
         <label className="flex items-center gap-2 text-xs font-mono uppercase tracking-wider">
+          <span className="text-[#666] font-bold">Preset</span>
+          <select
+            value={orientation}
+            onChange={(e) => handleOrientationChange(e.target.value)}
+            className="bg-white border-[3px] border-[#0A0A0A] px-2 py-1 text-xs font-mono text-[#0A0A0A] focus:border-[#FFD233]"
+          >
+            {Object.entries(ORIENTATION_PRESETS).map(([key, { label }]) => (
+              <option key={key} value={key}>{label}</option>
+            ))}
+          </select>
+        </label>
+        <label className="flex items-center gap-2 text-xs font-mono uppercase tracking-wider">
           <span className="text-[#666] font-bold">W</span>
           <input
             type="number"
             value={width}
-            onChange={(e) => setWidth(+e.target.value)}
+            onChange={(e) => { setWidth(+e.target.value); setOrientation("custom"); }}
             className="bg-white border-[3px] border-[#0A0A0A] px-2 py-1 w-16 text-xs font-mono text-[#0A0A0A] focus:border-[#FFD233]"
           />
         </label>
@@ -203,7 +235,7 @@ export default function EditorPage() {
           <input
             type="number"
             value={height}
-            onChange={(e) => setHeight(+e.target.value)}
+            onChange={(e) => { setHeight(+e.target.value); setOrientation("custom"); }}
             className="bg-white border-[3px] border-[#0A0A0A] px-2 py-1 w-16 text-xs font-mono text-[#0A0A0A] focus:border-[#FFD233]"
           />
         </label>
@@ -220,7 +252,7 @@ export default function EditorPage() {
           </select>
         </label>
         <div className="flex items-center gap-3 text-xs font-mono">
-          {(["png", "webp", "pdf"] as const).map((f) => (
+          {(["png", "webp", "pdf", "pptx"] as const).map((f) => (
             <label key={f} className="flex items-center gap-1.5 cursor-pointer">
               <input
                 type="checkbox"
@@ -232,9 +264,23 @@ export default function EditorPage() {
             </label>
           ))}
         </div>
+        {formats.webp && (
+          <label className="flex items-center gap-2 text-xs font-mono uppercase tracking-wider">
+            <span className="text-[#666] font-bold">Quality</span>
+            <input
+              type="range"
+              min={10}
+              max={100}
+              value={webpQuality}
+              onChange={(e) => setWebpQuality(+e.target.value)}
+              className="w-16 accent-[#FFD233]"
+            />
+            <span className="text-[#0A0A0A] font-bold w-6 text-right">{webpQuality}</span>
+          </label>
+        )}
         <div className="flex items-center gap-2 ml-auto">
           <span className="bg-[#0A0A0A] text-[#FFD233] font-mono font-bold text-xs px-3 py-1 border-[3px] border-[#0A0A0A]">
-            {width * scale} × {height * scale}
+            {width * scale} x {height * scale}
           </span>
           <span className="bg-[#FFD233] text-[#0A0A0A] font-black text-xs px-2 py-1 border-[3px] border-[#0A0A0A]">
             {scale}x

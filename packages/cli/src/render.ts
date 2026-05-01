@@ -3,7 +3,7 @@ import fs from "node:fs";
 import type { ImageFormat, RenderOptions, RenderResult } from "./types.js";
 import { DEFAULTS, ORIENTATION_PRESETS } from "./types.js";
 import { launchBrowser, setupPage } from "./browser.js";
-import { loadHtml, screenshotSlides, generatePdf, PRINT_CSS } from "./renderer.js";
+import { loadHtml, screenshotSlides, generatePdf, buildPrintCss } from "./renderer.js";
 import { generateImagePptx, generateNativePptx, extractSlideData, captureSlideImages } from "./pptx.js";
 
 function resolveOrientation(options: RenderOptions) {
@@ -45,7 +45,7 @@ export async function renderSlides(options: RenderOptions): Promise<RenderResult
     const rasterFormats = formats.filter((f) => f !== "pdf" && f !== "pptx") as ImageFormat[];
     if (rasterFormats.length > 0) {
       const rasterFiles = await screenshotSlides(
-        page, selector, outDir, rasterFormats, webpQuality, options.slideRange,
+        page, selector, outDir, rasterFormats, webpQuality, options.slideRange, width, height,
       );
       files.push(...rasterFiles);
     }
@@ -135,6 +135,11 @@ export async function renderToBuffers(options: Omit<RenderOptions, "outDir"> & {
     if (allSlides.length === 0)
       throw new Error(`No elements found for selector "${selector}"`);
 
+    // Same reset as PDF path so element-screenshot crops match (SS-003 parity).
+    if (formats.includes("png") || formats.includes("webp")) {
+      await page.addStyleTag({ content: buildPrintCss(width, height) });
+    }
+
     const rangeStart = options.slideRange ? options.slideRange[0] - 1 : 0;
     const rangeEnd = options.slideRange ? Math.min(options.slideRange[1], allSlides.length) : allSlides.length;
     const slides = allSlides.slice(rangeStart, rangeEnd);
@@ -155,11 +160,13 @@ export async function renderToBuffers(options: Omit<RenderOptions, "outDir"> & {
 
     if (formats.includes("pdf")) {
       await loadHtml(page, loadOpts);
-      await page.addStyleTag({ content: PRINT_CSS });
+      await page.addStyleTag({ content: buildPrintCss(width, height) });
       const pdfBuf = await page.pdf({
         width: `${width}px`,
         height: `${height}px`,
         printBackground: true,
+        margin: { top: 0, bottom: 0, left: 0, right: 0 },
+        preferCSSPageSize: true,
       });
       pdf = Buffer.from(pdfBuf);
     }

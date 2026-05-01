@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const THEMES = ["generic", "branded", "instagram-carousel", "infographic", "pitch-deck", "dark-modern", "editorial", "browser-shell"] as const;
+const THEMES = ["generic", "branded", "instagram-carousel", "infographic", "pitch-deck", "dark-modern", "editorial", "browser-shell", "academic-poster", "clinical-medical", "sketch-handdrawn"] as const;
 
 const ORIENTATIONS = ["portrait", "landscape", "linkedin", "instagram", "a4", "custom"] as const;
 
@@ -15,6 +15,19 @@ export const ORIENTATION_PRESETS: Record<string, { width: number; height: number
 // ── Tool 1: discover_themes ──
 
 export const DiscoverInputSchema = {};
+
+// ── Tool: list_themes (idempotent) ──
+
+export const ListThemesInputSchema = {};
+
+// ── Tool: edit_slides (token-efficient partial edits) ──
+
+export const EditInputSchema = {
+  htmlPath: z.string().optional().describe("Path to HTML to edit. Falls back to cached HTML from last create_slides call."),
+  operation: z.enum(["replace_slide", "patch_css", "swap_token", "patch_class"]).describe("Edit operation: replace_slide swaps one slide block; patch_css appends CSS rules to <style>; swap_token replaces a CSS variable's value; patch_class adds/removes a class on a slide."),
+  slideIndex: z.number().int().positive().optional().describe("1-indexed slide position. Required for replace_slide and patch_class. Omit for global ops (patch_css, swap_token)."),
+  payload: z.union([z.string(), z.record(z.string())]).describe("For replace_slide: the new <div class=\"slide\">...</div> HTML string. For patch_css: a CSS rules string. For swap_token: an object {tokenName: newValue}, e.g. {\"--coral\": \"#FF0000\"}. For patch_class: an object {add?: string, remove?: string}."),
+};
 
 // ── Tool 2: create_slides ──
 
@@ -161,9 +174,17 @@ export const CreateInputSchema = {
 
 export const RenderInputSchema = {
   htmlPath: z.string().optional().describe("Path to saved HTML file (from create_slides). Falls back to cached HTML."),
-  formats: z.array(z.enum(["pdf", "webp", "png"])).optional().describe("Output formats (default: [pdf])"),
+  html: z.string().optional().describe("HTML string (prefer htmlPath to save tokens)"),
+  selector: z.string().optional().describe("Slide selector (default: .slide)"),
+  width: z.number().optional().describe("Width px (default: 540)"),
+  height: z.number().optional().describe("Height px (default: 675)"),
   scale: z.number().optional().describe("Device scale 1-6 (default: 4)"),
-  slideRange: z.tuple([z.number(), z.number()]).optional().describe("Render slides N-M, 1-indexed"),
+  formats: z.array(z.enum(["png", "webp", "pdf", "pptx"])).optional().describe("Output formats (default: [pdf])"),
+  webpQuality: z.number().optional().describe("WebP quality 0-100 (default: 95)"),
   outDir: z.string().optional().describe("Output directory override"),
   pdfFilename: z.string().optional().describe("Custom PDF filename"),
+  pptxFilename: z.string().optional().describe("Custom PPTX filename"),
+  slideRange: z.tuple([z.number(), z.number()]).optional().describe("Render slides N-M, 1-indexed"),
+  orientation: z.enum(["portrait", "landscape"]).optional().describe("portrait=540x675, landscape=1920x1080"),
+  pptxMode: z.enum(["native", "image"]).optional().describe("native=editable text, image=pixel-perfect"),
 };

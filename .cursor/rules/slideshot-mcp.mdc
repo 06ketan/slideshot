@@ -1,12 +1,12 @@
 ---
-description: Slideshot MCP server v4.1.0 — tool usage guide with enforced workflow
+description: Slideshot MCP server v4.2.0 — tool usage guide with enforced workflow
 globs:
   - packages/mcp-server/**
   - prompts/**
 alwaysApply: true
 ---
 
-# Slideshot MCP v4.1.0 — Tool Usage Guide
+# Slideshot MCP v4.2.0 — Tool Usage Guide
 
 ## 4 Tools
 
@@ -14,7 +14,7 @@ alwaysApply: true
 |------|-------------|
 | `discover_themes` | **MANDATORY first** for slide creation workflow. |
 | `create_slides` | Create slides. Use **mode=default** unless user explicitly chose token_saver. |
-| `render_slides` | Render HTML to PDF/WebP/PNG. Can be called directly with an existing htmlPath (bypasses gates). |
+| `render_slides` | Render HTML to PDF/WebP/PNG/PPTX. Accepts html string or htmlPath. Supports width, height, selector, scale, webpQuality, orientation, pptxMode, pptxFilename, slideRange. Can be called directly with an existing htmlPath (bypasses gates). |
 | `health_check` | Diagnose Puppeteer/Chromium issues. |
 
 ## Two Workflows
@@ -37,15 +37,17 @@ alwaysApply: true
    ── STOP: Show htmlPath as code preview artifact
    ── Ask user to confirm. DO NOT call render_slides in this turn.
 
-4. User confirms → render_slides(htmlPath, formats) → files on disk
+4. User confirms → render_slides(htmlPath, formats, scale, pptxMode...) → files on disk
 ```
 
 ### B. Direct render (user has existing HTML file)
 
 ```
-1. render_slides(htmlPath=<path to existing file>, formats) → files on disk
+1. render_slides(htmlPath=<path to existing file>, formats, width, height, scale...) → files on disk
    ── No discover_themes or create_slides needed
    ── Gates are bypassed when htmlPath points to an existing file
+   ── Also accepts html string directly instead of htmlPath
+   ── Supports all render params: selector, width, height, scale, webpQuality, orientation, pptxMode, pptxFilename, slideRange
 ```
 
 ## Two Token Modes
