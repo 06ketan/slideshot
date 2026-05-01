@@ -1,0 +1,137 @@
+name: Publish to npm
+
+on:
+  push:
+    tags:
+      - "cli-v*.*.*"
+      - "mcp-v*.*.*"
+  workflow_dispatch:
+    inputs:
+      package:
+        description: "Which package to publish"
+        required: true
+        type: choice
+        options:
+          - cli
+          - mcp
+          - both
+      dry_run:
+        description: "Dry run (build + pack, no publish)"
+        type: boolean
+        default: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: https://registry.npmjs.org/
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build CLI
+        run: npm run build:cli
+
+      - name: Build MCP
+        run: npm run build:mcp
+
+      - name: Determine packages to publish
+        id: targets
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            case "${{ inputs.package }}" in
+              cli)  echo "cli=true" >> $GITHUB_OUTPUT; echo "mcp=false" >> $GITHUB_OUTPUT ;;
+              mcp)  echo "cli=false" >> $GITHUB_OUTPUT; echo "mcp=true" >> $GITHUB_OUTPUT ;;
+              both) echo "cli=true" >> $GITHUB_OUTPUT; echo "mcp=true" >> $GITHUB_OUTPUT ;;
+            esac
+            echo "dry_run=${{ inputs.dry_run }}" >> $GITHUB_OUTPUT
+          else
+            TAG="${GITHUB_REF#refs/tags/}"
+            if [[ "$TAG" == cli-v* ]]; then
+              echo "cli=true" >> $GITHUB_OUTPUT
+              echo "mcp=false" >> $GITHUB_OUTPUT
+            elif [[ "$TAG" == mcp-v* ]]; then
+              echo "cli=false" >> $GITHUB_OUTPUT
+              echo "mcp=true" >> $GITHUB_OUTPUT
+            fi
+            echo "dry_run=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Verify CLI version matches tag
+        if: steps.targets.outputs.cli == 'true' && github.event_name == 'push'
+        working-directory: packages/cli
+        run: |
+          PKG_VERSION=$(node -p "require('./package.json').version")
+          TAG_VERSION="${GITHUB_REF#refs/tags/cli-v}"
+          if [[ "$PKG_VERSION" != "$TAG_VERSION" ]]; then
+            echo "Version mismatch: package.json=$PKG_VERSION but tag=cli-v$TAG_VERSION"
+            exit 1
+          fi
+          echo "Verified: slideshot@$PKG_VERSION"
+
+      - name: Verify MCP version matches tag
+        if: steps.targets.outputs.mcp == 'true' && github.event_name == 'push'
+        working-directory: packages/mcp-server
+        run: |
+          PKG_VERSION=$(node -p "require('./package.json').version")
+          TAG_VERSION="${GITHUB_REF#refs/tags/mcp-v}"
+          if [[ "$PKG_VERSION" != "$TAG_VERSION" ]]; then
+            echo "Version mismatch: package.json=$PKG_VERSION but tag=mcp-v$TAG_VERSION"
+            exit 1
+          fi
+          echo "Verified: slideshot-mcp@$PKG_VERSION"
+
+      - name: Pack CLI (dry run)
+        if: steps.targets.outputs.cli == 'true' && steps.targets.outputs.dry_run == 'true'
+        working-directory: packages/cli
+        run: npm pack --dry-run
+
+      - name: Pack MCP (dry run)
+        if: steps.targets.outputs.mcp == 'true' && steps.targets.outputs.dry_run == 'true'
+        working-directory: packages/mcp-server
+        run: npm pack --dry-run
+
+      - name: Publish CLI
+        if: steps.targets.outputs.cli == 'true' && steps.targets.outputs.dry_run != 'true'
+        working-directory: packages/cli
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --access public --provenance
+
+      - name: Publish MCP
+        if: steps.targets.outputs.mcp == 'true' && steps.targets.outputs.dry_run != 'true'
+        working-directory: packages/mcp-server
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --access public --provenance
+
+      - name: Create GitHub Release (CLI)
+        if: steps.targets.outputs.cli == 'true' && steps.targets.outputs.dry_run != 'true' && github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION="${GITHUB_REF#refs/tags/cli-v}"
+          gh release create "cli-v$VERSION" \
+            --title "slideshot CLI v$VERSION" \
+            --notes "Published to npm: https://www.npmjs.com/package/slideshot/v/$VERSION" \
+            --latest=false
+
+      - name: Create GitHub Release (MCP)
+        if: steps.targets.outputs.mcp == 'true' && steps.targets.outputs.dry_run != 'true' && github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION="${GITHUB_REF#refs/tags/mcp-v}"
+          gh release create "mcp-v$VERSION" \
+            --title "slideshot-mcp v$VERSION" \
+            --notes "Published to npm: https://www.npmjs.com/package/slideshot-mcp/v/$VERSION" \
+            --latest=true
