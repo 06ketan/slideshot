@@ -126,8 +126,30 @@ export function loadPromptLocal(variant: PromptVariant): string {
   return fs.readFileSync(filePath, "utf-8");
 }
 
-export async function loadPrompt(variant: PromptVariant): Promise<string> {
-  const remote = await fetchPromptFromGitHub(variant);
-  if (remote) return remote;
-  return loadPromptLocal(variant);
+/** Replace `{{SLIDE_W}}`, `{{SLIDE_H}}`, `{{SLIDE_DIMS}}` in prompt markdown. */
+export function substitutePromptDimensions(
+  text: string,
+  dims: { width: number; height: number },
+): string {
+  return text
+    .replace(/\{\{SLIDE_W\}\}/g, String(dims.width))
+    .replace(/\{\{SLIDE_H\}\}/g, String(dims.height))
+    .replace(/\{\{SLIDE_DIMS\}\}/g, `${dims.width}x${dims.height}`);
+}
+
+export async function loadPrompt(
+  variant: PromptVariant,
+  dimensions?: { width: number; height: number },
+): Promise<string> {
+  let text: string;
+  try {
+    text = loadPromptLocal(variant);
+  } catch {
+    const remote = await fetchPromptFromGitHub(variant);
+    if (!remote) {
+      throw new Error(`Prompt "${variant}" not found locally or remotely.`);
+    }
+    text = remote;
+  }
+  return substitutePromptDimensions(text, dimensions ?? { width: 540, height: 675 });
 }

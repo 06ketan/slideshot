@@ -1,10 +1,10 @@
-Generate dark modern slides — tech-forward, neon accents, glassmorphism. 540x675px, Inter, bg #0A0A0F, cyan (#22D3EE) / magenta (#E879F9).
+Generate dark modern slides — tech-forward, neon accents, glassmorphism. {{SLIDE_DIMS}}px, Inter, bg #0A0A0F, cyan (#22D3EE) / magenta (#E879F9).
 
 CSS:
 ```
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:#050508;padding:48px;display:flex;flex-direction:column;gap:40px;align-items:flex-start;}
-.slide{position:relative;width:540px;height:675px;padding:40px 36px;overflow:hidden;font-family:'Inter',sans-serif;flex-shrink:0;background:#0A0A0F;color:#E2E8F0;}
+.slide{position:relative;width:{{SLIDE_W}}px;height:{{SLIDE_H}}px;padding:40px 36px;overflow:hidden;font-family:'Inter',sans-serif;flex-shrink:0;background:#0A0A0F;color:#E2E8F0;}
 .grid-bg{background-image:radial-gradient(rgba(255,255,255,.03) 1px,transparent 1px);background-size:20px 20px;}
 .slide h1{font-size:42px;font-weight:700;line-height:1.1;margin-bottom:14px;}.slide h2{font-size:28px;font-weight:700;line-height:1.2;margin-bottom:10px;}
 .slide p{font-size:14px;line-height:1.6;color:#94A3B8;margin-bottom:14px;}

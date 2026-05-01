@@ -71,9 +71,16 @@ export async function handleRender(args: {
     }
 
     let pptxOrientationWarning: string | undefined;
+    let pptxNativeModeWarning: string | undefined;
     const resolvedFormats = resolveFormats(args.formats as ImageFormat[] | undefined);
     if (resolvedFormats.includes("pptx") && args.orientation === "portrait") {
       pptxOrientationWarning = "PPTX requested with portrait orientation (540x675). Standard presentations use landscape (1920x1080). Consider orientation: 'landscape' for better PowerPoint compatibility.";
+    }
+    // Warn loudly if the caller asked for native mode — most users assume "editable PPTX"
+    // means design is preserved, but native only extracts text leaf nodes (no shapes,
+    // backgrounds, gradients, or pseudo-elements). Result looks empty/broken.
+    if (resolvedFormats.includes("pptx") && args.pptxMode === "native") {
+      pptxNativeModeWarning = "WARNING: pptxMode='native' was chosen. The output will have selectable/editable TEXT but the visual design (backgrounds, borders, gradients, decorative elements) WILL NOT be preserved — the slides will look mostly empty in PowerPoint. Use pptxMode='image' (default) for pixel-perfect un-editable output, or expect to re-author the slide design in PowerPoint after import.";
     }
 
     if (!html && !htmlPath) {
@@ -191,6 +198,7 @@ export async function handleRender(args: {
           nativeWarnings: result.nativeWarnings,
         }),
         ...(pptxOrientationWarning && { pptxOrientationWarning }),
+        ...(pptxNativeModeWarning && { pptxNativeModeWarning }),
       }, null, 2),
     });
 

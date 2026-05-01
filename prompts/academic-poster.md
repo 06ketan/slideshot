@@ -1,6 +1,6 @@
 # Academic Poster — DNA Specification
 
-A compact carousel themed after IEEE/ACM conference posters. Built for working papers, lit reviews, methodology decks, and thesis summaries. Each slide is 540×675px, overflow:hidden, no JS.
+A compact carousel themed after IEEE/ACM conference posters. Built for working papers, lit reviews, methodology decks, and thesis summaries. Each slide is {{SLIDE_DIMS}}px ({{SLIDE_W}}×{{SLIDE_H}} px canvas), overflow:hidden, no JS.
 
 ## Canvas
 

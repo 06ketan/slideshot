@@ -47,8 +47,8 @@ async function handleDefault(args: {
   height?: number;
 }) {
   if (!args.html) {
-    const promptText = await loadPrompt(args.theme as PromptVariant);
     const dims = resolveOrientation(args.orientation, args.width, args.height);
+    const promptText = await loadPrompt(args.theme as PromptVariant, dims);
     return {
       content: [{
         type: "text" as const,
@@ -93,12 +93,13 @@ function handleTokenSaver(args: {
   }
 
   const dims = resolveOrientation(args.orientation, args.width, args.height);
-  const isLandscape = dims.width > dims.height;
 
   const input: AssembleInput = {
     theme: args.theme,
     slides: args.slides as unknown as SlideData[],
-    orientation: isLandscape ? "landscape" : "portrait",
+    orientation: args.orientation,
+    width: dims.width,
+    height: dims.height,
     brandName: args.brandName,
   };
 

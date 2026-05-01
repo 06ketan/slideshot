@@ -51,17 +51,25 @@ export function assembleHtml(input: AssembleInput): string {
     throw new Error(`Unknown theme "${input.theme}". Available: generic, branded, instagram-carousel, infographic, pitch-deck, dark-modern, editorial, browser-shell, academic-poster, clinical-medical, sketch-handdrawn`);
   }
 
-  const { width, height } = input.orientation === "landscape"
-    ? { width: 1920, height: 1080 }
-    : themeCSS.dimensions;
+  // Resolve dimensions: explicit width/height > orientation preset > theme default
+  const { width, height } = resolveAssembleDimensions(input, themeCSS.dimensions);
+  const isLandscape = width > height;
 
-  const landscapeCSS = input.orientation === "landscape"
-    ? `.slide{width:${width}px !important;height:${height}px !important;}`
-    : "";
+  // Inject CSS custom properties so theme CSS rules `width:var(--slide-w,540px)` resolve correctly.
+  // Add `.orient-landscape` body class when geometry is wider than tall, so theme's `.slide.landscape`
+  // reflow rules apply (paired with `.slide.landscape` on each slide).
+  const dimsCSS = `:root{--slide-w:${width}px;--slide-h:${height}px;}`;
+  const bodyClass = isLandscape ? ' class="orient-landscape"' : "";
+  const slideExtraClass = isLandscape ? " landscape" : "";
 
   const normalized = input.slides.map(s => normalizeSlide(s as unknown as Record<string, unknown>));
   const slidesHtml = normalized
-    .map((slide: SlideData, i: number) => renderSlide(input.theme, slide, i, normalized.length))
+    .map((slide: SlideData, i: number) => {
+      const html = renderSlide(input.theme, slide, i, normalized.length);
+      // Inject `landscape` modifier class onto every .slide. Renderers emit `class="slide ..."`;
+      // we tack it on after `slide` so theme-specific modifiers (e.g. `slide dark`) keep working.
+      return slideExtraClass ? html.replace(/class="slide([^"]*)"/g, `class="slide${slideExtraClass}$1"`) : html;
+    })
     .join("\n  ");
 
   return `<!DOCTYPE html>
@@ -70,12 +78,38 @@ export function assembleHtml(input: AssembleInput): string {
   <meta charset="UTF-8">
   ${themeCSS.font}
   <style>
+    ${dimsCSS}
     ${themeCSS.css}
-    ${landscapeCSS}
   </style>
 </head>
-<body>
+<body${bodyClass}>
   ${slidesHtml}
 </body>
 </html>`;
+}
+
+function resolveAssembleDimensions(
+  input: AssembleInput,
+  defaultDims: { width: number; height: number },
+): { width: number; height: number } {
+  // Explicit width+height takes priority (custom orientation case).
+  if (typeof input.width === "number" && typeof input.height === "number") {
+    return { width: input.width, height: input.height };
+  }
+
+  // Otherwise map orientation key to preset dimensions.
+  // Keep ORIENTATION_DIMS source of truth in sync with packages/cli/src/types.ts.
+  const ORIENTATION_DIMS: Record<string, { width: number; height: number }> = {
+    portrait: { width: 540, height: 675 },
+    landscape: { width: 1920, height: 1080 },
+    linkedin: { width: 540, height: 675 },
+    instagram: { width: 1080, height: 1080 },
+    a4: { width: 595, height: 842 },
+  };
+
+  if (input.orientation && ORIENTATION_DIMS[input.orientation]) {
+    return ORIENTATION_DIMS[input.orientation];
+  }
+
+  return defaultDims;
 }

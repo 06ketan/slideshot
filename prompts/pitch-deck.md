@@ -1,4 +1,4 @@
-Generate professional pitch deck slides. 540x675px, DM Sans, white bg, blue (#3B82F6) / violet (#8B5CF6) accents.
+Generate professional pitch deck slides. {{SLIDE_DIMS}}px, DM Sans, white bg, blue (#3B82F6) / violet (#8B5CF6) accents.
 
 Slides: 1.Title/Hook 2.Problem 3.Solution 4.How it works 5.KPIs 6.Traction/Timeline 7.Team 8.CTA
 
@@ -6,7 +6,7 @@ CSS:
 ```
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:#1a1a1a;padding:48px;display:flex;flex-direction:column;gap:40px;align-items:flex-start;}
-.slide{position:relative;width:540px;height:675px;padding:40px 36px;overflow:hidden;font-family:'DM Sans',sans-serif;flex-shrink:0;background:#FFF;color:#0F172A;}
+.slide{position:relative;width:{{SLIDE_W}}px;height:{{SLIDE_H}}px;padding:40px 36px;overflow:hidden;font-family:'DM Sans',sans-serif;flex-shrink:0;background:#FFF;color:#0F172A;}
 .slide h1{font-size:38px;font-weight:700;line-height:1.1;margin-bottom:12px;}.slide h2{font-size:26px;font-weight:700;line-height:1.2;margin-bottom:10px;}.slide h3{font-size:18px;font-weight:500;line-height:1.3;margin-bottom:8px;color:#475569;}
 .slide p{font-size:14px;line-height:1.6;color:#64748B;margin-bottom:14px;}
 .accent-bar{position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#3B82F6,#8B5CF6);}

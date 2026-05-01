@@ -53,7 +53,7 @@ src/
 
 - **Two token modes**: Default gives AI full HTML control (more tokens). Token-saver has AI send structured JSON, server assembles HTML (fewer tokens, less control).
 - **Discovery + create gates**: render_slides rejects if discover_themes and create_slides haven't been called (unless htmlPath points to an existing file).
-- **Full format support**: PDF, WebP, PNG, and PPTX all supported. PPTX has native (editable) and image (pixel-perfect) modes via `pptxMode`.
+- **Full format support**: PDF, WebP, PNG, and PPTX all supported. PPTX defaults to `pptxMode="image"` (pixel-perfect, design preserved, text NOT editable). `pptxMode="native"` is opt-in for text-only export and emits a warning that the visual design won't be preserved (no shapes, backgrounds, gradients, or pseudo-elements). For truly editable decks with shapes preserved, see `docs/pptx-rich-roadmap.md`.
 - **Render tool uses htmlPath**: HTML is persisted to disk by create_slides. render_slides reads from disk or falls back to cache.
 - **Sandbox-safe**: If htmlPath is inaccessible (sandboxed environments), falls back to writing cached HTML to tmpdir.
 

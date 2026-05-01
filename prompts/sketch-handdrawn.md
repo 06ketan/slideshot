@@ -1,6 +1,6 @@
 # Sketch Handdrawn — DNA Specification
 
-An informal, whiteboard-style aesthetic: hand-drawn fonts, dashed borders, gentle rotations. For internal team explainers, brainstorm recaps, "napkin math" carousels, and onboarding decks where authority is *not* the goal. Each slide is 540×675px, overflow:hidden, no JS.
+An informal, whiteboard-style aesthetic: hand-drawn fonts, dashed borders, gentle rotations. For internal team explainers, brainstorm recaps, "napkin math" carousels, and onboarding decks where authority is *not* the goal. Each slide is {{SLIDE_DIMS}}px ({{SLIDE_W}}×{{SLIDE_H}} px canvas), overflow:hidden, no JS.
 
 ## Canvas
 

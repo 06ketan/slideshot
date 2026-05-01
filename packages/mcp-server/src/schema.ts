@@ -186,5 +186,5 @@ export const RenderInputSchema = {
   pptxFilename: z.string().optional().describe("Custom PPTX filename"),
   slideRange: z.tuple([z.number(), z.number()]).optional().describe("Render slides N-M, 1-indexed"),
   orientation: z.enum(["portrait", "landscape"]).optional().describe("portrait=540x675, landscape=1920x1080"),
-  pptxMode: z.enum(["native", "image"]).optional().describe("native=editable text, image=pixel-perfect"),
+  pptxMode: z.enum(["native", "image"]).optional().describe("Default: image (pixel-perfect, preserves design, NOT editable). 'native' is opt-in for text-only export (selectable text but design is NOT preserved — looks broken). For true editable PPTX with shapes/colors, use a different tool."),
 };

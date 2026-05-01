@@ -1,19 +1,21 @@
 ---
-description: Slideshot MCP server v4.2.0 — tool usage guide with enforced workflow
+description: Slideshot MCP server v4.4.0 — tool usage guide with enforced workflow
 globs:
   - packages/mcp-server/**
   - prompts/**
 alwaysApply: true
 ---
 
-# Slideshot MCP v4.2.0 — Tool Usage Guide
+# Slideshot MCP v4.4.0 — Tool Usage Guide
 
-## 4 Tools
+## 6 Tools
 
 | Tool | When to use |
 |------|-------------|
-| `discover_themes` | **MANDATORY first** for slide creation workflow. |
+| `discover_themes` | **MANDATORY first** for slide creation workflow. Returns themes, orientation presets, token modes, format options, and persisted user preferences. |
+| `list_themes` | Idempotent theme catalog read with no discovery gates. Use when you just need the theme list. |
 | `create_slides` | Create slides. Use **mode=default** unless user explicitly chose token_saver. |
+| `edit_slides` | Partial edits to existing HTML — replace_slide, patch_css, patch_class, swap_token. Use this instead of regenerating the whole deck for small iterations (saves tokens). |
 | `render_slides` | Render HTML to PDF/WebP/PNG/PPTX. Accepts html string or htmlPath. Supports width, height, selector, scale, webpQuality, orientation, pptxMode, pptxFilename, slideRange. Can be called directly with an existing htmlPath (bypasses gates). |
 | `health_check` | Diagnose Puppeteer/Chromium issues. |
 
@@ -50,6 +52,15 @@ alwaysApply: true
    ── Supports all render params: selector, width, height, scale, webpQuality, orientation, pptxMode, pptxFilename, slideRange
 ```
 
+### C. Iterative edit (user wants small changes to existing HTML)
+
+```
+1. edit_slides(htmlPath, operation, ...args) → updated htmlPath
+   ── operation: "replace_slide" | "patch_css" | "patch_class" | "swap_token"
+   ── Cheaper than regenerating: doesn't re-send the whole deck through the LLM
+   ── User confirms updated preview, then render_slides
+```
+
 ## Two Token Modes
 
 ### Default (Recommended — best quality)
@@ -57,8 +68,8 @@ Use **mode=default** for full creative control over layout, styling, and design.
 1. `discover_themes` → native prompts only
 2. STOP: Ask user — theme, topic, orientation, format, token mode. WAIT.
 3. Show data outline. Present outlineConfirm selector. WAIT for confirmation.
-4. `create_slides` with mode=default, theme, orientation (no html yet) → returns CSS prompt
-5. Generate full HTML using the prompt
+4. `create_slides` with mode=default, theme, orientation (no html yet) → returns CSS prompt with target dimensions filled in
+5. Generate full HTML using the prompt — make sure the .slide width/height match the dimensions in the prompt (orientation-aware)
 6. `create_slides` with mode=default, theme, html=\<generated HTML\> → htmlPath
 7. STOP: Show code preview artifact. Ask user. WAIT.
 8. User confirms → `render_slides` with htmlPath → files
@@ -69,6 +80,7 @@ Only use if user explicitly chose this mode.
 2. STOP: Ask user — theme, topic, orientation, format, token mode. WAIT.
 3. Show data outline. Present outlineConfirm selector. WAIT for confirmation.
 4. `create_slides` with mode=token_saver, theme, slides=[{type:"cover",...}, ...] → htmlPath
+   (server handles orientation: themes have CSS variables for `--slide-w`/`--slide-h` and a `.slide.landscape` reflow modifier)
 5. STOP: Show code preview artifact. Ask user. WAIT.
 6. User confirms → `render_slides` with htmlPath → files
 
@@ -76,20 +88,31 @@ Only use if user explicitly chose this mode.
 
 | Key | Dimensions | Use case |
 |-----|-----------|----------|
-| portrait | 540x675 | Default social/LinkedIn |
-| landscape | 1920x1080 | Presentations |
-| linkedin | 540x675 | LinkedIn carousel |
-| instagram | 1080x1080 | Square posts |
-| a4 | 595x842 | Documents/print |
+| portrait | 540×675 | Default social/LinkedIn |
+| landscape | 1920×1080 | Presentations |
+| linkedin | 540×675 | LinkedIn carousel |
+| instagram | 1080×1080 | Square posts |
+| a4 | 595×842 | Documents/print |
 | custom | user-specified | Any size |
 
-## 8 Theme Variants
+Themes auto-reflow for landscape via per-theme `.slide.landscape` CSS rules (multi-column grids, larger fonts, bumped paddings). Other orientations use the base theme styling scaled by `--slide-w`/`--slide-h` CSS vars.
 
-generic, branded, instagram-carousel, infographic, pitch-deck, dark-modern, editorial, browser-shell
+## 11 Theme Variants
+
+generic, branded, instagram-carousel, infographic, pitch-deck, dark-modern, editorial, browser-shell, academic-poster, clinical-medical, sketch-handdrawn
 
 ## Slide Types (token_saver mode only)
 
 cover, content, stats, list, steps, comparison, quote, code, cta, timeline, team
+
+## Output Formats
+
+| Format | Notes |
+|--------|-------|
+| pdf | Default. Best for LinkedIn carousels, sharing, printing. |
+| png | High-quality images, universal compatibility. |
+| webp | Lightweight images for web/social (95% quality default). |
+| pptx | PowerPoint file. **Image mode (default)** preserves design but is NOT editable. **Native mode** (opt-in) extracts text only — design WILL NOT be preserved (looks broken in PowerPoint). For truly editable decks, use PDF or recreate in PowerPoint. |
 
 ## Key Rules
 
@@ -101,8 +124,10 @@ cover, content, stats, list, steps, comparison, quote, code, cta, timeline, team
 - **Present outlineConfirm selector** after the outline for quick approval
 - Always use `htmlPath` from create_slides for render_slides
 - Default output format is PDF
-- Default orientation is portrait (540x675)
+- Default orientation is portrait (540×675)
 - Default scale is 4x
+- Default `pptxMode` is `"image"` — pixel-perfect, design preserved, text NOT editable
+- `pptxMode: "native"` is opt-in for text-only export and emits a warning that design won't be preserved
 - Output goes to ~/Desktop/slideshot-output (or fallback locations)
 - **NEVER skip the preview step** — always show HTML as code preview artifact before rendering
 - **NEVER call render_slides in the same turn as create_slides**

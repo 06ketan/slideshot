@@ -12,7 +12,7 @@ import { handleRender } from "./tools/render.js";
 import { handleHealthCheck } from "./tools/health.js";
 import { handleEdit } from "./tools/edit.js";
 
-export const VERSION = "4.3.0";
+export const VERSION = "4.4.0";
 
 export function createServer(): McpServer {
   const server = new McpServer({ name: "slideshot", version: VERSION });

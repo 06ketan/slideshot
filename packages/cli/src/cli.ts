@@ -22,12 +22,23 @@ function promptsDir(): string {
   return path.resolve(thisDir, "../../../prompts");
 }
 
+function substitutePromptDimensions(
+  text: string,
+  dims: { width: number; height: number },
+): string {
+  return text
+    .replace(/\{\{SLIDE_W\}\}/g, String(dims.width))
+    .replace(/\{\{SLIDE_H\}\}/g, String(dims.height))
+    .replace(/\{\{SLIDE_DIMS\}\}/g, `${dims.width}x${dims.height}`);
+}
+
 function loadPrompt(variant: string): string {
   const filePath = path.join(promptsDir(), `${variant}.md`);
   if (!fs.existsSync(filePath)) {
     return `Prompt variant "${variant}" not found. Available: ${VARIANTS.join(", ")}`;
   }
-  return fs.readFileSync(filePath, "utf-8");
+  const raw = fs.readFileSync(filePath, "utf-8");
+  return substitutePromptDimensions(raw, { width: 540, height: 675 });
 }
 
 const program = new Command();

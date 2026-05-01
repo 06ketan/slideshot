@@ -1,10 +1,10 @@
-Generate slides using "Ketan Slides" design — minimal monospace, Space Mono, 540x675px, bg #F0EDE7, teal/coral accents. Dark variant: .slide.dark.
+Generate slides using "Ketan Slides" design — minimal monospace, Space Mono, {{SLIDE_DIMS}}px, bg #F0EDE7, teal/coral accents. Dark variant: .slide.dark.
 
 CSS (include in `<style>`):
 ```
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:#1A1A1A;padding:48px;font-family:'Space Mono',monospace;display:flex;flex-direction:column;align-items:flex-start;gap:40px;}
-.slide{position:relative;width:540px;height:675px;background:#F0EDE7;padding:32px 40px 52px;overflow:hidden;font-family:'Space Mono',monospace;flex-shrink:0;}
+.slide{position:relative;width:{{SLIDE_W}}px;height:{{SLIDE_H}}px;background:#F0EDE7;padding:32px 40px 52px;overflow:hidden;font-family:'Space Mono',monospace;flex-shrink:0;}
 .slide::before{content:'';position:absolute;top:24px;right:24px;width:80px;height:80px;border-top:1px solid #B8B4AD;border-right:1px solid #B8B4AD;pointer-events:none;}
 .slide::after{content:'';position:absolute;bottom:24px;left:24px;width:60px;height:60px;border-bottom:1px solid #B8B4AD;border-left:1px solid #B8B4AD;pointer-events:none;}
 .dark{background:#0D0D0D;}.dark::before{border-color:#252525;}.dark::after{border-color:#252525;}

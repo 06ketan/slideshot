@@ -1,4 +1,4 @@
-Generate slides with browser-window chrome. 540x675px, Bebas Neue + DM Sans, yellow (#FFD233) / navy (#12122A).
+Generate slides with browser-window chrome. {{SLIDE_DIMS}}px, Bebas Neue + DM Sans, yellow (#FFD233) / navy (#12122A).
 
 Each slide uses this shell:
 
@@ -22,7 +22,7 @@ CSS:
 ```css
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:#1a1a1a;padding:48px;display:flex;flex-direction:column;gap:40px;align-items:flex-start;}
-.slide{position:relative;width:540px;height:675px;overflow:hidden;font-family:'DM Sans',sans-serif;flex-shrink:0;background:#FFD233;padding:20px;}
+.slide{position:relative;width:{{SLIDE_W}}px;height:{{SLIDE_H}}px;overflow:hidden;font-family:'DM Sans',sans-serif;flex-shrink:0;background:#FFD233;padding:20px;}
 .browser{width:100%;height:100%;background:#12122A;border-radius:14px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 2px 0 rgba(255,255,255,0.06) inset,0 20px 50px rgba(0,0,0,0.35);}
 .browser-bar{background:#12122A;padding:0 18px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;height:42px;}
 .dots{display:flex;gap:7px;align-items:center;}.dot{width:11px;height:11px;border-radius:50%;flex-shrink:0;}

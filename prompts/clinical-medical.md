@@ -1,6 +1,6 @@
 # Clinical Medical — DNA Specification
 
-A sterile, hospital-report aesthetic for healthcare carousels: clinical case reports, public-health PSA decks, pharma protocol summaries, and diagnostic flow explainers. Each slide is 540×675px, overflow:hidden, no JS.
+A sterile, hospital-report aesthetic for healthcare carousels: clinical case reports, public-health PSA decks, pharma protocol summaries, and diagnostic flow explainers. Each slide is {{SLIDE_DIMS}}px ({{SLIDE_W}}×{{SLIDE_H}} px canvas), overflow:hidden, no JS.
 
 ## Canvas
 

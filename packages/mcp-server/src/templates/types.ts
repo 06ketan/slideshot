@@ -117,6 +117,11 @@ export type SlideType = SlideData["type"];
 export interface AssembleInput {
   theme: string;
   slides: SlideData[];
-  orientation?: "portrait" | "landscape";
+  /** Preset key from discover/create (portrait, landscape, linkedin, instagram, a4, custom, …). */
+  orientation?: string;
+  /** Resolved pixel width when known (e.g. token_saver after resolveOrientation). */
+  width?: number;
+  /** Resolved pixel height when known. */
+  height?: number;
   brandName?: string;
 }

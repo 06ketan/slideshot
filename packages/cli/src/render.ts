@@ -60,7 +60,10 @@ export async function renderSlides(options: RenderOptions): Promise<RenderResult
 
     if (formats.includes("pptx")) {
       const pptxPath = path.join(outDir, options.pptxFilename || "carousel.pptx");
-      const useNative = options.pptxMode !== "image";
+      // Default: image-mode PPTX (pixel-perfect, preserves design but un-editable).
+      // Native mode is opt-in for users who want crude editable text export
+      // (no design preserved — see docs/pptx-rich-roadmap.md for the planned fix).
+      const useNative = options.pptxMode === "native";
 
       if (useNative) {
         try {
@@ -172,7 +175,9 @@ export async function renderToBuffers(options: Omit<RenderOptions, "outDir"> & {
     }
 
     if (formats.includes("pptx")) {
-      const useNative = (options as any).pptxMode !== "image";
+      // Default: image-mode PPTX (pixel-perfect, preserves design but un-editable).
+      // Native mode is opt-in for users who want crude editable text export.
+      const useNative = (options as any).pptxMode === "native";
       if (useNative) {
         try {
           await loadHtml(page, loadOpts);
