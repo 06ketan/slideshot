@@ -1,0 +1,20 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.06ketan/slideshot",
+  "description": "Convert HTML to high-fidelity slide carousels (PDF, PNG, WebP, PPTX) with 11 themes — for LinkedIn, Instagram, pitch decks, and presentations.",
+  "repository": {
+    "url": "https://github.com/06ketan/slideshot",
+    "source": "github"
+  },
+  "version": "4.4.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "slideshot-mcp",
+      "version": "4.4.0",
+      "transport": {
+        "type": "stdio"
+      }
+    }
+  ]
+}
