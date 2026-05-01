@@ -14,7 +14,7 @@ export interface RenderOptions {
   pptxFilename?: string;
   slideRange?: [number, number];
   orientation?: "portrait" | "landscape";
-  pptxMode?: "native" | "image";
+  pptxMode?: "native" | "image" | "rich-native";
 }
 
 export interface RenderResult {
