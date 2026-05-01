@@ -91,7 +91,7 @@ export async function handleDiscover() {
           pdf:  { label: "PDF", note: "Best for LinkedIn carousels, sharing, printing" },
           webp: { label: "WebP", note: "Lightweight images for web/social" },
           png:  { label: "PNG", note: "High-quality images, universal compatibility" },
-          pptx: { label: "PPTX", note: "Editable PowerPoint, best with landscape orientation" },
+          pptx: { label: "PPTX", note: "PowerPoint file (image-based by default — preserves design, NOT editable). Native text-only mode is opt-in. For truly editable decks, use PDF or generate slides directly in PowerPoint." },
         },
         prefs: {
           lastTheme: prefs.lastTheme,
@@ -145,9 +145,9 @@ export async function handleDiscover() {
             { value: "pptx", label: "PPTX (PowerPoint)" },
           ], default: prefs.lastFormats || ["pdf"] },
           { id: "pptxMode", type: "select", prompt: "PPTX mode?", options: [
-            { value: "native", label: "Native (editable text)" },
-            { value: "image", label: "Image (pixel-perfect)" },
-          ], default: "native", conditional: "formats includes pptx" },
+            { value: "image", label: "Image (Recommended) — pixel-perfect, preserves your design but text is not editable" },
+            { value: "native", label: "Text-only — selectable/copyable text but design is NOT preserved (looks broken). Useful only for extracting words." },
+          ], default: "image", conditional: "formats includes pptx" },
           { id: "brandName", type: "freetext", prompt: "Brand name? (optional)", optional: true, default: prefs.brandName },
           { id: "outlineConfirm", type: "select", prompt: "Does this outline look good?", options: [
             { value: "continue", label: "Looks good, continue" },
