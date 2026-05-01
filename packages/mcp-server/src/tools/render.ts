@@ -20,7 +20,7 @@ export async function handleRender(args: {
   pptxFilename?: string;
   slideRange?: [number, number];
   orientation?: "portrait" | "landscape";
-  pptxMode?: "native" | "image";
+  pptxMode?: "native" | "image" | "rich-native";
 }) {
   const hasExistingFile = args.htmlPath && fs.existsSync(args.htmlPath);
   const hasInlineHtml = !!args.html;

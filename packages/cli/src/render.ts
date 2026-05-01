@@ -60,9 +60,22 @@ export async function renderSlides(options: RenderOptions): Promise<RenderResult
 
     if (formats.includes("pptx")) {
       const pptxPath = path.join(outDir, options.pptxFilename || "carousel.pptx");
-      const useNative = options.pptxMode !== "image";
+      // Default: image-mode PPTX (pixel-perfect, preserves design but un-editable).
+      // Native mode is opt-in for users who want crude editable text export
+      // (no design preserved — see docs/pptx-rich-roadmap.md for the planned fix).
+      const mode = options.pptxMode ?? "image";
 
-      if (useNative) {
+      if (mode === "rich-native") {
+        // Phase 4 scaffold — falls back to image mode with a warning until implemented.
+        // See docs/pptx-rich-roadmap.md
+        nativeWarnings.push(
+          "pptxMode='rich-native' is not yet implemented (Option B scaffold only). " +
+            "Falling back to pptxMode='image' for this render. Track progress in docs/pptx-rich-roadmap.md.",
+        );
+        nativeFallbackUsed = true;
+      }
+
+      if (mode === "native") {
         try {
           await loadHtml(page, options);
           const slidesData = await extractSlideData(page, selector, options.slideRange);
@@ -86,6 +99,7 @@ export async function renderSlides(options: RenderOptions): Promise<RenderResult
           files.push(pptxPath);
         }
       } else {
+        // Image mode (default) and rich-native fallback after warning above.
         await loadHtml(page, options);
         const allSlides = await page.$$(selector);
         const start = options.slideRange ? options.slideRange[0] - 1 : 0;
@@ -172,8 +186,9 @@ export async function renderToBuffers(options: Omit<RenderOptions, "outDir"> & {
     }
 
     if (formats.includes("pptx")) {
-      const useNative = (options as any).pptxMode !== "image";
-      if (useNative) {
+      // Default: image-mode PPTX. rich-native uses same path as image here (warnings only from renderSlides).
+      const mode = options.pptxMode ?? "image";
+      if (mode === "native") {
         try {
           await loadHtml(page, loadOpts);
           const slidesData = await extractSlideData(page, selector, options.slideRange);
