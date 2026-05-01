@@ -11,6 +11,22 @@ type Variant = (typeof VARIANTS)[number];
 
 const cache = new Map<string, string>();
 
+function substitutePromptDimensions(
+  text: string,
+  dims: { width: number; height: number },
+): string {
+  return text
+    .replace(/\{\{SLIDE_W\}\}/g, String(dims.width))
+    .replace(/\{\{SLIDE_H\}\}/g, String(dims.height))
+    .replace(/\{\{SLIDE_DIMS\}\}/g, `${dims.width}x${dims.height}`);
+}
+
+function parseDimensionParam(value: string | null, fallback: number): number {
+  if (value === null || value === "") return fallback;
+  const n = parseInt(value, 10);
+  return Number.isFinite(n) && n > 0 ? n : fallback;
+}
+
 function promptsDir(): string {
   const cwd = process.cwd();
   const candidates = [
@@ -58,15 +74,19 @@ export async function GET(req: Request) {
     );
   }
 
-  const text = loadPrompt(variant);
-  if (!text) {
+  const raw = loadPrompt(variant);
+  if (!raw) {
     return new Response(
       JSON.stringify({ error: `Prompt file not found for variant "${variant}"` }),
       { status: 404, headers: { "Content-Type": "application/json", ...corsHeaders } },
     );
   }
 
-  return new Response(JSON.stringify({ variant, prompt: text }), {
+  const width = parseDimensionParam(searchParams.get("width"), 540);
+  const height = parseDimensionParam(searchParams.get("height"), 675);
+  const text = substitutePromptDimensions(raw, { width, height });
+
+  return new Response(JSON.stringify({ variant, prompt: text, width, height }), {
     status: 200,
     headers: { "Content-Type": "application/json", ...corsHeaders },
   });

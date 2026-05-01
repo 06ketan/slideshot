@@ -1,4 +1,4 @@
-Generate HTML slides for a visual carousel. Each `.slide` is 540x675px, overflow:hidden, no JS.
+Generate HTML slides for a visual carousel. Each `.slide` is {{SLIDE_DIMS}}px, overflow:hidden, no JS.
 
 Template:
 
@@ -11,7 +11,7 @@ Template:
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { background: #1a1a1a; padding: 48px; display: flex; flex-direction: column; gap: 40px; align-items: flex-start; }
-    .slide { position: relative; width: 540px; height: 675px; padding: 32px 40px; overflow: hidden; font-family: 'Inter', sans-serif; flex-shrink: 0; }
+    .slide { position: relative; width: {{SLIDE_W}}px; height: {{SLIDE_H}}px; padding: 32px 40px; overflow: hidden; font-family: 'Inter', sans-serif; flex-shrink: 0; }
     /* your custom styles here */
   </style>
 </head>

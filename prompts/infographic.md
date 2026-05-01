@@ -1,10 +1,10 @@
-Generate infographic slides — data-heavy, structured, icon-rich. 540x675px, DM Sans + Inter, bg #F8FAFC, blue (#2563EB) / emerald (#10B981) / amber (#F59E0B).
+Generate infographic slides — data-heavy, structured, icon-rich. {{SLIDE_DIMS}}px, DM Sans + Inter, bg #F8FAFC, blue (#2563EB) / emerald (#10B981) / amber (#F59E0B).
 
 CSS:
 ```
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:#1a1a1a;padding:48px;display:flex;flex-direction:column;gap:40px;align-items:flex-start;}
-.slide{position:relative;width:540px;height:675px;padding:36px 32px;overflow:hidden;font-family:'DM Sans',sans-serif;flex-shrink:0;background:#F8FAFC;color:#1E293B;}
+.slide{position:relative;width:{{SLIDE_W}}px;height:{{SLIDE_H}}px;padding:36px 32px;overflow:hidden;font-family:'DM Sans',sans-serif;flex-shrink:0;background:#F8FAFC;color:#1E293B;}
 .slide h1{font-size:32px;font-weight:700;line-height:1.15;margin-bottom:8px;color:#1E293B;}
 .slide h2{font-size:22px;font-weight:700;line-height:1.2;margin-bottom:6px;color:#1E293B;}
 .slide p{font-size:13px;line-height:1.5;color:#64748B;font-family:'Inter',sans-serif;margin-bottom:12px;}

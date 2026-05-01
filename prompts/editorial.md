@@ -1,10 +1,10 @@
-Generate magazine/editorial slides — elegant serif, sophisticated. 540x675px, Playfair Display + Source Sans 3, warm white (#FAF8F5), gold accent (#C9963B). Dark variant: .ed-dark.
+Generate magazine/editorial slides — elegant serif, sophisticated. {{SLIDE_DIMS}}px, Playfair Display + Source Sans 3, warm white (#FAF8F5), gold accent (#C9963B). Dark variant: .ed-dark.
 
 CSS:
 ```
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:#1a1a1a;padding:48px;display:flex;flex-direction:column;gap:40px;align-items:flex-start;}
-.slide{position:relative;width:540px;height:675px;padding:40px 36px;overflow:hidden;flex-shrink:0;background:#FAF8F5;color:#2C2824;font-family:'Source Sans 3',sans-serif;}
+.slide{position:relative;width:{{SLIDE_W}}px;height:{{SLIDE_H}}px;padding:40px 36px;overflow:hidden;flex-shrink:0;background:#FAF8F5;color:#2C2824;font-family:'Source Sans 3',sans-serif;}
 .ed-dark{background:#1A1814;color:#E8E3DC;}
 .slide h1{font-family:'Playfair Display',serif;font-size:44px;font-weight:900;line-height:1.05;margin-bottom:14px;letter-spacing:-.02em;}
 .slide h2{font-family:'Playfair Display',serif;font-size:30px;font-weight:700;line-height:1.15;margin-bottom:10px;}

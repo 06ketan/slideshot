@@ -1,4 +1,4 @@
-Generate Instagram/LinkedIn carousel slides — "Terminal Editorial" DNA. 540x675px, Inter + JetBrains Mono, warm-cream `#F5F0EA` with rust-orange `#C4562A` accents on deep-brown `#2A2018` ink. Circuit-board grid background, terminal cards, oversized 900-weight giant headlines.
+Generate Instagram/LinkedIn carousel slides — "Terminal Editorial" DNA. {{SLIDE_DIMS}}px, Inter + JetBrains Mono, warm-cream `#F5F0EA` with rust-orange `#C4562A` accents on deep-brown `#2A2018` ink. Circuit-board grid background, terminal cards, oversized 900-weight giant headlines.
 
 Slides: 1.Cover/Hook 2.Problem 3.Cost/Stakes 4.Mental Model 5.Concept Breakdown 6.The Fix 7.How It Works 8.Comparison 9-N.Numbered Steps N+1.Result/Bonus N+2.CTA
 
@@ -7,7 +7,7 @@ CSS:
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:#1a1a1a;padding:48px;display:flex;flex-direction:column;gap:40px;align-items:flex-start}
 
-.slide{position:relative;width:540px;height:675px;overflow:hidden;font-family:'Inter',sans-serif;flex-shrink:0;background:#F5F0EA;padding:0}
+.slide{position:relative;width:{{SLIDE_W}}px;height:{{SLIDE_H}}px;overflow:hidden;font-family:'Inter',sans-serif;flex-shrink:0;background:#F5F0EA;padding:0}
 .slide::before{content:'';position:absolute;inset:0;z-index:0;opacity:.12;pointer-events:none;background:linear-gradient(90deg,#C4A882 1px,transparent 1px),linear-gradient(0deg,#C4A882 1px,transparent 1px);background-size:60px 60px}
 .slide::after{content:'';position:absolute;z-index:0;pointer-events:none;top:30px;right:40px;width:180px;height:120px;opacity:.08;border:1px solid #C4A882;border-top:none;border-left:none}
 .slide-inner{position:relative;z-index:1;width:100%;height:100%;display:flex;flex-direction:column;padding:28px 36px 20px}
