@@ -2,9 +2,9 @@
   "manifest_version": "0.3",
   "name": "slideshot",
   "display_name": "Slideshot - HTML to Slides",
-  "version": "2.9.0",
+  "version": "2.10.0",
   "description": "Render HTML slides to high-resolution PNG, WebP, PDF, and PPTX using Puppeteer. Generate carousels for LinkedIn, Instagram, and presentations with a guided AI workflow.",
-  "long_description": "Slideshot converts HTML into pixel-perfect slide images and documents. Give it HTML with `.slide` divs and it renders each one as a high-resolution PNG, WebP, combined PDF (now with @page-aware single-page-per-slide output), or editable/image-based PPTX — ready for LinkedIn carousels, Instagram posts, pitch decks, or presentation decks. Includes 8 built-in prompt templates (generic, branded, instagram-carousel, infographic, pitch-deck, dark-modern, editorial, browser-shell), a token-efficient `token_saver` mode for structured slide JSON, an `edit_slides` patch tool for iterating without regenerating, and a guided creation workflow with persistent preferences.",
+  "long_description": "Slideshot converts HTML into pixel-perfect slide images and documents. Give it HTML with `.slide` divs and it renders each one as a high-resolution PNG, WebP, combined PDF (with @page-aware single-page-per-slide output), or PPTX (image-mode for design fidelity, native opt-in for text-only export). Includes 11 built-in prompt templates (generic, branded, instagram-carousel, infographic, pitch-deck, dark-modern, editorial, browser-shell, academic-poster, clinical-medical, sketch-handdrawn) with proper landscape reflow, a token-efficient `token_saver` mode for structured slide JSON, an `edit_slides` patch tool for iterating without regenerating, and a guided creation workflow with persistent preferences.",
   "author": {
     "name": "Ketan Chavan",
     "url": "https://github.com/06ketan"
