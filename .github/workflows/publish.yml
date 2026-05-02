@@ -139,6 +139,32 @@ jobs:
         working-directory: packages/mcp-server
         run: ../../mcp-publisher publish
 
+      - name: Install @anthropic-ai/mcpb
+        if: steps.targets.outputs.mcp == 'true' && steps.targets.outputs.dry_run != 'true' && github.event_name == 'push'
+        run: npm install -g @anthropic-ai/mcpb@latest
+
+      - name: Build slideshot-mcp.mcpb bundle
+        if: steps.targets.outputs.mcp == 'true' && steps.targets.outputs.dry_run != 'true' && github.event_name == 'push'
+        run: |
+          mkdir -p /tmp/mcpb-stage
+          cp packages/mcp-server/manifest.json /tmp/mcpb-stage/
+          cp -r packages/mcp-server/dist /tmp/mcpb-stage/
+          cp -r packages/mcp-server/prompts /tmp/mcpb-stage/ 2>/dev/null || cp -r prompts /tmp/mcpb-stage/
+          cp packages/mcp-server/package.json /tmp/mcpb-stage/
+          # Replace workspace ref with version pull from npm so the bundle is hermetic
+          node -e "
+            const fs = require('fs');
+            const p = JSON.parse(fs.readFileSync('/tmp/mcpb-stage/package.json'));
+            if (p.dependencies && p.dependencies.slideshot && p.dependencies.slideshot.startsWith('workspace')) {
+              p.dependencies.slideshot = '^' + JSON.parse(fs.readFileSync('packages/cli/package.json')).version;
+            }
+            fs.writeFileSync('/tmp/mcpb-stage/package.json', JSON.stringify(p, null, 2));
+          "
+          (cd /tmp/mcpb-stage && npm install --omit=dev --no-audit --no-fund)
+          mcpb validate /tmp/mcpb-stage/manifest.json
+          mcpb pack /tmp/mcpb-stage slideshot-mcp.mcpb
+          ls -lh slideshot-mcp.mcpb
+
       - name: Create GitHub Release (CLI)
         if: steps.targets.outputs.cli == 'true' && steps.targets.outputs.dry_run != 'true' && github.event_name == 'push'
         env:
@@ -150,13 +176,24 @@ jobs:
             --notes "Published to npm: https://www.npmjs.com/package/slideshot/v/$VERSION" \
             --latest=false
 
-      - name: Create GitHub Release (MCP)
+      - name: Create GitHub Release (MCP) with .mcpb attached
         if: steps.targets.outputs.mcp == 'true' && steps.targets.outputs.dry_run != 'true' && github.event_name == 'push'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           VERSION="${GITHUB_REF#refs/tags/mcp-v}"
-          gh release create "mcp-v$VERSION" \
-            --title "slideshot-mcp v$VERSION" \
-            --notes "Published to npm: https://www.npmjs.com/package/slideshot-mcp/v/$VERSION" \
-            --latest=true
+          BUNDLE="slideshot-mcp.mcpb"
+          NOTES="Published to npm: https://www.npmjs.com/package/slideshot-mcp/v/$VERSION"
+          if [ -f "$BUNDLE" ]; then
+            NOTES="$NOTES — Anthropic DXT bundle attached below."
+            gh release create "mcp-v$VERSION" \
+              --title "slideshot-mcp v$VERSION" \
+              --notes "$NOTES" \
+              --latest=true \
+              "$BUNDLE"
+          else
+            gh release create "mcp-v$VERSION" \
+              --title "slideshot-mcp v$VERSION" \
+              --notes "$NOTES" \
+              --latest=true
+          fi
