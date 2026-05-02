@@ -2,7 +2,7 @@
   "manifest_version": "0.3",
   "name": "slideshot",
   "display_name": "Slideshot - HTML to Slides",
-  "version": "2.10.0",
+  "version": "4.4.0",
   "description": "Render HTML slides to high-resolution PNG, WebP, PDF, and PPTX using Puppeteer. Generate carousels for LinkedIn, Instagram, and presentations with a guided AI workflow.",
   "long_description": "Slideshot converts HTML into pixel-perfect slide images and documents. Give it HTML with `.slide` divs and it renders each one as a high-resolution PNG, WebP, combined PDF (with @page-aware single-page-per-slide output), or PPTX (image-mode for design fidelity, native opt-in for text-only export). Includes 11 built-in prompt templates (generic, branded, instagram-carousel, infographic, pitch-deck, dark-modern, editorial, browser-shell, academic-poster, clinical-medical, sketch-handdrawn) with proper landscape reflow, a token-efficient `token_saver` mode for structured slide JSON, an `edit_slides` patch tool for iterating without regenerating, and a guided creation workflow with persistent preferences.",
   "author": {
@@ -32,7 +32,7 @@
   "tools": [
     {
       "name": "discover_themes",
-      "description": "MANDATORY first step — returns the full theme catalog (8 themes, primary + secondary tiers), orientation presets, token modes, output formats, persisted user preferences, and 3 quick-start presets. Resets the discovery gate."
+      "description": "MANDATORY first step — returns the full theme catalog (11 themes, primary + secondary tiers), orientation presets, token modes, output formats, persisted user preferences, and 3 quick-start presets. Resets the discovery gate."
     },
     {
       "name": "list_themes",
@@ -53,52 +53,6 @@
     {
       "name": "health_check",
       "description": "Verify Puppeteer/Chromium can launch in this environment. Run first to diagnose render failures."
-    }
-  ],
-  "prompts": [
-    {
-      "name": "generic-slides",
-      "description": "Clean minimal slide generation prompt with Inter font and white cards"
-    },
-    {
-      "name": "branded-slides",
-      "description": "Ketan Slides design system prompt with Space Mono font, teal/coral accents, and corner decorations"
-    },
-    {
-      "name": "instagram-carousel-slides",
-      "description": "Bold vibrant Instagram carousel style with Poppins font and gradient backgrounds"
-    },
-    {
-      "name": "infographic-slides",
-      "description": "Data-heavy infographic style with DM Sans, progress bars, and stat cards"
-    },
-    {
-      "name": "pitch-deck-slides",
-      "description": "Professional pitch deck style with DM Sans, KPI cards, and timelines"
-    },
-    {
-      "name": "dark-modern-slides",
-      "description": "Neon glassmorphism style with Inter font and code blocks on dark backgrounds"
-    },
-    {
-      "name": "editorial-slides",
-      "description": "Magazine serif style with Playfair Display and gold accents"
-    },
-    {
-      "name": "browser-shell-slides",
-      "description": "Browser shell chrome style with Bebas Neue + DM Sans, yellow/navy palette"
-    },
-    {
-      "name": "academic-poster-slides",
-      "description": "IEEE/ACM conference poster aesthetic with IBM Plex Serif + Mono, deep navy and parchment cream"
-    },
-    {
-      "name": "clinical-medical-slides",
-      "description": "Sterile medical-report aesthetic with Source Sans + Serif, clinical teal accents and alert-red highlights"
-    },
-    {
-      "name": "sketch-handdrawn-slides",
-      "description": "Whiteboard-style aesthetic with Caveat + Architects Daughter, dashed borders, gentle rotations"
     }
   ],
   "compatibility": {
