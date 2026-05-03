@@ -21,6 +21,59 @@ to **Validated** status.
 
 ---
 
+## LobeHub score breakdown — what each item is worth
+
+LobeHub grades servers F (0–60%) → B (60–80%) → A (80–100%). The score
+breaks down into the 9 items below. **Required items** (4 total) carry the
+most weight; the others are reinforcement.
+
+| Score item                              | How to pass                                                              | Status across our 3 servers |
+|-----------------------------------------|--------------------------------------------------------------------------|------------------------------|
+| **Validated** *(required)*              | Server passes LobeHub's `tools/list` + `tools/call` validator             | After re-trigger ✓           |
+| **At least one installation method** *(required)* | Manifest / package metadata declares an install command                | ✓                            |
+| **At least one Skill** *(required)*     | At least one MCP tool is discoverable via `tools/list`                    | ✓ (slideshot 6, medium 16, substack 26) |
+| **Has README**                           | `README.md` at repo root                                                 | ✓                            |
+| **Friendly installation methods**        | Anything other than "manual" — `uvx` / `npx` / `.mcpb` / Docker all count | ✓                            |
+| **Has LICENSE**                          | `LICENSE` at repo root (we use MIT)                                      | ✓                            |
+| **Includes Prompts**                     | Server registers `prompts/list` capability                                | ✗ (none of the 3 do today — see "Future score lifts") |
+| **Includes Resources**                   | Server registers `resources/list` capability                              | ✗ (none of the 3 do today — see "Future score lifts") |
+| **Claimed by Owner** *(required)*        | LobeHub badge embedded in repo `README.md`                                | ✓ (badge row shipped)        |
+
+The screenshot showed `slideshot` at `45 / 100 (F)` because **3 of 4 required
+items were missing** — Validated, Skill list (the kwargs bug was breaking
+tools/call indirectly), and Claimed. After this round all 4 required items
+pass, projecting the listing into B-tier (~70 / 100). To clear A-tier
+(80+) we'd still need Prompts + Resources support — covered below.
+
+---
+
+## How to claim the listing — the badge route
+
+LobeHub's "Claimed by Owner" check works by scanning the repo's `README.md`
+for a link to `https://lobehub.com/mcp/<slug>`. As soon as the badge lands
+on `main`, the next nightly re-scan flips the check ✓ — no manual claim
+flow required.
+
+The badges shipped in our 3 READMEs:
+
+```markdown
+[![MCP Badge](https://lobehub.com/badge/mcp/06ketan-slideshot)](https://lobehub.com/mcp/06ketan-slideshot)
+[![MCP Badge](https://lobehub.com/badge/mcp/06ketan-medium-ops)](https://lobehub.com/mcp/06ketan-medium-ops)
+[![MCP Badge](https://lobehub.com/badge/mcp/06ketan-substack-ops)](https://lobehub.com/mcp/06ketan-substack-ops)
+```
+
+LobeHub also offers a card-style badge for hero sections of READMEs
+(theme=light or theme=dark):
+
+```markdown
+[![MCP Badge](https://lobehub.com/badge/mcp-full/06ketan-slideshot?theme=light)](https://lobehub.com/mcp/06ketan-slideshot)
+```
+
+Both forms count for the "Claimed" check; we use the flat-square form for
+parity with our other shields.io badges in the badge row.
+
+---
+
 ## How LobeHub's validator works
 
 ```mermaid
@@ -209,5 +262,52 @@ LobeHub Marketplace is one of the top 5 MCP discovery surfaces (alongside
 Glama, the Official MCP Registry, mcp.so, and Anthropic's DXT directory).
 Validated listings appear in their search and recommended carousels;
 Unvalidated listings are visible only via direct URL. Getting all three
-servers to **Validated** unlocks organic discovery on a directory that
-sees ~6-figure monthly traffic.
+servers to **Validated + Claimed** unlocks organic discovery on a directory
+that sees ~6-figure monthly traffic.
+
+---
+
+## Future score lifts — A-tier work
+
+After the badge ships and validation re-runs, the remaining unchecked
+items in LobeHub's score breakdown are **Includes Prompts** and
+**Includes Resources**. Each is worth a few points; together they're the
+gap between B-tier (60–80%) and A-tier (80+).
+
+### Includes Prompts
+
+Register an `MCP prompts/list` capability + at least one prompt template.
+
+- **slideshot** — natural fit. Each of the 8 themes (`generic`, `branded`,
+  `dark-modern`, `editorial`, `infographic`, `instagram-carousel`,
+  `pitch-deck`, `browser-shell`) is already a prompt template at
+  `prompts/*.md`. Wrapping them in MCP prompts via the TypeScript SDK is
+  ~30 lines of code; the prompt body is loaded from disk and parameterised
+  on `topic`, `audience`, `slide_count`.
+- **substack-ops** — registering a `triage_unanswered_comments` prompt
+  that the host LLM can preload before calling `bulk_draft_replies` would
+  also unlock the score and give users a single-click reply workflow.
+- **medium-ops** — same pattern: a `triage_responses` prompt feeding the
+  reply-drafting tool family.
+
+### Includes Resources
+
+Register an `MCP resources/list` capability. Resources are read-only
+context the host LLM can attach into its window without paying tool-call
+overhead.
+
+- **slideshot** — `resource://themes` listing the 8 theme catalogs +
+  `resource://schema/render-options` for the render contract are obvious
+  fits.
+- **substack-ops / medium-ops** — `resource://drafts/<id>` and
+  `resource://policy/comment-rules` would surface in MCP clients without
+  needing a tool round-trip.
+
+Both items would be a single follow-on phase per server. Estimated effort:
+- slideshot ≈ 1–2 hours (TypeScript SDK, schemas already written)
+- substack-ops / medium-ops ≈ 2–3 hours each (FastMCP `@server.prompt` and
+  `@server.resource` decorators; need real prompt copy and resource URIs)
+
+After both ship, all 9 LobeHub score items pass and listings should land
+in the A-tier 80–95% range, with the exact score depending on
+`tools/call` runtime and uptime metrics that LobeHub tracks separately.
