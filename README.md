@@ -1,10 +1,21 @@
 # slideshot
 
+<!-- mcp-name: io.github.06ketan/slideshot -->
+
 [![npm](https://img.shields.io/npm/v/slideshot)](https://www.npmjs.com/package/slideshot)
 [![npm downloads](https://img.shields.io/npm/dm/slideshot)](https://www.npmjs.com/package/slideshot)
 [![npm mcp](https://img.shields.io/npm/v/slideshot-mcp?label=slideshot-mcp)](https://www.npmjs.com/package/slideshot-mcp)
 [![GitHub stars](https://img.shields.io/github/stars/06ketan/slideshot)](https://github.com/06ketan/slideshot)
 [![license](https://img.shields.io/github/license/06ketan/slideshot)](LICENSE)
+[![MCP compatible](https://img.shields.io/badge/MCP-compatible-8A2BE2)](https://modelcontextprotocol.io)
+[![MCP Registry](https://img.shields.io/badge/MCP_Registry-verified-blue)](https://registry.modelcontextprotocol.io/v0/servers?search=io.github.06ketan/slideshot)
+[![Anthropic DXT](https://img.shields.io/badge/Anthropic_DXT-.mcpb-D97706)](https://github.com/06ketan/slideshot/releases/latest)
+[![Glama MCP server](https://glama.ai/mcp/servers/06ketan/slideshot/badges/score.svg)](https://glama.ai/mcp/servers/06ketan/slideshot)
+[![MCP Badge](https://lobehub.com/badge/mcp/06ketan-slideshot)](https://lobehub.com/mcp/06ketan-slideshot)
+
+<a href="https://glama.ai/mcp/servers/06ketan/slideshot">
+  <img width="380" height="200" src="https://glama.ai/mcp/servers/06ketan/slideshot/badges/card.svg" alt="slideshot MCP server card on Glama" />
+</a>
 
 Convert AI-generated HTML carousels into high-res PNG, WebP, PDF, and PPTX — via **CLI**, **Web App**, **MCP Server**, or **REST API**.
 

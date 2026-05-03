@@ -3,6 +3,10 @@
 [![npm](https://img.shields.io/npm/v/slideshot-mcp)](https://www.npmjs.com/package/slideshot-mcp)
 [![npm downloads](https://img.shields.io/npm/dm/slideshot-mcp)](https://www.npmjs.com/package/slideshot-mcp)
 [![GitHub stars](https://img.shields.io/github/stars/06ketan/slideshot)](https://github.com/06ketan/slideshot)
+[![MCP Registry](https://img.shields.io/badge/MCP_Registry-verified-blue)](https://registry.modelcontextprotocol.io/v0/servers?search=io.github.06ketan/slideshot)
+[![Anthropic DXT](https://img.shields.io/badge/Anthropic_DXT-.mcpb-D97706)](https://github.com/06ketan/slideshot/releases/latest)
+[![Glama MCP server](https://glama.ai/mcp/servers/06ketan/slideshot/badges/score.svg)](https://glama.ai/mcp/servers/06ketan/slideshot)
+[![MCP Badge](https://lobehub.com/badge/mcp/06ketan-slideshot)](https://lobehub.com/mcp/06ketan-slideshot)
 
 MCP server that renders HTML slides to high-resolution PNG, WebP, PDF, and PPTX. Use with Claude Desktop, Cursor, or any MCP-compatible client.
 
