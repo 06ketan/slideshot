@@ -50,7 +50,7 @@ Orientation presets: portrait (540×675), landscape (1920×1080), linkedin (540�
 
 PPTX defaults to image-mode for design fidelity. Native text-only export is opt-in.
 
-Works with Claude Desktop, Cursor, and any MCP-compatible client.
+Works with Claude Desktop, Cursor, OpenCode, Continue, and any MCP-compatible stdio host (see README).
 ```
 
 ### Categories
@@ -62,7 +62,7 @@ Works with Claude Desktop, Cursor, and any MCP-compatible client.
 
 ### Tags
 
-mcp, model-context-protocol, slides, presentation, linkedin-carousel, instagram-carousel, pitch-deck, html-to-image, puppeteer, pdf-generation, pptx, ai-tools, content-generation
+mcp, model-context-protocol, slides, presentation, linkedin-carousel, instagram-carousel, pitch-deck, html-to-image, puppeteer, pdf-generation, pptx, opencode, continue, zed, cline, goose, cursor, claude-desktop, ai-tools, content-generation
 
 ### Repository URL
 

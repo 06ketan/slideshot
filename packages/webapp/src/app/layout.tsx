@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Geist_Mono } from "next/font/google";
 import { Bebas_Neue, DM_Sans } from "next/font/google";
-import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import Script from "next/script";
 import "./globals.css";
 
 const geistMono = Geist_Mono({
@@ -89,7 +89,7 @@ export default function RootLayout({
         className={`${bebasNeue.variable} ${dmSans.variable} ${geistMono.variable} antialiased`}
       >
         {children}
-        <Analytics />
+        <Script src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "333d7e63e7d746a09da821359c7ea54d"}' strategy="afterInteractive" />
         <SpeedInsights />
       </body>
     </html>
