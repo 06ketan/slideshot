@@ -8,9 +8,20 @@
 [![Glama MCP server](https://glama.ai/mcp/servers/06ketan/slideshot/badges/score.svg)](https://glama.ai/mcp/servers/06ketan/slideshot)
 [![MCP Badge](https://lobehub.com/badge/mcp/06ketan-slideshot)](https://lobehub.com/mcp/06ketan-slideshot)
 
-MCP server that renders HTML slides to high-resolution PNG, WebP, PDF, and PPTX. Use with Claude Desktop, Cursor, or any MCP-compatible client.
+MCP server that renders HTML slides to high-resolution PNG, WebP, PDF, and PPTX. Use with Cursor MCP, Claude MCP, OpenCode MCP, Continue, or any stdio MCP-compatible client. Published as **[slideshot-mcp](https://www.npmjs.com/package/slideshot-mcp)**.
 
 **[Web App](https://slideshot.vercel.app)** · **[npm CLI](https://www.npmjs.com/package/slideshot)** · **[GitHub](https://github.com/06ketan/slideshot)**
+
+### Wrong install?
+
+Use npm package **`slideshot-mcp`** ([Glama](https://glama.ai/mcp/servers/06ketan/slideshot)). Do not confuse with unrelated scoped packages from generic “HTML slides MCP” searches.
+
+## Works with (MCP)
+
+| Group | Host | Docs |
+|-------|------|------|
+| OSS-oriented | **OpenCode**, **Continue**, **Zed**, **Cline**, **Goose** | Wire stdio to `npx` + `slideshot-mcp` per host docs ([OpenCode](https://open-code.ai/en/docs/mcp-servers), [Continue](https://docs.continue.dev), …) |
+| Commercial | **Cursor**, **Claude**, **GitHub Copilot**, **ChatGPT**, **Gemini** | Cursor / Claude: `mcpServers` JSON below; ChatGPT often via [REST](https://slideshot.vercel.app/api/openapi.json) |
 
 ## Setup
 
@@ -39,6 +50,22 @@ Add to `.cursor/mcp.json`:
     "slideshot": {
       "command": "npx",
       "args": ["-y", "slideshot-mcp"]
+    }
+  }
+}
+```
+
+### OpenCode
+
+Add to `~/.config/opencode/opencode.json`:
+
+```json
+{
+  "mcp": {
+    "slideshot": {
+      "type": "local",
+      "command": ["npx", "-y", "slideshot-mcp"],
+      "enabled": true
     }
   }
 }
@@ -160,6 +187,8 @@ Slideshot MCP runs entirely on your local machine. No data is collected, transmi
 - **[slideshot](https://www.npmjs.com/package/slideshot)** — CLI and programmatic API
 - **[Web App](https://slideshot.vercel.app)** — paste HTML, preview, export online
 - **[GitHub](https://github.com/06ketan/slideshot)** — source code & issues
+- **[medium-ops](https://github.com/06ketan/medium-ops)** — Medium CLI + MCP (PyPI)
+- **[substack-ops](https://github.com/06ketan/substack-ops)** — Substack CLI + MCP (PyPI)
 
 ## License
 

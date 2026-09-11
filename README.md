@@ -17,9 +17,37 @@
   <img width="380" height="200" src="https://glama.ai/mcp/servers/06ketan/slideshot/badges/card.svg" alt="slideshot MCP server card on Glama" />
 </a>
 
-Convert AI-generated HTML carousels into high-res PNG, WebP, PDF, and PPTX — via **CLI**, **Web App**, **MCP Server**, or **REST API**.
+Convert AI-generated HTML carousels into high-res PNG, WebP, PDF, and PPTX — via **CLI**, **Web App**, **MCP Server** (Cursor MCP, Claude MCP, OpenCode MCP), or **REST API**.
 
 **[Web App](https://slideshot.vercel.app)** · **[npm CLI](https://www.npmjs.com/package/slideshot)** · **[npm MCP](https://www.npmjs.com/package/slideshot-mcp)** · **[API Spec](https://slideshot.vercel.app/api/openapi.json)**
+
+### Wrong install?
+
+The MCP package name is **`slideshot-mcp`** on npm ([canonical Glama listing](https://glama.ai/mcp/servers/06ketan/slideshot)). Use `npx -y slideshot-mcp` — not unrelated `html-to-slides` or third-party scoped copies from generic searches.
+
+## Works with (MCP)
+
+Discovery-oriented table — **verify each host’s current MCP docs** before upgrading.
+
+### Open source–oriented hosts
+
+| Host | Documentation | Typical wire-up |
+|------|---------------|-----------------|
+| **OpenCode** | [OpenCode MCP servers](https://open-code.ai/en/docs/mcp-servers) | See [OpenCode](#opencode) below |
+| **Continue** | [Continue](https://docs.continue.dev) | Add stdio MCP pointing at `npx` / `slideshot-mcp` per Continue docs |
+| **Zed** | [Zed](https://zed.dev/docs) | Stdio MCP per Zed |
+| **Cline** | [Cline](https://github.com/cline/cline) | Extension MCP docs |
+| **Goose** | [Goose](https://block.github.io/goose/) | MCP extensions per Goose |
+
+### Large commercial stacks
+
+| Host | Documentation | Typical wire-up |
+|------|---------------|-----------------|
+| **Cursor** | [Cursor MCP](https://docs.cursor.com/context/model-context-protocol) | `.cursor/mcp.json` — see [MCP Server](#mcp-server) |
+| **Claude** (Desktop / Code) | [Claude Desktop](https://support.anthropic.com/en/articles/10065433-installing-claude-for-desktop), [Claude Code](https://docs.claude.com/en/docs/claude-code) | Claude Desktop JSON or `claude mcp add` |
+| **GitHub Copilot** | [Copilot](https://docs.github.com/en/copilot) | MCP in VS Code where enabled |
+| **ChatGPT** | [OpenAI](https://platform.openai.com/docs) | Prefer REST (`/api/openapi.json`) where MCP is unavailable |
+| **Google Gemini** | [Gemini](https://ai.google.dev/docs) | Gemini IDE / CLI MCP when supported — else REST |
 
 ## Architecture
 
@@ -73,7 +101,9 @@ Open `http://localhost:3000` — paste HTML, preview, export.
 
 ### MCP Server
 
-Add to Claude Desktop or Cursor config:
+Add to Cursor, Claude Desktop, Claude Code, or any stdio MCP host. Published as **[slideshot-mcp](https://www.npmjs.com/package/slideshot-mcp)** on npm.
+
+**Cursor / Claude Desktop** (`mcpServers`):
 
 ```json
 {
@@ -81,6 +111,24 @@ Add to Claude Desktop or Cursor config:
     "slideshot": {
       "command": "npx",
       "args": ["-y", "slideshot-mcp"]
+    }
+  }
+}
+```
+
+Optional pin: `"args": ["-y", "slideshot-mcp@4.4.0"]` (replace with current npm version).
+
+#### OpenCode
+
+`~/.config/opencode/opencode.json`:
+
+```json
+{
+  "mcp": {
+    "slideshot": {
+      "type": "local",
+      "command": ["npx", "-y", "slideshot-mcp"],
+      "enabled": true
     }
   }
 }
@@ -121,6 +169,8 @@ The web app exposes an OpenAPI-compatible REST API at `https://slideshot.vercel.
 |----------|--------|-------|
 | Cursor | MCP | `npx slideshot-mcp` in `.cursor/mcp.json` |
 | Claude Desktop | MCP | `npx slideshot-mcp` in config |
+| OpenCode | MCP | `opencode.json` `mcp.slideshot` → `["npx","-y","slideshot-mcp"]` |
+| Continue | MCP | stdio → `npx` / `slideshot-mcp` per Continue docs |
 | ChatGPT | OpenAPI Action | Import `/api/openapi.json` |
 | OpenWebUI | OpenAPI Tool | Import `/api/openapi.json` |
 
@@ -156,6 +206,9 @@ cd packages/webapp && npm run build  # builds webapp separately
 | GitHub | [github.com/06ketan/slideshot](https://github.com/06ketan/slideshot) |
 | API Spec | [slideshot.vercel.app/api/openapi.json](https://slideshot.vercel.app/api/openapi.json) |
 
-## License
+## Related MCPs
 
-MIT
+- **[medium-ops](https://github.com/06ketan/medium-ops)** — Medium CLI + MCP (PyPI).
+- **[substack-ops](https://github.com/06ketan/substack-ops)** — Substack CLI + MCP (PyPI).
+
+## License

@@ -28,7 +28,7 @@ All platforms want roughly the same fields. Here's the canonical version:
 
 ### Tags / categories
 
-`mcp`, `model-context-protocol`, `slides`, `presentation`, `linkedin-carousel`, `instagram-carousel`, `pitch-deck`, `html-to-image`, `puppeteer`, `pdf-generation`, `pptx`, `claude-desktop`, `cursor`, `ai-tools`, `content-generation`
+`mcp`, `model-context-protocol`, `slides`, `presentation`, `linkedin-carousel`, `instagram-carousel`, `pitch-deck`, `html-to-image`, `puppeteer`, `pdf-generation`, `pptx`, `claude-desktop`, `cursor`, `opencode`, `continue`, `zed`, `cline`, `goose`, `github-copilot`, `gemini`, `chatgpt`, `ai-tools`, `content-generation`
 
 ### Repository
 
@@ -67,3 +67,4 @@ When you're ready to publish:
    - Editor page (https://slideshot.vercel.app/editor)
    - Sample carousel output (e.g. branded-portrait-1.png from `__snapshots__/`)
 5. Submit one platform at a time and note the listing URLs back in this file once approved
+6. README “Works with (MCP)” lists OpenCode, Continue, Zed, Cline, Goose, Cursor, Claude, Copilot, ChatGPT, Gemini (see root [README.md](../../README.md))
